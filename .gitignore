@@ -1,0 +1,17 @@
+# 依赖与渲染中间产物（每个视频工程、_template 各有自己的）
+node_modules/
+out/
+*.log
+__pycache__/
+
+# 系统字体副本（从 C:\Windows\Fonts 复制，见 README）、TTS 接口原始返回
+**/public/fonts/
+**/scripts/raw/
+
+# 待用户手动删除；会话记录（大，且可能含个人内容）
+_待删除/
+_资料/会话记录/
+
+# 成片与抽帧不入库
+*.mp4
+抽帧/

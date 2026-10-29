@@ -1,0 +1,14 @@
+[
+  {
+    "id": "s1a",
+    "scene": "1 示例",
+    "speak": "这张表有个小秘密：沿对角线对折，两边一模一样。",
+    "subs": [
+      {
+        "at": "这张表",
+        "text": "这张表有个小秘密：沿对角线对折，两边一模一样。",
+        "en": "This table has a little secret: fold it along the diagonal, and the two halves match."
+      }
+    ]
+  }
+]
