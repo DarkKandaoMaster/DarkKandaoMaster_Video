@@ -1,0 +1,122 @@
+{
+ "s1a": {
+  "sig": "5120679b00dfa374bed3b020af91d05f3eb0beb3",
+  "model": "speech-2.8-hd",
+  "seconds": 5.271
+ },
+ "s1b": {
+  "sig": "91ebbb7598b39f1976810d98ab1dfe38adda17e4",
+  "model": "speech-2.8-hd",
+  "seconds": 4.11
+ },
+ "s1c": {
+  "sig": "5a25aace8c702583797f3fa4eec562a838dcf1d4",
+  "model": "speech-2.8-hd",
+  "seconds": 4.261
+ },
+ "s2a": {
+  "sig": "a404cacdb3d4678bba23591f64eece0c535746e4",
+  "model": "speech-2.8-hd",
+  "seconds": 6.316
+ },
+ "s2b": {
+  "sig": "f5bc374c6d1b3d021a2013c85942f9028acd34ee",
+  "model": "speech-2.8-hd",
+  "seconds": 4.064
+ },
+ "s2c": {
+  "sig": "1abe8d0a23f347073eab123ef96a766dc77c1c3f",
+  "model": "speech-2.8-hd",
+  "seconds": 6.699
+ },
+ "s2d": {
+  "sig": "233b29216840e5b5b51884337e5048f5af717d09",
+  "model": "speech-2.8-hd",
+  "seconds": 4.609
+ },
+ "s3a": {
+  "sig": "741d642b453faaaf7e3f68ef27d8a78bfb3bfa0a",
+  "model": "speech-2.8-hd",
+  "seconds": 4.923
+ },
+ "s3b": {
+  "sig": "f06261b9185eca35ed0ca8085577d3c6a49b5a9b",
+  "model": "speech-2.8-hd",
+  "seconds": 7.442
+ },
+ "s4a": {
+  "sig": "1b58d16062968b10298ecc644fc5345fe47197a0",
+  "model": "speech-2.8-hd",
+  "seconds": 4.493
+ },
+ "s4b": {
+  "sig": "7e9e49837b951c127240718fbee4444b1457400f",
+  "model": "speech-2.8-hd",
+  "seconds": 6.166
+ },
+ "s4c": {
+  "sig": "8d85f069df131bccfae47cc2456888efa707166e",
+  "model": "speech-2.8-hd",
+  "seconds": 7.407
+ },
+ "s4d": {
+  "sig": "6ed0b88b6373601e55a63e54be2018b3968841c2",
+  "model": "speech-2.8-hd",
+  "seconds": 6.664
+ },
+ "s5a": {
+  "sig": "62010774739bd09ddafec457bd40b68adf193bdf",
+  "model": "speech-2.8-hd",
+  "seconds": 5.387
+ },
+ "s5b": {
+  "sig": "4f7e3c841970610c7439dcb31d73e4f1b3efe98c",
+  "model": "speech-2.8-hd",
+  "seconds": 5.7
+ },
+ "s5c": {
+  "sig": "3fd531db1951a7c035329277fa550951fa7e694d",
+  "model": "speech-2.8-hd",
+  "seconds": 5.387
+ },
+ "s6a": {
+  "sig": "b951ab9aa298670c743f02208058bacc5daab825",
+  "model": "speech-2.8-hd",
+  "seconds": 6.351
+ },
+ "s6b": {
+  "sig": "ce04e7289e10c22ed19e34f4fb8cc40021850549",
+  "model": "speech-2.8-hd",
+  "seconds": 4.992
+ },
+ "s6c": {
+  "sig": "5c6cfae26f8d77fb119a493006088edcb5619bf8",
+  "model": "speech-2.8-hd",
+  "seconds": 4.992
+ },
+ "s7a": {
+  "sig": "e1c38c72ad406caf82a97ff1cfee10e023af92d2",
+  "model": "speech-2.8-hd",
+  "seconds": 6.584
+ },
+ "s7b": {
+  "sig": "3f304c272c6062748dfec9930cc7dc2d128e5bf4",
+  "model": "speech-2.8-hd",
+  "seconds": 8.057
+ },
+ "s7c": {
+  "sig": "ad9749e00911a57c8561a4d8efc3789ffcf9dcb2",
+  "model": "speech-2.8-hd",
+  "seconds": 4.644
+ },
+ "s8a": {
+  "sig": "fd8c3b70ebe86b8b8330441816291a4a2682ba35",
+  "model": "speech-2.8-hd",
+  "seconds": 2.984
+ },
+ "s8b": {
+  "sig": "436e237a8abf33b2db4471001fc7b5eb92945a7b",
+  "model": "speech-2.8-hd",
+  "seconds": 3.565
+ }
+}

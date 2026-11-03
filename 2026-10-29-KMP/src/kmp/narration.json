@@ -1,0 +1,208 @@
+[
+  {
+    "id": "s1a",
+    "scene": "1 钩子",
+    "speak": "小 i 在主串里找这个模式串，前五个全对，第六个，错了！",
+    "subs": [
+      { "at": "小 i 在主串", "text": "小 i 在主串里找这个模式串，", "en": "Little i is hunting for this pattern in the main string." },
+      { "at": "前五个", "text": "前五个全对，第六个——错了！", "en": "Five matches in a row, then the sixth... miss!" }
+    ]
+  },
+  {
+    "id": "s1b",
+    "scene": "1 钩子",
+    "speak": "朴素做法：小 i 被一把拽回第四位，从头再来。",
+    "subs": [
+      { "at": "朴素做法", "text": "朴素做法：小 i 被一把拽回第 4 位，从头再来。", "en": "The naive way: little i gets yanked back to position 4 and starts over." }
+    ]
+  },
+  {
+    "id": "s1c",
+    "scene": "1 钩子",
+    "speak": "前面明明都比过了，凭什么重来？KMP：i 一步都不退。",
+    "subs": [
+      { "at": "前面明明", "text": "前面明明都比过了，凭什么重来？", "en": "We've already checked those letters. Why start over?" },
+      { "at": "KMP", "text": "KMP：i 一步都不退。", "en": "KMP says: i never steps back." }
+    ]
+  },
+  {
+    "id": "s2a",
+    "scene": "2 i 不动，模式滑过去",
+    "speak": "失配时，主串这五位我们已经知道，就是模式的前五位，a b a a b。",
+    "subs": [
+      { "at": "失配时", "text": "失配时，主串这五位我们已经知道：", "en": "At the miss, we already know these five letters of the main string:" },
+      { "at": "就是模式", "text": "就是模式的前五位，abaab。", "en": "they're just the pattern's first five, abaab." }
+    ]
+  },
+  {
+    "id": "s2b",
+    "scene": "2 i 不动，模式滑过去",
+    "speak": "它的开头 a b，和结尾 a b，一模一样。",
+    "subs": [
+      { "at": "它的开头", "text": "它的开头 ab，和结尾 ab，一模一样。", "en": "Its first two letters, ab, are exactly its last two." }
+    ]
+  },
+  {
+    "id": "s2c",
+    "scene": "2 i 不动，模式滑过去",
+    "speak": "那就让 i 不动，模式右滑，让开头的 a b 对准结尾的 a b，接着比第三位。",
+    "subs": [
+      { "at": "那就让", "text": "那就让 i 不动，模式右滑，", "en": "So i stays put and the pattern slides right," },
+      { "at": "让开头", "text": "让开头的 ab 对准结尾的 ab，接着比第 3 位。", "en": "the leading ab landing on the trailing ab. Then we carry on with p_{3}." }
+    ]
+  },
+  {
+    "id": "s2d",
+    "scene": "2 i 不动，模式滑过去",
+    "speak": "能滑多远，只看已匹配那段的最长相等前后缀。",
+    "subs": [
+      { "at": "能滑多远", "text": "能滑多远，只看已匹配那段的最长相等前后缀。", "en": "How far to slide depends only on the matched part: its longest prefix that is also a suffix." }
+    ]
+  },
+  {
+    "id": "s3a",
+    "scene": "3 定义 next",
+    "speak": "每一位失配后 j 换成几，提前算好，就是 next 数组。",
+    "subs": [
+      { "at": "每一位", "text": "每一位失配后 j 换成几，提前算好，就是 next 数组。", "en": "Work out in advance what j becomes after a miss at each position. That table is the next array." }
+    ]
+  },
+  {
+    "id": "s3b",
+    "scene": "3 定义 next",
+    "speak": "规则：最长相等前后缀长度加一。第一位就失配记零，i 前进一格，模式从头比。",
+    "subs": [
+      { "at": "规则", "text": "规则：最长相等前后缀长度 + 1。", "en": "The rule: length of the longest equal prefix and suffix, plus one." },
+      { "at": "第一位就失配", "text": "第 1 位就失配记 0：i 前进一格，模式从头比。", "en": "A miss at position 1 gets 0: i moves on one step, and the pattern starts fresh." }
+    ]
+  },
+  {
+    "id": "s4a",
+    "scene": "4 手推 next",
+    "speak": "来，手推一遍。第一位零，第二位一，这俩是固定的。",
+    "subs": [
+      { "at": "来，", "text": "来，手推一遍。第 1 位是 0，第 2 位是 1，这俩是固定的。", "en": "Let's work it out by hand. Position 1 is 0, position 2 is 1. Those two are always fixed." }
+    ]
+  },
+  {
+    "id": "s4b",
+    "scene": "4 手推 next",
+    "speak": "第三位看 a b，头尾不同，记一。第四位看 a b a，头尾都是 a，记二。",
+    "subs": [
+      { "at": "第三位看", "text": "第 3 位看 ab，头尾不同，记 1。", "en": "Position 3: look at ab. Ends differ, so 1." },
+      { "at": "第四位看", "text": "第 4 位看 aba，头尾都是 a，记 2。", "en": "Position 4: aba. Both ends are a, so 2." }
+    ]
+  },
+  {
+    "id": "s4c",
+    "scene": "4 手推 next",
+    "speak": "第五位看 a b a a，还是一个 a，记二。第六位看 a b a a b，头尾 a b，记三。",
+    "subs": [
+      { "at": "第五位看", "text": "第 5 位看 abaa，还是一个 a，记 2。", "en": "Position 5: abaa. Still just one a, so 2." },
+      { "at": "第六位看", "text": "第 6 位看 abaab，头尾 ab，记 3。", "en": "Position 6: abaab. ab at both ends, so 3." }
+    ]
+  },
+  {
+    "id": "s4d",
+    "scene": "4 手推 next",
+    "speak": "第七位，结尾是 c，开头没有，记一。第八位，头尾一个 a，记二。",
+    "subs": [
+      { "at": "第七位", "text": "第 7 位，结尾是 c，开头没有，记 1。", "en": "Position 7: it ends in c, and nothing starts with c, so 1." },
+      { "at": "第八位", "text": "第 8 位，头尾一个 a，记 2。", "en": "Position 8: an a at each end, so 2." }
+    ]
+  },
+  {
+    "id": "s5a",
+    "scene": "5 拿着 next 走一遍",
+    "speak": "拿 next 再比一遍：失配就查表跳 j，小 i 只往前走。",
+    "subs": [
+      { "at": "拿 next", "text": "拿 next 再比一遍：失配就查表跳 j，小 i 只往前走。", "en": "Now match again with next: on a miss, look up where j jumps. Little i only moves forward." }
+    ]
+  },
+  {
+    "id": "s5b",
+    "scene": "5 拿着 next 走一遍",
+    "speak": "第六位失配，查表是三，滑过去接着比，在第六位找到了。",
+    "subs": [
+      { "at": "第六位失配", "text": "第 6 位失配，查表是 3，滑过去接着比，", "en": "A miss at position 6? The table says 3. Slide and keep going," },
+      { "at": "在第六位", "text": "在第 6 位找到了！", "en": "and there it is, at position 6!" }
+    ]
+  },
+  {
+    "id": "s5c",
+    "scene": "5 拿着 next 走一遍",
+    "speak": "朴素比了二十次，KMP 十五次；串越长、重复越多，差距越大。",
+    "subs": [
+      { "at": "朴素比了", "text": "朴素比了 20 次，KMP 15 次；串越长、重复越多，差距越大。", "en": "Naive: 20 comparisons. KMP: 15. The longer and more repetitive the strings, the bigger the gap." }
+    ]
+  },
+  {
+    "id": "s6a",
+    "scene": "6 next 的小漏洞",
+    "speak": "但 next 有个小漏洞。换段主串，第五位失配，主串 a，模式 b。",
+    "subs": [
+      { "at": "但 next", "text": "但 next 有个小漏洞。", "en": "But next has a small flaw." },
+      { "at": "换段主串", "text": "换段主串，第 5 位失配：主串 a，模式 b。", "en": "Another main string: a miss at position 5, a in the text, b in the pattern." }
+    ]
+  },
+  {
+    "id": "s6b",
+    "scene": "6 next 的小漏洞",
+    "speak": "查表跳到第二位，可第二位也是 b，在同一个坑里又摔一次。",
+    "subs": [
+      { "at": "查表跳到", "text": "查表跳到第 2 位，可第 2 位也是 b——", "en": "The table sends us to position 2, but that's a b too," },
+      { "at": "在同一个坑", "text": "在同一个坑里又摔一次。", "en": "so we trip in the same pothole twice." }
+    ]
+  },
+  {
+    "id": "s6c",
+    "scene": "6 next 的小漏洞",
+    "speak": "所以要跳去的那位和自己一样，就接着跳，这就是 nextval。",
+    "subs": [
+      { "at": "所以", "text": "所以要跳去的那位和自己一样，就接着跳：", "en": "So if the letter we'd jump to is the same as this one, keep jumping." },
+      { "at": "这就是", "text": "这就是 nextval。", "en": "That's nextval." }
+    ]
+  },
+  {
+    "id": "s7a",
+    "scene": "7 手推 nextval",
+    "speak": "拿第 j 位和 next 指的那位比：不同抄 next，相同抄那位的 nextval。",
+    "subs": [
+      { "at": "拿第 j 位", "text": "拿第 j 位和 next 指的那位比：", "en": "Compare p_{j} with the letter next points to." },
+      { "at": "不同抄", "text": "不同抄 next，相同抄那位的 nextval。", "en": "Different? Copy next. Same? Copy that letter's nextval." }
+    ]
+  },
+  {
+    "id": "s7b",
+    "scene": "7 手推 nextval",
+    "speak": "第三位 a 撞上第一位，抄零；第五位 b 撞上第二位，抄一；第七位 a 撞上第一位，抄零。",
+    "subs": [
+      { "at": "第三位 a", "text": "第 3 位 a 撞上第 1 位，抄 0；第 5 位 b 撞上第 2 位，抄 1；", "en": "Position 3: a meets the a at 1, copy 0. Position 5: b meets the b at 2, copy 1." },
+      { "at": "第七位 a", "text": "第 7 位 a 撞上第 1 位，抄 0。", "en": "Position 7: a meets the a at 1 again, copy 0." }
+    ]
+  },
+  {
+    "id": "s7c",
+    "scene": "7 手推 nextval",
+    "speak": "其余照抄，nextval 就是：零一零二一三零二。",
+    "subs": [
+      { "at": "其余照抄", "text": "其余照抄，nextval 就是：0 1 0 2 1 3 0 2。", "en": "Copy the rest. nextval is 0 1 0 2 1 3 0 2." }
+    ]
+  },
+  {
+    "id": "s8a",
+    "scene": "8 小题",
+    "speak": "轮到你：a b a b a a 的 next 是多少？",
+    "subs": [
+      { "at": "轮到你", "text": "轮到你：ababaa 的 next 是多少？", "en": "Your turn: what's the next array of ababaa?" }
+    ]
+  },
+  {
+    "id": "s8b",
+    "scene": "8 小题",
+    "speak": "答案：零一一二三四。推对了吗？",
+    "subs": [
+      { "at": "答案", "text": "答案：0 1 1 2 3 4。推对了吗？", "en": "Answer: 0 1 1 2 3 4. Did you get it?" }
+    ]
+  }
+]
