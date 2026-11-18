@@ -1,0 +1,205 @@
+[
+  {
+    "id": "s1a",
+    "scene": "1 开场",
+    "speak": "这张图有八个顶点。从V一出发，要把它们都访问一遍。",
+    "subs": [
+      { "at": "这张图", "text": "这张图有8个顶点。", "en": "This graph has 8 vertices." },
+      { "at": "从V一", "text": "从v_{1}出发，要把它们都访问一遍。", "en": "Starting from v_{1}, we want to visit every one of them." }
+    ]
+  },
+  {
+    "id": "s1b",
+    "scene": "1 开场",
+    "speak": "再加一个要求：离V一越近的，越早访问到。",
+    "subs": [
+      { "at": "再加", "text": "再加一个要求：", "en": "One more condition:" },
+      { "at": "离V一", "text": "离v_{1}越近的，越早访问到。", "en": "the closer a vertex is to v_{1}, the earlier it gets visited." }
+    ]
+  },
+  {
+    "id": "s1c",
+    "scene": "1 开场",
+    "speak": "该按什么顺序走？",
+    "subs": [{ "at": "该按", "text": "该按什么顺序走？", "en": "So what order should we follow?" }]
+  },
+  {
+    "id": "s2a",
+    "scene": "2 一层层出来",
+    "speak": "远近就数边。V一自己一条边都不用走，算第零层。",
+    "subs": [
+      { "at": "远近", "text": "远近就数边。", "en": "Distance here means the number of edges." },
+      { "at": "V一自己", "text": "v_{1}自己一条边都不用走，算第0层。", "en": "v_{1} itself takes zero edges: layer 0." }
+    ]
+  },
+  {
+    "id": "s2b",
+    "scene": "2 一层层出来",
+    "speak": "走一条边，能到哪几个？",
+    "subs": [{ "at": "走一条边", "text": "走一条边，能到哪几个？", "en": "Which ones are one edge away?" }]
+  },
+  {
+    "id": "s2c",
+    "scene": "2 一层层出来",
+    "speak": "V二和V三。这是第一层。",
+    "subs": [{ "at": "V二和V三", "text": "v_{2}和v_{3}，这是第1层。", "en": "v_{2} and v_{3}. That's layer 1." }]
+  },
+  {
+    "id": "s2d",
+    "scene": "2 一层层出来",
+    "speak": "再往外一步：V四、V五、V六、V七，第二层。",
+    "subs": [
+      { "at": "再往外", "text": "再往外一步：", "en": "One step further out:" },
+      { "at": "V四", "text": "v_{4}、v_{5}、v_{6}、v_{7}，第2层。", "en": "v_{4}, v_{5}, v_{6}, v_{7}: layer 2." }
+    ]
+  },
+  {
+    "id": "s2e",
+    "scene": "2 一层层出来",
+    "speak": "最后是V八，第三层。",
+    "subs": [{ "at": "最后", "text": "最后是v_{8}，第3层。", "en": "Last, v_{8}: layer 3." }]
+  },
+  {
+    "id": "s2g",
+    "scene": "2 一层层出来",
+    "speak": "一层走完再走下一层，像水波一圈圈往外扩。这就是广度优先遍历，BFS。",
+    "subs": [
+      { "at": "一层走完", "text": "一层走完再走下一层，", "en": "Finish one layer, then the next," },
+      { "at": "像水波", "text": "像水波一圈圈往外扩。", "en": "spreading out like ripples on water." },
+      { "at": "这就是", "text": "这就是广度优先遍历（BFS）。", "en": "This is breadth-first search, BFS." }
+    ]
+  },
+  {
+    "id": "s2h",
+    "scene": "2 一层层出来",
+    "speak": "按层排好，访问顺序就出来了。",
+    "subs": [{ "at": "按层", "text": "按层排好，访问顺序就出来了。", "en": "Line them up by layer, and you have the visit order." }]
+  },
+  {
+    "id": "s3a",
+    "scene": "3 队列",
+    "speak": "不过程序看不到整张图。它每次只能站在一个顶点上，看它连着谁。",
+    "subs": [
+      { "at": "不过", "text": "不过程序看不到整张图。", "en": "But a program can't see the whole graph." },
+      { "at": "它每次", "text": "它每次只能站在一个顶点上，看它连着谁。", "en": "It stands on one vertex at a time and only sees that vertex's neighbors." }
+    ]
+  },
+  {
+    "id": "s3b",
+    "scene": "3 队列",
+    "speak": "那它怎么排出这个顺序？",
+    "subs": [{ "at": "那它", "text": "那它怎么排出这个顺序？", "en": "So how does it produce this order?" }]
+  },
+  {
+    "id": "s3c",
+    "scene": "3 队列",
+    "speak": "靠一个队列：先进队的，先出队。",
+    "subs": [{ "at": "靠一个", "text": "靠一个队列：先进队的，先出队。", "en": "With a queue: first in, first out." }]
+  },
+  {
+    "id": "s3d",
+    "scene": "3 队列",
+    "speak": "规则就一条：出队一个顶点，把它没来过的邻居涂上颜色，放进队尾。",
+    "subs": [
+      { "at": "规则", "text": "规则就一条：", "en": "There's just one rule:" },
+      { "at": "出队一个", "text": "出队一个顶点，", "en": "dequeue a vertex," },
+      { "at": "把它", "text": "把它没来过的邻居涂上颜色，放进队尾。", "en": "color its unvisited neighbors and put them at the back." }
+    ]
+  },
+  {
+    "id": "s3f",
+    "scene": "3 队列",
+    "speak": "先让V一入队。V一出队，邻居V二、V三入队。",
+    "subs": [
+      { "at": "先让", "text": "先让v_{1}入队。", "en": "First, v_{1} goes in." },
+      { "at": "V一出队", "text": "v_{1}出队，邻居v_{2}、v_{3}入队。", "en": "v_{1} comes out; its neighbors v_{2}, v_{3} go in." }
+    ]
+  },
+  {
+    "id": "s3g",
+    "scene": "3 队列",
+    "speak": "V二出队，V一来过了，跳过；V四、V五入队。",
+    "subs": [{ "at": "V二出队", "text": "v_{2}出队：v_{1}来过了，跳过；v_{4}、v_{5}入队。", "en": "v_{2} comes out. v_{1} is visited, skip it; v_{4}, v_{5} go in." }]
+  },
+  {
+    "id": "s3h",
+    "scene": "3 队列",
+    "speak": "现在队里是V三、V四、V五。下一个出队的是谁？",
+    "subs": [
+      { "at": "现在", "text": "现在队里是v_{3}、v_{4}、v_{5}。", "en": "Now the queue holds v_{3}, v_{4}, v_{5}." },
+      { "at": "下一个", "text": "下一个出队的是谁？", "en": "Which one comes out next?" }
+    ]
+  },
+  {
+    "id": "s3i",
+    "scene": "3 队列",
+    "speak": "是V三。它比V四、V五先进来。",
+    "subs": [{ "at": "是V三", "text": "是v_{3}。它比v_{4}、v_{5}先进来。", "en": "v_{3}. It went in before v_{4} and v_{5}." }]
+  },
+  {
+    "id": "s3j",
+    "scene": "3 队列",
+    "speak": "新入队的都是下一层的点，只能排在后面。所以第一层出完，才轮到第二层。",
+    "subs": [
+      { "at": "新入队", "text": "新入队的都是下一层的点，只能排在后面。", "en": "Whatever goes in now belongs to the next layer, so it waits at the back." },
+      { "at": "所以", "text": "所以第1层出完，才轮到第2层。", "en": "So layer 1 is finished before layer 2 begins." }
+    ]
+  },
+  {
+    "id": "s3k",
+    "scene": "3 队列",
+    "speak": "V三出队，V六、V七入队。队里正好是整个第二层。",
+    "subs": [
+      { "at": "V三出队", "text": "v_{3}出队，v_{6}、v_{7}入队。", "en": "v_{3} comes out; v_{6}, v_{7} go in." },
+      { "at": "队里", "text": "队里正好是整个第2层。", "en": "The queue now holds exactly layer 2." }
+    ]
+  },
+  {
+    "id": "s3l",
+    "scene": "3 队列",
+    "speak": "V四出队，V八入队。",
+    "subs": [{ "at": "V四出队", "text": "v_{4}出队，v_{8}入队。", "en": "v_{4} comes out; v_{8} goes in." }]
+  },
+  {
+    "id": "s3m",
+    "scene": "3 队列",
+    "speak": "接着V五出队。它也连着V八，这时V八还在队里排着。要不要再放一次？",
+    "subs": [
+      { "at": "接着", "text": "接着v_{5}出队。它也连着v_{8}，", "en": "Next, v_{5} comes out. It's connected to v_{8} too," },
+      { "at": "这时", "text": "这时v_{8}还在队里排着。", "en": "and v_{8} is still waiting in the queue." },
+      { "at": "要不要", "text": "要不要再放一次？", "en": "Should v_{8} go in again?" }
+    ]
+  },
+  {
+    "id": "s3n",
+    "scene": "3 队列",
+    "speak": "不用。V八入队时就已经标记过了。",
+    "subs": [{ "at": "不用", "text": "不用。v_{8}入队时就已经标记过了。", "en": "No. v_{8} was marked the moment it went in." }]
+  },
+  {
+    "id": "s3o",
+    "scene": "3 队列",
+    "speak": "要是出队才标记，V五会把V八再放一次，队里就有两个V八。所以入队就标记。",
+    "subs": [
+      { "at": "要是", "text": "要是出队才标记，", "en": "If you marked only on dequeue," },
+      { "at": "V五会把", "text": "v_{5}会把v_{8}再放一次，", "en": "v_{5} would add v_{8} again," },
+      { "at": "队里就有", "text": "队里就有两个v_{8}。", "en": "and the queue would hold v_{8} twice." },
+      { "at": "所以", "text": "所以入队就标记。", "en": "So mark on enqueue." }
+    ]
+  },
+  {
+    "id": "s3p",
+    "scene": "3 队列",
+    "speak": "剩下的V六、V七、V八，邻居都来过了。队列空了，遍历结束。",
+    "subs": [
+      { "at": "剩下的", "text": "剩下的v_{6}、v_{7}、v_{8}，邻居都来过了。", "en": "For the rest, v_{6}, v_{7}, v_{8}, every neighbor is visited." },
+      { "at": "队列空了", "text": "队列空了，遍历结束。", "en": "The queue is empty. Done." }
+    ]
+  },
+  {
+    "id": "s3q",
+    "scene": "3 队列",
+    "speak": "访问顺序正好一层一层排好。",
+    "subs": [{ "at": "访问顺序", "text": "访问顺序正好一层一层排好。", "en": "The visit order comes out layer by layer." }]
+  }
+]
