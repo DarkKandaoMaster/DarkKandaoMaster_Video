@@ -1,0 +1,98 @@
+{
+ "s1a": {
+  "sig": "ee3500cb239040cb5f1484584e737f20754d78dd",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 6.002
+ },
+ "s2a": {
+  "sig": "0c38f3b5149e7a20f28621e7085d3f8fd4affb3c",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 5.968
+ },
+ "s3a": {
+  "sig": "5ca02c88965b6a22c4fe8d2caeadb8d105354b30",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 2.357
+ },
+ "s3b": {
+  "sig": "8724e081a6e18a882f41bf947a5e72d9340c76e0",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 4.609
+ },
+ "s4a": {
+  "sig": "5afe62b9df68783380c416a7bf6c70851b22728b",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 5.933
+ },
+ "s4b": {
+  "sig": "557e0fed318a90c85e35e6d463fab1a99d794d6d",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 5.19
+ },
+ "s4c": {
+  "sig": "7aa68fdb2bf139bae2105296fa9ac55e93967cf9",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 3.449
+ },
+ "s5a": {
+  "sig": "85bc64c101f86521d36d3d4eadb8f86f451924a5",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 3.286
+ },
+ "s5b": {
+  "sig": "a54c813276a8874af526420d099718842174869b",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 5.539
+ },
+ "s6a": {
+  "sig": "ce1a26e794da96df54080739a2d0cdcd203b5d36",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 5.236
+ },
+ "s6b": {
+  "sig": "c383399766f155d97e094ec9a01fb46c110fca82",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 5.074
+ },
+ "s6c": {
+  "sig": "f4d5c967bc56916ac364ff99ccff9ee60ef97d49",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 5.387
+ },
+ "s6d": {
+  "sig": "75d8cef6945a73aaa5aed442764b54bbc982bb8a",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 3.251
+ },
+ "s6e": {
+  "sig": "bff2e6558b003b32eebb3fc8519605b16b61eede",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 6.629
+ },
+ "s7a": {
+  "sig": "f088a5d80e7451c9b8068205103154dae5918d28",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 3.68
+ },
+ "s7b": {
+  "sig": "f3560351b0368b614d82b7ed82a7a9e8b1518575",
+  "model": "speech-2.8-hd",
+  "voice": "presenter_male",
+  "seconds": 4.69
+ }
+}

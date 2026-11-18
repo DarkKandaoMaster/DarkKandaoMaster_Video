@@ -1,0 +1,98 @@
+{
+ "s1a": {
+  "sig": "fdf4603368f9e7f3e350f396266b9d8a8ddd218c",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 5.7
+ },
+ "s2a": {
+  "sig": "8641a18bca0165ec26ee05d84e62dfb0eb107d21",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 7.094
+ },
+ "s3a": {
+  "sig": "473f2a195f297380a1ac8110dedacf12d296b820",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 2.554
+ },
+ "s3b": {
+  "sig": "e39e3ceb3504fbde68914f7c1d61b03ef85aade8",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 4.609
+ },
+ "s4a": {
+  "sig": "aec3c7463131fecc4c2f7aac77873e2d50627568",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 5.236
+ },
+ "s4b": {
+  "sig": "b1ae4ddf6f295cc2a5bb324a6065ca14cfde66c9",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 5.968
+ },
+ "s4c": {
+  "sig": "3c6fe546f6a967928384b85131fb0bb30ed0b440",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 4.11
+ },
+ "s5a": {
+  "sig": "b94b838f12e00ce0d9dd7a4d736026006e421b53",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 3.994
+ },
+ "s5b": {
+  "sig": "4cb5c36d163b09adaa0b6f0a0cf30c63dab3b81f",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 6.049
+ },
+ "s6a": {
+  "sig": "504a77db270d6e63ed74194c2c1464118f0f1756",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 5.039
+ },
+ "s6b": {
+  "sig": "4a64a528bf2119e621d8467ff84ec9ce076883c5",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 4.923
+ },
+ "s6c": {
+  "sig": "a9d67502adbe340fbf13830d34fa042ebf4f7742",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 5.852
+ },
+ "s6d": {
+  "sig": "89c3928e0756a099b98ebfac8464b08d69435292",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 3.019
+ },
+ "s6e": {
+  "sig": "5c626a1124601bae017a1e95f4ad4cef00e90bb2",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 6.2
+ },
+ "s7a": {
+  "sig": "d8f45ff44001ab597ece73e342bda97b30186002",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 3.599
+ },
+ "s7b": {
+  "sig": "1a8828e96e55de468ec7aefdf1b1e1e22bdbe731",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 4.876
+ }
+}

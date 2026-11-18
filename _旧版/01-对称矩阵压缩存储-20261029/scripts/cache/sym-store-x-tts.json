@@ -1,0 +1,114 @@
+{
+ "s1a": {
+  "sig": "45c51e803200f045624c660a0baa81de307d0de6",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 5.767
+ },
+ "s2a": {
+  "sig": "7cf1e1bb63197312567070221f865bbce80c129e",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 5.503
+ },
+ "s3a": {
+  "sig": "904d3f25a7f34e972dfebf5562d0580d64ed028b",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 2.335
+ },
+ "s3b": {
+  "sig": "575de6d20c93ebc9163c800e405fbe337190f1d6",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 4.358
+ },
+ "s4a": {
+  "sig": "9116f667e3c73a914399d9e23ce8a3b512c3c6d0",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 4.973
+ },
+ "s4b": {
+  "sig": "983d99567adaa1b0d38dc954d291abaa78d43a27",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 4.634
+ },
+ "s4c": {
+  "sig": "64e53f37d434478d1458e0c18262d586f8f01c41",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 2.901
+ },
+ "s5a": {
+  "sig": "edbb9d68f62fe903b77116a8e662471135ee9d13",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 4.046
+ },
+ "s5b": {
+  "sig": "bfd6f72502e3e9e5a80dc72615eee8b53441011c",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 5.933
+ },
+ "s6a": {
+  "sig": "531db771366bff181c40b5a15728f273d9169289",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 4.293
+ },
+ "s6b": {
+  "sig": "e8ca1818f56bf249ac35793688b178adb532f40d",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 5.045
+ },
+ "s6c": {
+  "sig": "186f86616accdc4de9c0005ec4e97994fe6bb13c",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 4.352
+ },
+ "s6d": {
+  "sig": "03e6af9b3b68007d77c5408c129c7bd4a3ffbaf0",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 2.991
+ },
+ "s6e": {
+  "sig": "09439ff09863b3c4428587798cb004e2020b8201",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 5.987
+ },
+ "s7a": {
+  "sig": "141519b93d1ce1137185afd55644cf0e34474fa9",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 3.763
+ },
+ "s7b": {
+  "sig": "19be319670d6bf5fd7d2460daa411c4c0cc9db47",
+  "engine": "edge",
+  "voice": "zh-CN-YunxiNeural",
+  "rate": "+10%",
+  "seconds": 5.027
+ }
+}
