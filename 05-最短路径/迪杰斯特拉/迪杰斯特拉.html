@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>迪杰斯特拉算法：单源最短路径</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #E9ECF0; overflow: hidden; }
+  canvas { position: absolute; left: 0; top: 0; display: block; outline: none; }
+</style>
+</head>
+<body>
+<canvas id="cv" tabindex="0"></canvas>
+<script>const NET = {"source": "体育场地分布图（2023 年 9 月修订）像素坐标；长度在总平面图（1:2000）上按比例尺量", "k_px_per_m": 3.878710644677661, "vertices": [{"id": "W", "xy": [3600, 1665], "letter": "A", "bld": "明达楼", "short": "明达楼", "note": "明达路 × 胡瑗路，明达楼东北"}, {"id": "LN", "xy": [3862, 1850], "letter": "B", "bld": null, "short": null, "note": "郑凝路南口 × 图书馆北路"}, {"id": "X", "xy": [3862, 1666], "letter": "C", "bld": "32号教学楼", "short": "32号楼", "note": "明达路 × 郑凝路，32 号公共教学楼西南角"}, {"id": "L", "xy": [4030, 1912], "letter": "D", "bld": "数字图书馆", "short": "图书馆", "note": "图书馆东广场北口（鸿鹄路）"}, {"id": "N", "xy": [4203, 1326], "letter": "E", "bld": "北门", "short": "北门", "note": "梁希路北口，北门"}, {"id": "M", "xy": [4300, 1602], "letter": "F", "bld": null, "short": null, "note": "明达路 × 梁希路"}, {"id": "J", "xy": [4350, 1885], "letter": "G", "bld": "生命科学学院", "short": "生科院", "note": "梁希路南口，生命科学学院西北角"}, {"id": "C", "xy": [4810, 1470], "letter": "H", "bld": "和润楼", "short": "和润楼", "note": "明达路上，和润楼（东区食堂）南面广场前"}], "edges": [{"u": "C", "v": "M", "road": "明达路", "pts": [[4810, 1470], [4715, 1495], [4600, 1524], [4500, 1550], [4400, 1578], [4300, 1602]], "m_plan": 212.2, "m_osm": 216.6, "w_round": 210, "w": 210}, {"u": "M", "v": "X", "road": "明达路", "pts": [[4300, 1602], [4200, 1619], [4100, 1637], [4000, 1650], [3862, 1666]], "m_plan": 176.6, "m_osm": 180.3, "w_round": 180, "w": 180}, {"u": "X", "v": "W", "road": "明达路", "pts": [[3862, 1666], [3700, 1665], [3600, 1665]], "m_plan": 103.5, "m_osm": 105.8, "w_round": 100, "w": 100}, {"u": "M", "v": "N", "road": "梁希路（北段）", "pts": [[4300, 1602], [4272, 1520], [4238, 1420], [4203, 1326]], "m_plan": 126.6, "m_osm": 130.6, "w_round": 130, "w": 130}, {"u": "M", "v": "J", "road": "梁希路（南段）", "pts": [[4300, 1602], [4290, 1700], [4318, 1800], [4350, 1885]], "m_plan": 128.1, "m_osm": 132.2, "w_round": 130, "w": 120}, {"u": "J", "v": "L", "road": "工学院南侧路", "pts": [[4350, 1885], [4300, 1888], [4200, 1895], [4100, 1902], [4060, 1907], [4030, 1912]], "m_plan": 127.6, "m_osm": 130.3, "w_round": 130, "w": 130}, {"u": "X", "v": "LN", "road": "郑凝路", "pts": [[3862, 1666], [3862, 1760], [3862, 1850]], "m_plan": 81.5, "m_osm": 84.0, "w_round": 80, "w": 80}, {"u": "W", "v": "LN", "road": "胡瑗路 + 图书馆北路", "pts": [[3600, 1665], [3600, 1845], [3700, 1846], [3862, 1850]], "m_plan": 183.2, "m_osm": 187.9, "w_round": 180, "w": 170}, {"u": "LN", "v": "L", "road": "鸿鹄路（图书馆东北角）", "pts": [[3862, 1850], [3900, 1866], [3950, 1880], [3990, 1897], [4030, 1912]], "m_plan": 70.9, "m_osm": 72.7, "w_round": 70, "w": 70}], "default": {"start": "J", "end": "X"}};</script>
+<script>
+'use strict';
+/* =====================================================================
+   迪杰斯特拉算法 · 正课（课堂版，单文件、离线、不配音，老师自己讲）。
+   接在"导航演示"后面：开场的图和导航演示第 2 步结束时一模一样（同一组顶点坐标），再变成抽象的图。
+   按 1920×1080 设计，按窗口大小等比缩放。全部手动，一按一步：
+   1 承接   2 核心思想   3 三样东西（dist / path / S）   4 逐轮推进（历史表，每轮新增一列）
+   5 读路径（最短路径树）   6 为什么锁定后不再变短（反证 + 负权反例）   7 课堂小练（换起点）
+   8 算法框架和复杂度   9 小结
+   ===================================================================== */
+
+// ---------------- 配色与字体（和导航演示一致） ----------------
+const COL = {
+  bg: '#F4F6F8', ink: '#1F2430', ink2: '#555B6B', ink3: '#959AA6', line: '#E3E6EB',
+  card: '#FFFFFF', cardLine: '#E5E8ED',
+  orange: '#E8590C', orangeDeep: '#B5460A', orangeTint: '#FDE8DA', orangeSoft: '#FBE1CF',
+  blue: '#2F7BF5', blueDeep: '#1A5FD1', green: '#1FAA59', greenDeep: '#137A3D', red: '#E5484D', redDeep: '#C9363B',
+  edge: '#5B6472', edgeDim: '#9AA1AD',
+};
+const FONT_SANS = '"Microsoft YaHei", "微软雅黑", "PingFang SC", sans-serif';
+const FONT_MONO = 'Consolas, "Microsoft YaHei", monospace';
+const INF = 1e9;
+const DEFAULT_START = 'G';        // 生命科学学院（和导航演示的默认起点一致）
+const DEFAULT_PRACTICE = 'E';     // 课堂小练默认换成北门
+const PRACTICE_SECONDS = 120;     // 小练限时
+
+const QS = new URLSearchParams(location.search);
+const REC = QS.has('record');     // 录屏 / 截图模式：手动时钟
+
+// ---------------- 小工具 ----------------
+const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeIO = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+const easeBack = (t) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+const prog = (t, start, dur, ease) => { const x = clamp01((t - start) / dur); return ease ? ease(x) : x; };
+const hex2rgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+const mixHex = (a, b, t) => { const x = hex2rgb(a), y = hex2rgb(b); return `rgb(${lerp(x[0], y[0], t) | 0},${lerp(x[1], y[1], t) | 0},${lerp(x[2], y[2], t) | 0})`; };
+const fmtD = (d) => (d >= INF ? '∞' : String(d));
+
+let manualT = 0;
+const now = () => (REC ? manualT : performance.now() / 1000);
+
+// ---------------- 画布与缩放 ----------------
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let VIEW = { s: 1, ox: 0, oy: 0, dpr: 1 };
+function resize() {
+  const w = window.innerWidth, h = window.innerHeight, dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  cv.style.width = w + 'px'; cv.style.height = h + 'px';
+  const s = Math.min(w / 1920, h / 1080);
+  VIEW = { s, ox: (w - 1920 * s) / 2, oy: (h - 1080 * s) / 2, dpr };
+}
+window.addEventListener('resize', resize);
+resize();
+const baseTransform = () => ctx.setTransform(VIEW.dpr * VIEW.s, 0, 0, VIEW.dpr * VIEW.s, VIEW.dpr * VIEW.ox, VIEW.dpr * VIEW.oy);
+const toStage = (e) => ({ x: (e.clientX - VIEW.ox) / VIEW.s, y: (e.clientY - VIEW.oy) / VIEW.s });
+
+// =====================================================================
+//  图：顶点 / 边（数据和导航演示同一份 network.json）
+// =====================================================================
+const VS = NET.vertices;
+const N = VS.length;
+const VI = {}; VS.forEach((v, i) => { VI[v.id] = i; });
+const LI = {}; VS.forEach((v, i) => { LI[v.letter] = i; });
+const L = (i) => VS[i].letter;
+const ES = NET.edges.map((e) => ({ a: VI[e.u], b: VI[e.v], w: e.w, pts: e.pts }));
+const ADJ = VS.map(() => []);
+ES.forEach((e, k) => { ADJ[e.a].push({ to: e.b, w: e.w, e: k }); ADJ[e.b].push({ to: e.a, w: e.w, e: k }); });
+ADJ.forEach((a) => a.sort((x, y) => L(x.to).localeCompare(L(y.to))));   // 邻居按字母顺序看
+const BYLET = VS.map((v, i) => i).sort((a, b) => L(a).localeCompare(L(b)));
+function edgeBetween(a, b) { for (const x of ADJ[a]) if (x.to === b) return x.e; return -1; }
+
+// 导航演示第 2 步结束时（地图放倒、连好边）的镜头：同一套投影公式，算出每个顶点在 1920×1080 上的位置
+const DEG = Math.PI / 180;
+const NAVCAM = { k: 1.22, ox: 4205, oy: 1640, sx: 960, sy: 590, th: 40 * DEG, P: 1700, px: 960, py: 430 };
+function projNav(wx, wy) {
+  const C = NAVCAM;
+  const dx = (wx - C.ox) * C.k, dy = (wy - C.oy) * C.k;
+  const c = Math.cos(C.th), s = Math.sin(C.th);
+  const x = C.sx + dx, y = C.sy + dy * c, z = dy * s;
+  const f = C.P / (C.P - z);
+  return { x: C.px + (x - C.px) * f, y: C.py + (y - C.py) * f };
+}
+const BASE = VS.map((v) => projNav(v.xy[0], v.xy[1]));
+const BASE_E = ES.map((e) => e.pts.map((p) => projNav(p[0], p[1])));
+const BASE_U = BASE_E.map((P) => { const c = [0]; for (let i = 1; i < P.length; i++) c.push(c[i - 1] + Math.hypot(P[i].x - P[i - 1].x, P[i].y - P[i - 1].y)); return c.map((x) => x / c[c.length - 1]); });
+const BC = (() => { const xs = BASE.map((p) => p.x), ys = BASE.map((p) => p.y); return { x: (Math.min(...xs) + Math.max(...xs)) / 2, y: (Math.min(...ys) + Math.max(...ys)) / 2 }; })();
+// 顶点旁边的标签往哪边放（单位方向）：避开连出去的边
+const TAG_DIR = { A: [0, -1], B: [-0.5, 0.87], C: [0, -1], D: [0, 1], E: [1, 0], F: [0.45, -0.89], G: [1, 0], H: [0, -1] };
+// 导航演示里起终点楼名的位置（屏幕像素偏移）
+const NAME_OFF = { W: [-20, -62], LN: [-30, 62], X: [0, -64], L: [10, 64], N: [70, -30], M: [60, -52], J: [40, 62], C: [10, -64] };
+
+// 图在各段的摆放：BASE 绕中心缩放 s 倍后放到 (cx, cy)；R 顶点半径，vf 顶点字号，wf 边长字号
+const LAYS = {
+  nav:   { s: 1,    cx: BC.x, cy: BC.y, R: 30, vf: 36, wf: 40 },
+  title: { s: 0.86, cx: 960,  cy: 580,  R: 30, vf: 38, wf: 40 },
+  round: { s: 0.6,  cx: 560,  cy: 262,  R: 27, vf: 36, wf: 36 },
+  read:  { s: 0.76, cx: 660,  cy: 372,  R: 29, vf: 38, wf: 38 },
+  proof: { s: 0.56, cx: 960,  cy: 318,  R: 27, vf: 36, wf: 36 },
+  mid:   { s: 0.62, cx: 960,  cy: 352,  R: 27, vf: 36, wf: 36 },
+};
+
+// =====================================================================
+//  迪杰斯特拉（照教材的朴素版，算到所有顶点都确定）
+//  同距离时挑字母靠前的（这张图换哪个起点都不会出现同距离，核对脚本会检查）
+// =====================================================================
+function dijFull(s) {
+  const dist = Array(N).fill(INF), path = Array(N).fill(-1), inS = Array(N).fill(false);
+  dist[s] = 0; inS[s] = true;
+  for (const { to, w } of ADJ[s]) { dist[to] = w; path[to] = s; }
+  const snap = () => ({ dist: dist.slice(), path: path.slice(), S: inS.slice() });
+  const states = [snap()], rounds = [], order = [s];
+  for (;;) {
+    const cand = BYLET.filter((v) => !inS[v] && dist[v] < INF);
+    if (!cand.length) break;
+    const m = Math.min(...cand.map((v) => dist[v]));
+    const tied = cand.filter((v) => dist[v] === m);
+    const u = tied[0];
+    inS[u] = true; order.push(u);
+    const ups = [], skipped = [];
+    for (const { to, w } of ADJ[u]) {
+      if (inS[to]) { skipped.push(to); continue; }
+      const nd = dist[u] + w, changed = nd < dist[to];
+      ups.push({ v: to, w, du: dist[u], nd, old: dist[to], changed });
+      if (changed) { dist[to] = nd; path[to] = u; }
+    }
+    rounds.push({ u, du: dist[u], tied, ups, skipped });
+    states.push(snap());
+  }
+  return { s, states, rounds, order, dist: dist.slice(), path: path.slice() };
+}
+function chainOf(tr, v) { const c = [v]; while (c[c.length - 1] !== tr.s) c.push(tr.path[c[c.length - 1]]); return c; } // v ← … ← 起点
+function edgesOfChain(c) { const out = []; for (let i = 1; i < c.length; i++) out.push(edgeBetween(c[i - 1], c[i])); return out; }
+
+// 当前起点（第 1 段可以点顶点换；第 7 段 Enter 用练习起点完整算一遍）与练习起点
+const CUR = { s: LI[DEFAULT_START], ps: LI[DEFAULT_PRACTICE] };
+let TR = null, PTR = null, STEPS = [], SEC_FIRST = {};
+let READ = null, PROOF = null;
+
+// 第 5 段：先演示哪两个点、再让学生读哪个点（跳数多的优先；32 号楼 C 优先；学生读的点不在已演示的路上）
+function pickRead(tr) {
+  const others = BYLET.filter((v) => v !== tr.s);
+  const hops = (v) => chainOf(tr, v).length - 1;
+  const sorted = others.slice().sort((a, b) => hops(b) - hops(a) || (L(a) === 'C' ? -1 : L(b) === 'C' ? 1 : 0) || L(a).localeCompare(L(b)));
+  const demo = sorted.slice(0, 2);
+  const onDemo = new Set(demo.flatMap((v) => chainOf(tr, v)));
+  const quiz = sorted.slice(2).find((v) => !onDemo.has(v)) ?? sorted[2];
+  return { demo, quiz };
+}
+// 第 6 段：取第 k 轮（S 里至少 3 个点、还有别的候选）刚锁定 B 的那一刻；X 优先挑和 B 直接相连的候选（假想的路就画在真边上），
+// 没有就挑其余候选里 dist 最小的（假想的路画成虚线弧）
+function pickProof(tr) {
+  for (let k = 3; k <= tr.rounds.length; k++) {
+    const st = tr.states[k - 1], B = tr.rounds[k - 1].u;
+    const cand = BYLET.filter((v) => !st.S[v] && st.dist[v] < INF && v !== B).sort((a, b) => st.dist[a] - st.dist[b] || L(a).localeCompare(L(b)));
+    const adj = cand.filter((v) => edgeBetween(v, B) >= 0), X = adj.length ? adj[0] : cand[0];
+    if (cand.length) return { k, B, dB: st.dist[B], X, dX: st.dist[X], st };
+  }
+  return null;
+}
+function practiceInfo() {
+  const tr = PTR, ps = tr.s, f = tr.rounds[0].u;
+  const qt = L(ps) !== 'C' ? LI.C : LI.G;
+  const ch = chainOf(tr, qt).slice().reverse();      // 起点 → … → qt
+  const ws = []; for (let i = 1; i < ch.length; i++) ws.push(ES[edgeBetween(ch[i - 1], ch[i])].w);
+  return { ps, f, df: tr.dist[f], qt, dq: tr.dist[qt], ch, ws };
+}
+
+// =====================================================================
+//  步骤表（每按一下走一步）
+// =====================================================================
+const SEC_NAMES = ['承接', '核心思想', '三样东西', '逐轮推进', '读路径', '为什么对', '课堂小练', '框架与复杂度', '小结'];
+function buildSteps() {
+  TR = dijFull(CUR.s);
+  if (CUR.ps === CUR.s) CUR.ps = L(CUR.s) !== DEFAULT_PRACTICE ? LI[DEFAULT_PRACTICE] : LI[DEFAULT_START];
+  PTR = dijFull(CUR.ps);
+  READ = pickRead(TR); PROOF = pickProof(TR);
+  const S = [];
+  const add = (o) => S.push(o);
+  add({ sec: 1, kind: 'nav', lay: 'nav', st: 0 });
+  add({ sec: 1, kind: 'title', lay: 'title' });
+  add({ sec: 1, kind: 'all', lay: 'title' });
+  for (let n = 1; n <= 3; n++) add({ sec: 2, kind: 'idea', n, lay: null });
+  for (let n = 1; n <= 3; n++) add({ sec: 3, kind: 'three', n, lay: null });
+  add({ sec: 4, kind: 'init', lay: 'round' });
+  const R = TR.rounds.length;
+  for (let i = 1; i <= R; i++) {
+    add({ sec: 4, kind: 'q', i, lay: 'round' });
+    add({ sec: 4, kind: 'l', i, lay: 'round' });
+    if (i < R) add({ sec: 4, kind: 'u', i, lay: 'round' });
+  }
+  add({ sec: 5, kind: 'rfinal', lay: 'read' });
+  add({ sec: 5, kind: 'read', v: READ.demo[0], lay: 'read' });
+  add({ sec: 5, kind: 'read', v: READ.demo[1], lay: 'read' });
+  add({ sec: 5, kind: 'quiz', v: READ.quiz, lay: 'read' });
+  add({ sec: 5, kind: 'read', v: READ.quiz, quiz: true, lay: 'read' });
+  add({ sec: 5, kind: 'tree', lay: 'read' });
+  for (let n = 0; n <= 4; n++) add({ sec: 6, kind: 'proof', n, lay: 'proof' });
+  add({ sec: 6, kind: 'neg', n: 0, lay: null });
+  add({ sec: 6, kind: 'neg', n: 1, lay: null });
+  for (let n = 0; n <= 2; n++) add({ sec: 7, kind: 'prac', n, lay: 'mid' });
+  for (let n = 0; n <= 2; n++) add({ sec: 8, kind: 'code', n, lay: null });
+  add({ sec: 9, kind: 'sum', lay: null });
+  let last = 'nav';
+  S.forEach((o) => { if (o.lay) { last = o.lay; o.g = 1; } else { o.lay = last; o.g = 0; } if (o.st === undefined) o.st = 1; });
+  SEC_FIRST = {}; S.forEach((o, i) => { if (SEC_FIRST[o.sec] === undefined) SEC_FIRST[o.sec] = i; });
+  STEPS = S;
+}
+buildSteps();
+
+// ---------------- 播放状态 ----------------
+const PH = { i: 0, t0: 0, lay: null, layFrom: null, layT0: -100, timerT0: 0 };
+let LCUR = Object.assign({}, LAYS.nav, { g: 1, st: 0 });
+const stepNow = () => STEPS[PH.i];
+function targetLay(o) { return Object.assign({}, LAYS[o.lay], { g: o.g, st: o.st }); }
+function goStep(i, instant) {
+  i = Math.max(0, Math.min(STEPS.length - 1, i));
+  PH.i = i; PH.t0 = instant ? now() - 100 : now();
+  PH.layFrom = instant ? null : Object.assign({}, LCUR); PH.layT0 = now();
+  const o = STEPS[i];
+  if (o.sec === 7 && o.n === 0) PH.timerT0 = now();
+}
+function stepDur(o) {
+  if (o.kind === 'u') return 0.3 + 0.45 * Math.max(1, TR.rounds[o.i - 1].ups.length) + 1.2;
+  if (o.kind === 'read') return 0.5 + 0.7 * (chainOf(TR, o.v).length - 1) + 0.8;
+  if (o.kind === 'proof' || o.kind === 'init' || o.kind === 'tree') return 1.6;
+  return 1.0;
+}
+function next() {
+  const dt = now() - PH.t0;
+  if (dt < stepDur(stepNow())) { PH.t0 = now() - 100; PH.layFrom = null; return; }   // 动画没放完：先放完
+  if (PH.i < STEPS.length - 1) goStep(PH.i + 1);
+}
+function prev() { if (PH.i > 0) goStep(PH.i - 1, true); }
+function jumpSec(n) { if (SEC_FIRST[n] !== undefined) goStep(SEC_FIRST[n]); }
+function lastOfSec(sec) { let k = SEC_FIRST[sec]; while (k + 1 < STEPS.length && STEPS[k + 1].sec === sec) k++; return k; }
+// R：恢复默认起点（G）和练习起点（E），回到本段开头
+function restart() {
+  const sec = stepNow().sec;
+  CUR.s = LI[DEFAULT_START]; CUR.ps = LI[DEFAULT_PRACTICE]; buildSteps();
+  goStep(SEC_FIRST[sec]);
+}
+// Enter：第 7 段 = 用练习起点完整算一遍（从第 4 段开始）；别处 = 跳到本段最后一步
+function enter() {
+  const o = stepNow();
+  if (o.sec === 7) { runPractice(); return; }
+  goStep(lastOfSec(o.sec));
+}
+function runPractice() {
+  const ps = CUR.ps; CUR.s = ps; buildSteps();
+  showToast(`起点换成 ${L(ps)}，从头算一遍`);
+  goStep(SEC_FIRST[4]);
+}
+function setStart(v) {          // 第 1 段：点顶点换起点
+  if (v === CUR.s) return;
+  CUR.s = v; const sec = stepNow().sec, keep = PH.i - SEC_FIRST[sec]; buildSteps();
+  goStep(SEC_FIRST[sec] + keep, true); PH.t0 = now();
+  showToast(`起点换成 ${L(v)}`);
+}
+function setPractice(v) {       // 第 7 段：点顶点换练习起点，重新计时
+  if (v === CUR.s) { showToast(`${L(v)} 是刚才讲的起点，换一个`); return; }
+  CUR.ps = v; buildSteps(); goStep(SEC_FIRST[7]);
+}
+
+let toast = null;
+function showToast(text) { toast = { text, t0: now() }; }
+
+// =====================================================================
+//  绘制工具
+// =====================================================================
+function setFont(size, weight, mono) { ctx.font = `${weight || 700} ${size}px ${mono ? FONT_MONO : FONT_SANS}`; }
+function text(str, x, y, size, color, o) {
+  o = o || {};
+  setFont(size, o.weight, o.mono);
+  ctx.textAlign = o.align || 'center'; ctx.textBaseline = 'middle';
+  ctx.globalAlpha = o.alpha === undefined ? 1 : o.alpha;
+  if (o.halo) { ctx.lineJoin = 'round'; ctx.strokeStyle = o.haloColor || 'rgba(244,246,248,0.95)'; ctx.lineWidth = o.halo; ctx.strokeText(str, x, y); }
+  ctx.fillStyle = color; ctx.fillText(str, x, y); ctx.globalAlpha = 1;
+}
+function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); }
+function shadowCard(x, y, w, h, r, alpha) {
+  ctx.save(); ctx.globalAlpha = alpha === undefined ? 1 : alpha; ctx.shadowColor = 'rgba(30,40,60,0.14)'; ctx.shadowBlur = 22; ctx.shadowOffsetY = 5;
+  roundRect(x, y, w, h, r); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.restore();
+}
+// 一行多色文字：parts = [[文字, 颜色], …]；it = { p, x, y, size, align, mono, weight, delay }
+function normParts(p) { return typeof p === 'string' ? [[p, COL.ink]] : p; }
+function itemText(it) { return normParts(it.p).map((q) => q[0]).join(''); }
+function measureParts(parts, size, weight, mono) { setFont(size, weight, mono); return parts.reduce((s, q) => s + ctx.measureText(q[0]).width, 0); }
+function drawParts(parts, x, y, size, o) {
+  o = o || {};
+  const W = measureParts(parts, size, o.weight, o.mono);
+  let x0 = o.align === 'left' ? x : o.align === 'right' ? x - W : x - W / 2;
+  ctx.save(); ctx.globalAlpha = o.alpha === undefined ? 1 : o.alpha; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  if (o.halo) {
+    let xh = x0; ctx.lineJoin = 'round'; ctx.lineWidth = o.halo; ctx.strokeStyle = 'rgba(244,246,248,0.95)';
+    for (const q of parts) { ctx.strokeText(q[0], xh, y); xh += ctx.measureText(q[0]).width; }
+  }
+  for (const q of parts) { ctx.fillStyle = q[1] || COL.ink; ctx.fillText(q[0], x0, y); x0 += ctx.measureText(q[0]).width; }
+  ctx.restore();
+  return W;
+}
+function drawItems(items, dt) {
+  for (const it of items) {
+    const a = it.delay === undefined ? 1 : prog(dt, it.delay, 0.45, easeOut);
+    if (a <= 0.001) continue;
+    ctx.save(); ctx.translate(0, (1 - a) * 14);
+    drawParts(normParts(it.p), it.x, it.y, it.size, { align: it.align, mono: it.mono, weight: it.weight || 700, alpha: a, halo: it.halo });
+    ctx.restore();
+  }
+}
+// 折线
+function polyLen(P) { let s = 0; for (let i = 1; i < P.length; i++) s += Math.hypot(P[i].x - P[i - 1].x, P[i].y - P[i - 1].y); return s; }
+function tracePoly(P, u) {
+  const Lt = polyLen(P) * clamp01(u); let acc = 0;
+  ctx.beginPath(); ctx.moveTo(P[0].x, P[0].y);
+  for (let i = 1; i < P.length; i++) {
+    const d = Math.hypot(P[i].x - P[i - 1].x, P[i].y - P[i - 1].y);
+    if (acc + d >= Lt) { const f = d ? (Lt - acc) / d : 0; ctx.lineTo(lerp(P[i - 1].x, P[i].x, f), lerp(P[i - 1].y, P[i].y, f)); return; }
+    ctx.lineTo(P[i].x, P[i].y); acc += d;
+  }
+}
+function pointAt(P, u) {
+  const Lt = polyLen(P) * clamp01(u); let acc = 0;
+  for (let i = 1; i < P.length; i++) {
+    const d = Math.hypot(P[i].x - P[i - 1].x, P[i].y - P[i - 1].y);
+    if (acc + d >= Lt) { const f = d ? (Lt - acc) / d : 0; return { x: lerp(P[i - 1].x, P[i].x, f), y: lerp(P[i - 1].y, P[i].y, f) }; }
+    acc += d;
+  }
+  return P[P.length - 1];
+}
+function strokePoly(P, u, width, color, alpha, dash) {
+  if (alpha <= 0.001 || u <= 0.001) return;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.strokeStyle = color; ctx.lineWidth = width;
+  if (dash) ctx.setLineDash(dash);
+  tracePoly(P, u); ctx.stroke(); ctx.restore();
+}
+
+// ---------------- 图的位置（随段落平滑移动） ----------------
+function curLay() {
+  const o = stepNow(), T = targetLay(o);
+  if (!PH.layFrom) return T;
+  const k = prog(now() - PH.layT0, 0, 0.8, easeIO);
+  if (k >= 1) { PH.layFrom = null; return T; }
+  const out = {}; for (const key in T) out[key] = lerp(PH.layFrom[key], T[key], k); return out;
+}
+function vpos(i) { const b = BASE[i]; return { x: (b.x - BC.x) * LCUR.s + LCUR.cx, y: (b.y - BC.y) * LCUR.s + LCUR.cy }; }
+function edgePts(e) {
+  const E = ES[e], A = BASE[E.a], B = BASE[E.b];
+  return BASE_E[e].map((q, j) => {
+    const u = BASE_U[e][j];
+    const x = lerp(q.x, lerp(A.x, B.x, u), LCUR.st), y = lerp(q.y, lerp(A.y, B.y, u), LCUR.st);
+    return { x: (x - BC.x) * LCUR.s + LCUR.cx, y: (y - BC.y) * LCUR.s + LCUR.cy };
+  });
+}
+function edgePtsDir(a, b) { const e = edgeBetween(a, b); const P = edgePts(e); return ES[e].a === a ? P : P.slice().reverse(); }
+function tagPos(i, extra) {
+  const p = vpos(i), d = TAG_DIR[L(i)] || [0, -1], r = LCUR.R + (extra || 26);
+  return { x: p.x + d[0] * r, y: p.y + d[1] * r, align: d[0] > 0.5 ? 'left' : d[0] < -0.5 ? 'right' : 'center' };
+}
+
+// ---------------- 画图 ----------------
+// o: { vs(i) → 顶点样式, hotE: Set(边), dimE: Set(边), under(), over(), top(), alpha }
+function weightPill(e, alpha, hot, dim) {
+  if (alpha <= 0.001) return;
+  const P = edgePts(e), m = pointAt(P, 0.5), s = String(ES[e].w), f = LCUR.wf;
+  ctx.save(); ctx.globalAlpha = alpha; setFont(f, 700, true);
+  const w = ctx.measureText(s).width + f * 0.6, h = f * 1.28;
+  roundRect(m.x - w / 2, m.y - h / 2, w, h, 13); ctx.fillStyle = hot ? COL.orangeTint : '#FFFFFF'; ctx.fill();
+  ctx.lineWidth = hot ? 3 : 2; ctx.strokeStyle = hot ? COL.orange : dim ? '#E1E4E9' : '#C9CED6'; ctx.stroke();
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = hot ? COL.orangeDeep : dim ? COL.ink3 : COL.ink; ctx.fillText(s, m.x, m.y + 2);
+  ctx.restore();
+}
+function vertexDot(i, st, alpha) {
+  const p = vpos(i), R = LCUR.R;
+  ctx.save(); ctx.globalAlpha = alpha * (st.alpha === undefined ? 1 : st.alpha);
+  if (st.ring) { ctx.beginPath(); ctx.arc(p.x, p.y, R + 9, 0, Math.PI * 2); ctx.lineWidth = 5; ctx.strokeStyle = st.ring; ctx.globalAlpha *= st.ringA === undefined ? 1 : st.ringA; ctx.stroke(); ctx.globalAlpha = alpha * (st.alpha === undefined ? 1 : st.alpha); }
+  ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, Math.PI * 2); ctx.fillStyle = st.fill || '#FFFFFF'; ctx.fill();
+  ctx.lineWidth = 4; ctx.strokeStyle = st.stroke || COL.ink; ctx.stroke();
+  const lab = st.label || L(i);
+  setFont(LCUR.vf, 800); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = st.text || COL.ink; ctx.fillText(lab, p.x, p.y + 2);
+  ctx.restore();
+}
+function pulseRing(i, k, color) {
+  if (k <= 0 || k >= 1) return;
+  const p = vpos(i);
+  ctx.save(); ctx.globalAlpha = 1 - k; ctx.beginPath(); ctx.arc(p.x, p.y, LCUR.R + 6 + 34 * k, 0, Math.PI * 2); ctx.lineWidth = 6 - 3 * k; ctx.strokeStyle = color || COL.orange; ctx.stroke(); ctx.restore();
+}
+const STY = {
+  plain: () => ({ fill: '#FFFFFF', stroke: COL.ink, text: COL.ink }),
+  start: () => ({ fill: COL.green, stroke: COL.greenDeep, text: '#FFFFFF' }),
+  locked: () => ({ fill: COL.orange, stroke: COL.orangeDeep, text: '#FFFFFF' }),
+  far: () => ({ fill: '#FFFFFF', stroke: COL.ink3, text: COL.ink3 }),
+};
+function drawGraph(o) {
+  const A = LCUR.g * (o.alpha === undefined ? 1 : o.alpha);
+  if (A <= 0.001) return;
+  ctx.save(); ctx.globalAlpha = 1;
+  if (o.under) o.under(A);
+  ES.forEach((e, k) => strokePoly(edgePts(k), 1, 8, o.dimE && o.dimE.has(k) ? '#C9CED6' : COL.edge, A));
+  if (o.over) o.over(A);
+  ES.forEach((e, k) => weightPill(k, A, o.hotE && o.hotE.has(k), o.dimE && o.dimE.has(k)));
+  VS.forEach((v, i) => vertexDot(i, o.vs ? o.vs(i) : STY.plain(), A));
+  if (o.top) o.top(A);
+  ctx.restore();
+}
+function sStyle(i, inS) { return i === TR.s ? STY.start() : inS && inS[i] ? STY.locked() : null; }
+
+// =====================================================================
+//  每一步的文字（画的和导出给核对脚本的是同一份）
+// =====================================================================
+const C_ = COL;
+function sSet(S, hi) {       // S = { G, F, D }，hi 这个点标橙
+  const xs = [TR.s].concat(TR.order.slice(1).filter((v) => S[v]));
+  const parts = [['S = { ', C_.ink]];
+  xs.forEach((v, j) => { parts.push([L(v), v === hi ? C_.orange : C_.ink]); if (j < xs.length - 1) parts.push([', ', C_.ink]); });
+  parts.push([' }', C_.ink]);
+  return parts;
+}
+function bldOf(i) { return VS[i].bld; }
+function content(o) {
+  const s = TR.s, sL = L(s), it = [];
+  const P = (p, x, y, size, extra) => it.push(Object.assign({ p, x, y, size }, extra || {}));
+  switch (o.kind) {
+    case 'nav': {
+      if (L(s) === DEFAULT_START) P([['刚才的导航：从', C_.ink], [bldOf(s), C_.greenDeep], ['出发，算到', C_.ink], ['32号教学楼', C_.redDeep], ['就停了', C_.ink]], 960, 72, 48);
+      else P([['起点：', C_.ink], [sL + (bldOf(s) ? `（${bldOf(s)}）` : ''), C_.greenDeep]], 960, 72, 48);
+      break;
+    }
+    case 'title': case 'all': {
+      P('单源最短路径', 960, 74, 72, { weight: 800 });
+      P([['从一个起点出发，到', C_.ink], ['其余所有点', C_.orange], ['的最短路径', C_.ink]], 960, 158, 44, { delay: 0.3 });
+      if (o.kind === 'all') P([['导航：算到终点就停　　', C_.ink2], ['今天：每个点都要算出来', C_.orange]], 960, 968, 44, { delay: 0.5 });
+      break;
+    }
+    case 'idea': {
+      P('迪杰斯特拉的核心思想', 960, 150, 56, { weight: 800 });
+      const x = 360;
+      P([['① 从', C_.ink], ['还没确定', C_.ink], ['的点里，挑', C_.ink], ['离起点最近', C_.orange], ['的一个', C_.ink]], x, 380, 64, { align: 'left', delay: o.n === 1 ? 0.1 : undefined });
+      if (o.n >= 2) P([['② 把它', C_.ink], ['确定下来', C_.orange], ['（锁定）', C_.ink2]], x, 530, 64, { align: 'left', delay: o.n === 2 ? 0.1 : undefined });
+      if (o.n >= 3) { P([['③ 再用它去', C_.ink], ['更新邻居', C_.orange]], x, 680, 64, { align: 'left', delay: 0.1 }); P([['重复这三步，直到所有点都确定', C_.ink2]], x, 830, 44, { align: 'left', delay: 0.7 }); }
+      break;
+    }
+    case 'three': {
+      P('要记的三样东西', 960, 130, 56, { weight: 800 });
+      const f = TR.rounds[0].u;
+      const rows = [
+        ['dist[v]', '从起点到 v，目前找到的最短距离', `例：dist[${L(f)}] = ${TR.dist[f]}　（之后还可能被改小）`],
+        ['path[v]', '这条路上，v 的前一个点', `例：path[${L(f)}] = ${sL}　（倒着读，就是整条路）`],
+        ['S', '已经确定（锁定）的点', `一开始 S = { ${sL} }　（图上锁定的点涂成橙色）`],
+      ];
+      rows.forEach((r, j) => {
+        if (o.n < j + 1) return;
+        const y = 300 + j * 220, d = o.n === j + 1 ? 0.1 : undefined;
+        P([[r[0], C_.orange]], 300, y, 64, { align: 'left', mono: true, delay: d });
+        P(r[1], 640, y - 6, 48, { align: 'left', delay: d });
+        P([[r[2], C_.ink2]], 640, y + 66, 38, { align: 'left', weight: 600, delay: d === undefined ? undefined : 0.4 });
+      });
+      break;
+    }
+    case 'init': {
+      const X = 1060;
+      P([['初始化', C_.orange]], X, 64, 52, { align: 'left', weight: 800 });
+      P(sSet(TR.states[0].S), X, 146, 44, { align: 'left', mono: true, delay: 0.2 });
+      P([[`${sL} 的邻居：dist = 边长，path = ${sL}`, C_.ink]], X, 222, 44, { align: 'left', delay: 0.5 });
+      P([[ADJ[s].map((a) => `${L(a.to)}：${a.w}`).join('　'), C_.orangeDeep]], X, 298, 44, { align: 'left', mono: true, delay: 0.8 });
+      P([['其余：dist = ∞（还到不了）', C_.ink2]], X, 374, 44, { align: 'left', delay: 1.1 });
+      break;
+    }
+    case 'q': {
+      const X = 1060, st = TR.states[o.i - 1];
+      P([[`第 ${o.i} 轮`, C_.orange], ['：下一个锁定谁？', C_.ink]], X, 64, 52, { align: 'left', weight: 800 });
+      P([[`看第 ${o.i} 列：还没确定的点里，dist 最小的`, C_.ink2]], X, 146, 40, { align: 'left', weight: 600, delay: 0.4 });
+      P(sSet(st.S), X, 222, 44, { align: 'left', mono: true, delay: 0.2 });
+      break;
+    }
+    case 'l': {
+      const X = 1060, r = TR.rounds[o.i - 1], u = r.u, st = TR.states[o.i];
+      P([[`第 ${o.i} 轮`, C_.orange], [`：锁定 ${L(u)}（dist = ${r.du}）`, C_.ink]], X, 64, 52, { align: 'left', weight: 800 });
+      P([[`第 ${o.i} 列里 ${L(u)} 最小 → 确定下来，加入 S`, C_.ink2]], X, 146, 40, { align: 'left', weight: 600, delay: 0.3 });
+      P(sSet(st.S, u), X, 222, 44, { align: 'left', mono: true, delay: 0.2 });
+      if (r.tied.length > 1) {   // 同距离：挑哪个都对，本页约定按字母顺序（这张图换哪个起点都不会出现，留着以防改数据）
+        P([[`${r.tied.map(L).join('、')} 一样近（都是 ${r.du}）`, C_.ink2]], X, 300, 38, { align: 'left', weight: 600, delay: 0.5 });
+        P([[`挑哪个都对，这里按字母先锁 ${L(u)}`, C_.ink2]], X, 356, 38, { align: 'left', weight: 600, delay: 0.5 });
+      }
+      if (o.i === TR.rounds.length) P([['全部顶点都确定了，算法结束！', C_.orange]], X, 330, 48, { align: 'left', weight: 800, delay: 0.6 });
+      break;
+    }
+    case 'u': {
+      const X = 1060, r = TR.rounds[o.i - 1], u = L(r.u);
+      P([[`第 ${o.i} 轮`, C_.orange], [`：用 ${u}（${r.du}）更新邻居`, C_.ink]], X, 64, 52, { align: 'left', weight: 800 });
+      if (r.ups.length) {
+        if (r.skipped.length) P([[`${r.skipped.map(L).join('、')} 已确定，不用看`, C_.ink3]], X, 124, 36, { align: 'left', weight: 600, delay: 0.2 });
+        r.ups.forEach((q, j) => {
+          const y = 180 + j * 100, d = 0.3 + 0.45 * j;
+          P([[`${L(q.v)}：`, C_.ink], [`dist[${u}] + ${q.w} = ${q.nd} ${q.changed ? '<' : '≥'} ${fmtD(q.old)}`, C_.ink]], X, y, 44, { align: 'left', mono: true, delay: d });
+          P(q.changed ? [[`　→ 改为 ${q.nd}，path = ${u}`, C_.orange]] : [['　→ 不改', C_.ink3]], X, y + 48, 44, { align: 'left', mono: true, delay: d + 0.2 });
+        });
+      } else {
+        P([[`${u} 的邻居 ${r.skipped.map(L).join('、')} 都已确定`, C_.ink]], X, 160, 44, { align: 'left', delay: 0.3 });
+        P([['没有要更新的，下一列照抄', C_.ink2]], X, 236, 44, { align: 'left', delay: 0.6 });
+      }
+      break;
+    }
+    case 'rfinal': {
+      P('读路径：顺着 path 往回找', 960, 64, 56, { weight: 800 });
+      P([['每个点只记了', C_.ink], ['"前一个点"', C_.orange]], 1290, 250, 44, { align: 'left', delay: 0.3 });
+      P([['从目标点一路往回', C_.ink]], 1290, 330, 44, { align: 'left', delay: 0.5 });
+      P([['找到起点 ', C_.ink], [sL, C_.greenDeep], [' 就停', C_.ink]], 1290, 410, 44, { align: 'left', delay: 0.7 });
+      break;
+    }
+    case 'quiz': {
+      P('读路径：顺着 path 往回找', 960, 64, 56, { weight: 800 });
+      P([['你来读：', C_.orange], [`${L(o.v)} 怎么走？`, C_.ink]], 1290, 250, 52, { align: 'left', weight: 800, delay: 0.2 });
+      break;
+    }
+    case 'read': {
+      P('读路径：顺着 path 往回找', 960, 64, 56, { weight: 800 });
+      const c = chainOf(TR, o.v);
+      P(o.quiz ? [['你来读：', C_.orange], [`${L(o.v)} 怎么走？`, C_.ink]] : `${L(o.v)} 怎么走？`, 1290, 250, 52, { align: 'left', weight: 800 });
+      // 倒推链：一跳一跳出来
+      const parts = []; c.forEach((v, j) => { if (j) parts.push([' ← ', C_.ink3]); parts.push([L(v), v === s ? C_.greenDeep : C_.ink]); });
+      it.push({ p: parts, x: 1290, y: 340, size: 56, align: 'left', mono: true, chain: c.length, delay: 0 });
+      const T = 0.5 + 0.7 * (c.length - 1);
+      P([['倒过来：', C_.ink2], [c.slice().reverse().map(L).join(' → '), C_.ink]], 1290, 430, 44, { align: 'left', delay: T });
+      P([[`dist[${L(o.v)}] = ${TR.dist[o.v]}`, C_.orangeDeep]], 1290, 510, 48, { align: 'left', mono: true, delay: T + 0.3 });
+      break;
+    }
+    case 'tree': {
+      P('读路径：顺着 path 往回找', 960, 64, 56, { weight: 800 });
+      P('所有 path 边连起来', 1290, 230, 44, { align: 'left', delay: 0.2 });
+      P([['= 最短路径树', C_.orange]], 1290, 310, 56, { align: 'left', weight: 800, delay: 0.6 });
+      P([[`从 ${sL} 到每个点的最短路`, C_.ink2]], 1290, 400, 40, { align: 'left', weight: 600, delay: 1.0 });
+      P([['都在这棵树上', C_.ink2]], 1290, 460, 40, { align: 'left', weight: 600, delay: 1.0 });
+      break;
+    }
+    case 'proof': {
+      const pf = PROOF, B = L(pf.B), X = L(pf.X), x = 300;
+      P('讨论：锁定之后，dist 还会变小吗？', 960, 60, 56, { weight: 800 });
+      const lines = [
+        [0, [['此刻：', C_.ink2], [`${B} 刚被锁定，dist[${B}] = ${pf.dB}`, C_.orangeDeep]]],
+        [1, [['假设：到 ', C_.ink], [B, C_.ink], [' 还有一条', C_.ink], ['更短的路', C_.red], [`（< ${pf.dB}）`, C_.ink], ['（图上红虚线）', C_.ink2]]],
+        [2, [['它总要走出 S，第一个出 S 的点记作 ', C_.ink], ['X', C_.red], [`（比如 ${X}）`, C_.ink2]]],
+        [3, [['光走到 X，就至少要 ', C_.ink], [`dist[${X}] = ${pf.dX}`, C_.red]]],
+        [3, [[`${B} 是没确定的点里最近的：`, C_.ink], [`dist[X] ≥ dist[${B}] = ${pf.dB}`, C_.orangeDeep]]],
+        [4, [[`后面的边长都 ≥ 0 → 整条路 ≥ ${pf.dB}，`, C_.ink], ['矛盾！', C_.red]]],
+        [4, [['所以：锁定那一刻，dist 就是最短距离', C_.orange]]],
+      ];
+      lines.forEach(([n, p], j) => { if (o.n >= n) P(p, x, 588 + j * 58, 42, { align: 'left', delay: o.n === n ? 0.2 + 0.4 * (j - lines.findIndex((q) => q[0] === n)) : undefined }); });
+      break;
+    }
+    case 'neg': {
+      P('前提：边长不能是负数', 960, 60, 56, { weight: 800 });
+      P([['有向图反例：迪杰斯特拉第一个锁定 P，', C_.ink], ['dist[P] = 2', C_.orangeDeep]], 360, 640, 44, { align: 'left', delay: o.n === 0 ? 0.3 : undefined });
+      if (o.n >= 1) {
+        P([['可是 起 → Q → P = 5 + (−4) = ', C_.ink], ['1 < 2', C_.red], ['，P 锁早了！', C_.ink]], 360, 730, 44, { align: 'left', delay: 0.3 });
+        P([['所以：迪杰斯特拉要求', C_.ink], ['边权 ≥ 0', C_.orange]], 360, 820, 44, { align: 'left', delay: 0.8 });
+      }
+      break;
+    }
+    case 'prac': {
+      const pi = practiceInfo(), ps = L(pi.ps), x = 300, xa = 830;   // 答案从 xa 开始：最长的（3 段路）也不出右边
+      P('课堂小练', 960, 64, 56, { weight: 800 });
+      P([['起点换成 ', C_.ink], [(bldOf(pi.ps) ? bldOf(pi.ps) + ' ' : '') + ps, C_.greenDeep], ['，先在纸上算：', C_.ink]], x, 620, 44, { align: 'left' });
+      P('① 第一个被锁定的是谁？', x, 706, 44, { align: 'left' });
+      P(`② dist[${L(pi.qt)}] 是多少？`, x, 792, 44, { align: 'left' });
+      if (o.n >= 1) P([[`→ ${L(pi.f)}（dist = ${pi.df}）`, C_.orange]], xa, 706, 44, { align: 'left', delay: o.n === 1 ? 0.2 : undefined });
+      if (o.n >= 2) P([[`→ ${pi.dq}（${pi.ch.map(L).join(' → ')}${pi.ws.length > 1 ? ' = ' + pi.ws.join(' + ') : ''}）`, C_.orange]], xa, 792, 44, { align: 'left', delay: 0.2 });
+      break;
+    }
+    case 'code': {
+      P('算法框架', 960, 70, 56, { weight: 800 });
+      break;
+    }
+    case 'sum': {
+      P('小结', 960, 92, 64, { weight: 800 });
+      const rows = [
+        [['单源最短路径：', C_.ink], ['一个起点 → 其余所有点', C_.orange]],
+        [['每轮：挑没确定的点里 ', C_.ink], ['dist 最小', C_.orange], ['的，锁定，再更新邻居', C_.ink]],
+        [['更新：', C_.ink], ['dist[u] + w(u, v) < dist[v]', C_.orangeDeep], [' 就改，path[v] = u', C_.ink]],
+        [['锁定后不会再变短', C_.ink], ['（前提：边权不能为负）', C_.ink2]],
+        [['读路径：顺着 path 倒推；时间复杂度 ', C_.ink], ['O(n²)', C_.orange]],
+      ];
+      rows.forEach((p, j) => P(p, 330, 230 + j * 120, 46, { align: 'left', delay: 0.15 + 0.15 * j }));
+      P([['拓展：PS 里的"磁性套索"抠图，用的也是它', C_.ink2]], 330, 230 + 5 * 120 + 10, 38, { align: 'left', weight: 600, delay: 1.0 });
+      break;
+    }
+  }
+  return it;
+}
+
+// =====================================================================
+//  第 4 段：历史表（每轮新增一列，保留历史）
+// =====================================================================
+const HT = { y: 490, hh: 52, rh: 56, lh: 58, lw: 130, cw: 150 };
+function histRows() { return BYLET.filter((v) => v !== TR.s); }
+function cellStr(j, v) {      // 第 j 列（第 j 轮选点前的状态）里 v 的格子："300 F" / "∞" / ""（已确定，不再写）
+  const st = TR.states[j - 1];
+  if (st.S[v]) return '';
+  return st.dist[v] >= INF ? '∞' : `${st.dist[v]} ${L(st.path[v])}`;
+}
+function histView(o) {
+  if (o.kind === 'init') return { cols: 1, lock: 0, active: 1, newCol: 1 };
+  if (o.kind === 'q') return { cols: o.i, lock: o.i - 1, active: o.i, newCol: 0 };
+  if (o.kind === 'l') return { cols: o.i, lock: o.i, active: o.i, newCol: 0 };
+  return { cols: o.i + 1, lock: o.i, active: o.i + 1, newCol: o.i + 1 };
+}
+function drawCellText(str, x, y, color, pathColor, alpha) {
+  if (!str) return;
+  ctx.save(); ctx.globalAlpha = alpha;
+  if (str === '∞') { text('∞', x, y + 2, 44, COL.ink3, { mono: true, weight: 700, alpha }); ctx.restore(); return; }
+  const [d, p] = str.split(' ');
+  setFont(44, 800, true); const wd = ctx.measureText(d).width; setFont(44, 800); const wp = ctx.measureText(p).width;
+  const x0 = x - (wd + 12 + wp) / 2;
+  text(d, x0, y + 2, 44, color, { mono: true, weight: 800, align: 'left', alpha });
+  text(p, x0 + wd + 12, y + 2, 44, p === L(TR.s) && pathColor === COL.blueDeep ? COL.greenDeep : pathColor, { weight: 800, align: 'left', alpha });
+  ctx.restore();
+}
+function drawHist(o, dt) {
+  const V = histView(o), rows = histRows(), C = TR.rounds.length;
+  const TW = HT.lw + C * HT.cw, x0 = (1920 - TW) / 2, H = HT.hh + rows.length * HT.rh + HT.lh;
+  shadowCard(x0 - 14, HT.y - 8, TW + 28, H + 16, 22);
+  const colX = (j) => x0 + HT.lw + (j - 1) * HT.cw + HT.cw / 2;
+  const rowY = (r) => HT.y + HT.hh + r * HT.rh + HT.rh / 2;
+  const lockY = HT.y + HT.hh + rows.length * HT.rh + HT.lh / 2;
+  // 新列在算式之后再填
+  const r0 = o.kind === 'u' ? TR.rounds[o.i - 1] : null;
+  const colStart = o.kind === 'u' ? 0.3 + 0.45 * Math.max(1, r0.ups.length) : o.kind === 'init' ? 0.6 : 0;
+  // 当前列底色
+  if (V.active) {
+    const a = o.kind === 'q' ? 0.75 + 0.25 * Math.sin(now() * 4) : 1;
+    ctx.save(); ctx.globalAlpha = (V.newCol ? prog(dt, colStart, 0.4) : 1) * a;
+    roundRect(colX(V.active) - HT.cw / 2 + 4, HT.y + 2, HT.cw - 8, H - 4, 14); ctx.fillStyle = '#FFF3EA'; ctx.fill();
+    if (o.kind === 'q') { ctx.lineWidth = 3; ctx.strokeStyle = COL.orange; ctx.stroke(); }
+    ctx.restore();
+  }
+  // 表头
+  text('顶点', x0 + HT.lw / 2, HT.y + HT.hh / 2 + 2, 36, COL.ink2, { weight: 700 });
+  for (let j = 1; j <= C; j++) text(`第${j}轮`, colX(j), HT.y + HT.hh / 2 + 2, 36, j === V.active ? COL.orangeDeep : j <= V.cols ? COL.ink2 : '#C5CAD3', { weight: 700 });
+  ctx.save(); ctx.strokeStyle = COL.line; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x0 + 10, HT.y + HT.hh); ctx.lineTo(x0 + TW - 10, HT.y + HT.hh);
+  ctx.moveTo(x0 + 10, lockY - HT.lh / 2); ctx.lineTo(x0 + TW - 10, lockY - HT.lh / 2);
+  ctx.moveTo(x0 + HT.lw, HT.y + 8); ctx.lineTo(x0 + HT.lw, HT.y + H - 8); ctx.stroke(); ctx.restore();
+  // 当前已确定的点（行首圆圈涂橙）
+  const Snow = o.kind === 'q' ? TR.states[o.i - 1].S : o.kind === 'init' ? TR.states[0].S : TR.states[o.i].S;
+  rows.forEach((v, r) => {
+    const y = rowY(r), on = Snow[v];
+    ctx.save(); ctx.beginPath(); ctx.arc(x0 + HT.lw / 2, y, 25, 0, Math.PI * 2); ctx.fillStyle = on ? COL.orange : '#FFFFFF'; ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = on ? COL.orange : COL.ink; ctx.stroke(); ctx.restore();
+    text(L(v), x0 + HT.lw / 2, y + 2, 36, on ? '#FFFFFF' : COL.ink, { weight: 800 });
+  });
+  text('锁定', x0 + HT.lw / 2, lockY + 2, 36, COL.ink2, { weight: 700 });
+  // 格子
+  for (let j = 1; j <= V.cols; j++) {
+    const isNew = j === V.newCol;
+    const up = isNew && o.kind === 'u' ? new Map(r0.ups.map((q) => [q.v, q])) : null;
+    rows.forEach((v, r) => {
+      const str = cellStr(j, v); if (!str) return;
+      const x = colX(j), y = rowY(r);
+      const a = isNew ? prog(dt, colStart + 0.06 * r, 0.35, easeOut) : 1;
+      if (a <= 0.001) return;
+      const circled = j <= V.lock && TR.rounds[j - 1].u === v;
+      const q = up && up.get(v);
+      if (circled) {
+        const k = o.kind === 'l' && j === o.i ? prog(dt, 0.1, 0.4, easeOut) : 1;
+        ctx.save(); ctx.globalAlpha = k; roundRect(x - HT.cw / 2 + 10, y - HT.rh / 2 + 4, HT.cw - 20, HT.rh - 8, 12); ctx.fillStyle = COL.orangeTint; ctx.fill();
+        ctx.lineWidth = 4; ctx.strokeStyle = COL.orange; ctx.stroke(); ctx.restore();
+      } else if (q) {
+        ctx.save(); ctx.globalAlpha = a; roundRect(x - HT.cw / 2 + 10, y - HT.rh / 2 + 4, HT.cw - 20, HT.rh - 8, 12);
+        if (q.changed) { ctx.fillStyle = '#FFD9BF'; ctx.fill(); }
+        else { ctx.setLineDash([8, 6]); ctx.lineWidth = 3; ctx.strokeStyle = COL.ink3; ctx.stroke(); }
+        ctx.restore();
+      }
+      const pop = q && q.changed ? 1 + 0.25 * Math.sin(Math.PI * clamp01((dt - colStart - 0.06 * r) / 0.45)) : 1;
+      ctx.save(); ctx.translate(x, y); ctx.scale(pop, pop);
+      drawCellText(str, 0, 0, circled ? COL.orangeDeep : q && q.changed ? COL.orangeDeep : COL.ink, circled ? COL.orangeDeep : COL.blueDeep, a);
+      ctx.restore();
+    });
+  }
+  // 锁定行
+  for (let j = 1; j <= V.lock; j++) {
+    const k = o.kind === 'l' && j === o.i ? prog(dt, 0.25, 0.4, easeBack) : 1;
+    const u = TR.rounds[j - 1].u, x = colX(j);
+    ctx.save(); ctx.translate(x, lockY); ctx.scale(k, k);
+    ctx.beginPath(); ctx.arc(0, 0, 25, 0, Math.PI * 2); ctx.fillStyle = COL.orange; ctx.fill();
+    ctx.restore();
+    if (k > 0.5) text(L(u), x, lockY + 2, 36, '#FFFFFF', { weight: 800 });
+  }
+}
+function histExport(o) {
+  const V = histView(o), rows = histRows();
+  const cols = []; for (let j = 1; j <= V.cols; j++) cols.push(rows.map((v) => cellStr(j, v)));
+  const lock = []; for (let j = 1; j <= V.lock; j++) lock.push(L(TR.rounds[j - 1].u));
+  const circled = []; for (let j = 1; j <= V.lock; j++) circled.push(`${j}:${L(TR.rounds[j - 1].u)}`);
+  return { rows: rows.map(L), cols, lock, active: V.active, circled };
+}
+
+// =====================================================================
+//  第 5 段：最终结果表（一行顶点、一行 dist、一行 path）
+// =====================================================================
+const FT = { y: 690, rh: 70, lw: 150, cw: 150 };
+function drawFinal(o, dt) {
+  const rows = histRows(), TW = FT.lw + rows.length * FT.cw, x0 = (1920 - TW) / 2;
+  shadowCard(x0 - 14, FT.y - 8, TW + 28, FT.rh * 3 + 16, 22);
+  const colX = (j) => x0 + FT.lw + j * FT.cw + FT.cw / 2, rowY = (r) => FT.y + r * FT.rh + FT.rh / 2;
+  // 正在读的链：一跳一跳点亮 path 格
+  let hl = [];
+  if (o.kind === 'read') { const c = chainOf(TR, o.v); hl = c.slice(0, -1).map((v, j) => ({ v, k: prog(dt, 0.5 + 0.7 * j - 0.35, 0.3) })); }
+  hl.forEach(({ v, k }) => {
+    const j = rows.indexOf(v); if (j < 0 || k <= 0) return;
+    ctx.save(); ctx.globalAlpha = k; roundRect(colX(j) - FT.cw / 2 + 8, FT.y + 6, FT.cw - 16, FT.rh * 3 - 12, 14); ctx.fillStyle = '#FFF3EA'; ctx.fill();
+    roundRect(colX(j) - FT.cw / 2 + 14, rowY(2) - FT.rh / 2 + 6, FT.cw - 28, FT.rh - 12, 12); ctx.lineWidth = 4; ctx.strokeStyle = COL.orange; ctx.stroke(); ctx.restore();
+  });
+  text('顶点', x0 + FT.lw / 2, rowY(0) + 2, 36, COL.ink2);
+  text('dist', x0 + FT.lw / 2, rowY(1) + 2, 40, COL.ink2, { mono: true });
+  text('path', x0 + FT.lw / 2, rowY(2) + 2, 40, COL.ink2, { mono: true });
+  ctx.save(); ctx.strokeStyle = COL.line; ctx.lineWidth = 2; ctx.beginPath();
+  ctx.moveTo(x0 + 10, FT.y + FT.rh); ctx.lineTo(x0 + TW - 10, FT.y + FT.rh); ctx.moveTo(x0 + FT.lw, FT.y + 8); ctx.lineTo(x0 + FT.lw, FT.y + FT.rh * 3 - 8); ctx.stroke(); ctx.restore();
+  rows.forEach((v, j) => {
+    const x = colX(j);
+    ctx.save(); ctx.beginPath(); ctx.arc(x, rowY(0), 25, 0, Math.PI * 2); ctx.fillStyle = COL.orange; ctx.fill(); ctx.restore();
+    text(L(v), x, rowY(0) + 2, 36, '#FFFFFF', { weight: 800 });
+    text(String(TR.dist[v]), x, rowY(1) + 2, 44, COL.ink, { mono: true, weight: 800 });
+    text(L(TR.path[v]), x, rowY(2) + 2, 44, TR.path[v] === TR.s ? COL.greenDeep : COL.blueDeep, { weight: 800 });
+  });
+}
+
+// =====================================================================
+//  各段的画面
+// =====================================================================
+function drawNavLook(dt) {        // 第 1 段第 1 步：和导航演示第 2 步结束时一样（起 / 终 + 楼名）
+  const s = TR.s, t = L(s) === DEFAULT_START ? LI.C : -1;
+  drawGraph({
+    vs: (i) => (i === s ? Object.assign(STY.start(), { label: '起' }) : i === t ? { fill: '#FFFFFF', stroke: COL.red, text: COL.ink, label: '终' } : STY.plain()),
+    top: (A) => {
+      for (const i of [s, t]) {
+        if (i < 0 || !VS[i].bld) continue;
+        const p = vpos(i), off = NAME_OFF[VS[i].id] || [0, -60];
+        text(VS[i].bld, p.x + off[0], p.y + off[1], 40, i === s ? '#178A47' : '#C9363B', { weight: 800, halo: 10, alpha: A });
+      }
+    },
+  });
+}
+function drawTitle(o, dt) {
+  const s = TR.s;
+  drawGraph({
+    vs: (i) => (i === s ? STY.start() : STY.plain()),
+    top: (A) => {
+      const tp = tagPos(s, 24); text('起点', tp.x, tp.y, 36, COL.greenDeep, { align: tp.align, weight: 800, halo: 8, alpha: A * prog(dt, 0.4, 0.4) });
+      if (o.kind === 'all') {
+        BYLET.forEach((v, j) => {
+          if (v === s) return;
+          const k = prog(dt, 0.2 + 0.07 * j, 0.35, easeBack), tq = tagPos(v, 32);
+          if (k <= 0) return;
+          ctx.save(); ctx.translate(tq.x, tq.y); ctx.scale(k, k);
+          text('?', 0, 0, 44, COL.orange, { weight: 800, halo: 8, align: tq.align });
+          ctx.restore();
+        });
+      }
+    },
+  });
+}
+function drawRound(o, dt) {
+  const s = TR.s;
+  let S, dist, hot = new Set(), changedV = new Set(), uNow = -1;
+  if (o.kind === 'init') { S = TR.states[0].S; dist = TR.states[0].dist; }
+  else if (o.kind === 'q') { S = TR.states[o.i - 1].S; dist = TR.states[o.i - 1].dist; }
+  else { S = TR.states[o.i].S; dist = (o.kind === 'l' ? TR.states[o.i - 1] : TR.states[o.i]).dist; uNow = TR.rounds[o.i - 1].u; }
+  const r = o.kind === 'u' ? TR.rounds[o.i - 1] : null;
+  if (r) r.ups.forEach((q) => { hot.add(edgeBetween(r.u, q.v)); if (q.changed) changedV.add(q.v); });
+  if (o.kind === 'init') ADJ[s].forEach((a) => hot.add(a.e));
+  drawGraph({
+    hotE: hot,
+    over: (A) => {
+      // 已锁定点的 path 边（最短路径树逐渐长出来）
+      for (let v = 0; v < N; v++) {
+        if (!S[v] || v === s) continue;
+        const born = o.kind === 'l' && v === uNow ? prog(dt, 0.1, 0.45, easeOut) : 1;
+        strokePoly(edgePtsDir(TR.path[v], v), born, 13, COL.orange, 0.5 * A);
+      }
+      if (o.kind === 'init') ADJ[s].forEach((a, j) => strokePoly(edgePtsDir(s, a.to), prog(dt, 0.6, 0.5, easeOut), 13, COL.orange, 0.8 * A));
+      if (r) r.ups.forEach((q, j) => {
+        const k = prog(dt, 0.3 + 0.45 * j, 0.4, easeOut);
+        strokePoly(edgePtsDir(r.u, q.v), k, 13, q.changed ? COL.orange : COL.ink3, 0.85 * A, q.changed ? null : [14, 12]);
+      });
+    },
+    vs: (i) => {
+      let st = sStyle(i, S) || (dist[i] < INF ? STY.plain() : STY.far());
+      if (o.kind === 'l' && i === uNow) st = Object.assign({}, st, { fill: mixHex('#FFFFFF', COL.orange, prog(dt, 0, 0.35)) });
+      if (o.kind === 'q' && !S[i] && dist[i] < INF) st = Object.assign({}, st, { ring: COL.orange, ringA: 0.35 + 0.35 * Math.sin(now() * 4) });
+      if (changedV.has(i)) st = Object.assign({}, st, { ring: COL.orange, ringA: prog(dt, 0.4, 0.3) });
+      if (o.kind === 'init' && !S[i] && dist[i] < INF) st = Object.assign({}, st, { ring: COL.orange, ringA: prog(dt, 0.7, 0.3) });
+      return st;
+    },
+    top: () => { if (o.kind === 'l') pulseRing(uNow, clamp01(dt / 0.8)); },
+  });
+  drawHist(o, dt);
+}
+function drawRead(o, dt) {
+  const s = TR.s, c = o.kind === 'read' ? chainOf(TR, o.v) : null;
+  const tree = o.kind === 'tree';
+  drawGraph({
+    hotE: c ? new Set(edgesOfChain(c).filter((e, j) => prog(dt, 0.5 + 0.7 * j - 0.35, 0.3) > 0.5)) : tree ? new Set(BYLET.filter((v) => v !== s).map((v) => edgeBetween(v, TR.path[v]))) : null,
+    over: (A) => {
+      if (c) for (let j = 1; j < c.length; j++) strokePoly(edgePtsDir(c[j - 1], c[j]), prog(dt, 0.5 + 0.7 * (j - 1) - 0.35, 0.55, easeOut), 16, COL.orange, 0.85 * A);
+      if (tree) BYLET.forEach((v, j) => { if (v !== s) strokePoly(edgePtsDir(TR.path[v], v), prog(dt, 0.1 + 0.08 * j, 0.5, easeOut), 16, COL.orange, 0.8 * A); });
+    },
+    vs: (i) => {
+      const st = sStyle(i, TR.states[TR.states.length - 1].S);
+      if (c && i === o.v) return Object.assign({}, st, { ring: COL.orange });
+      if (o.kind === 'quiz' && i === o.v) return Object.assign({}, st, { ring: COL.orange, ringA: 0.45 + 0.45 * Math.sin(now() * 4) });
+      return st;
+    },
+    top: (A) => {
+      if (!tree) return;
+      BYLET.forEach((v) => { if (v === s) return; const tp = tagPos(v, 22); text(String(TR.dist[v]), tp.x, tp.y, 38, COL.orangeDeep, { mono: true, weight: 800, halo: 9, align: tp.align, alpha: A * prog(dt, 0.8, 0.4) }); });
+    },
+  });
+  drawFinal(o, dt);
+}
+function sBlob(S, A) {       // S 的范围：顶点画圆 + 树边画粗线，同一种不透明浅橙色（重叠处不会更深）
+  const R = LCUR.R + 26;
+  ctx.save(); ctx.globalAlpha = A; ctx.fillStyle = COL.orangeSoft; ctx.strokeStyle = COL.orangeSoft; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = R * 2;
+  for (let v = 0; v < N; v++) {
+    if (!S[v]) continue;
+    const p = vpos(v); ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, Math.PI * 2); ctx.fill();
+    if (v !== TR.s && S[TR.path[v]]) { tracePoly(edgePtsDir(TR.path[v], v), 1); ctx.stroke(); }
+  }
+  ctx.restore();
+}
+function hypoCurve(a, b, bulge) {    // X ⋯ B 的假想路线：二次贝塞尔，往远离 S 的一侧鼓
+  const p = vpos(a), q = vpos(b), mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2;
+  const dx = q.x - p.x, dy = q.y - p.y, len = Math.hypot(dx, dy) || 1;
+  let nx = -dy / len, ny = dx / len;
+  const sp = vpos(TR.s); if ((mx - sp.x) * nx + (my - sp.y) * ny < 0) { nx = -nx; ny = -ny; }
+  const c = { x: mx + nx * len * bulge, y: my + ny * len * bulge };
+  const pts = []; for (let k = 0; k <= 40; k++) { const t = k / 40; pts.push({ x: (1 - t) * (1 - t) * p.x + 2 * (1 - t) * t * c.x + t * t * q.x, y: (1 - t) * (1 - t) * p.y + 2 * (1 - t) * t * c.y + t * t * q.y }); }
+  return pts;
+}
+function drawProof(o, dt) {
+  const pf = PROOF, st = pf.st, S = st.S, s = TR.s;
+  const chainX = [pf.X]; while (chainX[chainX.length - 1] !== s) chainX.push(st.path[chainX[chainX.length - 1]]);
+  chainX.reverse();                                       // 起点 → … → X：用"那一刻"的 path 倒推（X 之前都在 S 里）
+  const hypo = edgeBetween(pf.X, pf.B) >= 0 ? edgePtsDir(pf.X, pf.B) : hypoCurve(pf.X, pf.B, 0.42);
+  drawGraph({
+    under: (A) => { if (o.n >= 2) { ctx.save(); ctx.globalAlpha = prog(dt, 0, 0.4) * (o.n === 2 ? 1 : 1); sBlob(S, A); ctx.restore(); } },
+    over: (A) => {
+      for (let v = 0; v < N; v++) if (S[v] && v !== s) strokePoly(edgePtsDir(TR.path[v], v), 1, 13, COL.orange, 0.45 * A);
+      if (o.n >= 1) {
+        const solid = o.n >= 3;
+        for (let j = 1; j < chainX.length; j++) strokePoly(edgePtsDir(chainX[j - 1], chainX[j]), o.n === 1 ? prog(dt, 0.2 + 0.3 * (j - 1), 0.3) : 1, solid ? 12 : 9, COL.red, 0.85 * A, solid ? null : [16, 12]);
+        strokePoly(hypo, o.n === 1 ? prog(dt, 0.2 + 0.3 * (chainX.length - 1), 0.6) : 1, 9, COL.red, 0.85 * A, [16, 12]);
+      }
+    },
+    vs: (i) => {
+      let x = sStyle(i, S) || (st.dist[i] < INF ? STY.plain() : STY.far());
+      if (i === pf.B) x = Object.assign(STY.locked(), { ring: COL.orange });
+      if (i === pf.X && o.n >= 2) x = Object.assign({}, x, { ring: COL.red, stroke: COL.red });
+      return x;
+    },
+    top: (A) => {
+      for (let v = 0; v < N; v++) {
+        if (st.dist[v] >= INF || (S[v] && v !== pf.B)) continue;    // 只标 B 和还没确定的点
+        const tp = tagPos(v, 20), isX = v === pf.X && o.n >= 2;
+        const str = isX ? `X：${st.dist[v]}` : String(st.dist[v]);
+        text(str, tp.x, tp.y, 36, isX ? COL.red : v === pf.B ? COL.orangeDeep : S[v] ? COL.orangeDeep : COL.ink2, { mono: true, weight: 800, halo: 9, align: tp.align, alpha: A });
+      }
+      if (o.n >= 2) {      // "S" 写在起点旁边（起点一定在 S 里，旁边没有 dist 标签）
+        const tp = tagPos(s, 30);
+        text('S（已确定）', tp.x, tp.y, 38, COL.orangeDeep, { weight: 800, halo: 8, align: tp.align, alpha: A * prog(dt, 0, 0.4) });
+      }
+      if (o.n === 0) pulseRing(pf.B, (now() % 1.6) / 1.6);
+    },
+  });
+}
+// 负权反例：小有向图
+const NEG = { V: [{ id: '起', x: 760, y: 340 }, { id: 'P', x: 1160, y: 210 }, { id: 'Q', x: 1160, y: 470 }], E: [[0, 1, 2], [0, 2, 5], [2, 1, -4]] };
+function drawNeg(o, dt) {
+  const R = 36, V = NEG.V;
+  const arrow = (a, b, w, hot) => {
+    const p = V[a], q = V[b], dx = q.x - p.x, dy = q.y - p.y, d = Math.hypot(dx, dy), ux = dx / d, uy = dy / d;
+    const x1 = p.x + ux * R, y1 = p.y + uy * R, x2 = q.x - ux * (R + 6), y2 = q.y - uy * (R + 6);
+    ctx.save(); ctx.strokeStyle = hot ? COL.red : COL.edge; ctx.fillStyle = hot ? COL.red : COL.edge; ctx.lineWidth = hot ? 10 : 7; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * 16, y2 - uy * 16); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * 30 - uy * 16, y2 - uy * 30 + ux * 16); ctx.lineTo(x2 - ux * 30 + uy * 16, y2 - uy * 30 - ux * 16); ctx.closePath(); ctx.fill(); ctx.restore();
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, s = String(w).replace('-', '−');
+    setFont(42, 700, true); const ww = ctx.measureText(s).width + 26;
+    ctx.save(); roundRect(mx - ww / 2, my - 27, ww, 54, 13); ctx.fillStyle = w < 0 ? '#FDE2E3' : '#FFFFFF'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = w < 0 ? COL.red : '#C9CED6'; ctx.stroke(); ctx.restore();
+    text(s, mx, my + 2, 42, w < 0 ? COL.redDeep : COL.ink, { mono: true });
+  };
+  const hot = o.n >= 1;
+  arrow(0, 1, 2, false); arrow(0, 2, 5, hot); arrow(2, 1, -4, hot);
+  V.forEach((v, i) => {
+    ctx.save(); ctx.beginPath(); ctx.arc(v.x, v.y, R, 0, Math.PI * 2);
+    ctx.fillStyle = i === 0 ? COL.green : i === 1 ? COL.orange : '#FFFFFF'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = i === 0 ? COL.greenDeep : i === 1 ? COL.orangeDeep : COL.ink; ctx.stroke(); ctx.restore();
+    text(v.id, v.x, v.y + 2, 38, i === 2 ? COL.ink : '#FFFFFF', { weight: 800 });
+  });
+  text('已锁定：2', V[1].x + 60, V[1].y, 38, COL.orangeDeep, { align: 'left', weight: 800 });
+  if (o.n >= 1) text('其实：1', V[1].x + 60, V[1].y + 56, 38, COL.red, { align: 'left', weight: 800, alpha: prog(dt, 0.3, 0.4) });
+}
+function drawPractice(o, dt) {
+  const pi = practiceInfo(), tr = PTR;
+  const pathE = new Set(edgesOfChain(pi.ch));
+  drawGraph({
+    hotE: o.n >= 2 ? pathE : null,
+    over: (A) => { if (o.n >= 2) for (let j = 1; j < pi.ch.length; j++) strokePoly(edgePtsDir(pi.ch[j - 1], pi.ch[j]), prog(dt, 0.2 + 0.35 * (j - 1), 0.4, easeOut), 16, COL.orange, 0.85 * A); },
+    vs: (i) => {
+      if (i === pi.ps) return STY.start();
+      if (o.n >= 1 && i === pi.f) return STY.locked();
+      if (o.n >= 2 && i === pi.qt) return Object.assign(STY.plain(), { ring: COL.orange });
+      return STY.plain();
+    },
+    top: (A) => {
+      const tp = tagPos(pi.ps, 24); text('起点', tp.x, tp.y, 36, COL.greenDeep, { align: tp.align, weight: 800, halo: 8, alpha: A });
+      if (o.n >= 2) { const tq = tagPos(pi.qt, 20); text(String(pi.dq), tq.x, tq.y, 38, COL.orangeDeep, { align: tq.align, mono: true, weight: 800, halo: 9, alpha: A * prog(dt, 0.6, 0.4) }); }
+    },
+  });
+  if (o.n === 0) {                 // 倒计时
+    const left = Math.max(0, PRACTICE_SECONDS - (now() - PH.timerT0));
+    const sec = Math.ceil(left), str = left <= 0 ? '时间到' : `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+    text(str, 1850, 66, 56, left <= 10 ? COL.red : COL.ink2, { align: 'right', mono: left > 0, weight: 800 });
+  }
+  // 给老师的按钮
+  const r = BTN.prac; const hover = inRect(MOUSE, r);
+  ctx.save(); roundRect(r.x, r.y, r.w, r.h, 26); ctx.fillStyle = hover ? '#FFFFFF' : 'rgba(255,255,255,0.85)'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = hover ? COL.orange : COL.cardLine; ctx.stroke(); ctx.restore();
+  text(`用 ${L(pi.ps)} 当起点，完整算一遍 ›`, r.x + r.w / 2, r.y + r.h / 2 + 1, 28, hover ? COL.orangeDeep : COL.ink2, { weight: 600 });
+}
+// 伪代码
+const CODE = [
+  [0, '初始化：S = {v0}，dist[v] = w(v0, v)，path[v] = v0'],
+  [1, '（v 和 v0 不相邻：dist = ∞，path = −1）', 'gray'],
+  [0, '重复 n − 1 次：'],
+  [1, 'u = 不在 S 里、dist 最小的顶点'],
+  [1, '把 u 加入 S'],
+  [1, '对 u 的每个不在 S 里的邻居 v：'],
+  [2, '如果 dist[u] + w(u, v) < dist[v]：'],
+  [3, 'dist[v] = dist[u] + w(u, v)'],
+  [3, 'path[v] = u'],
+];
+const CODE_NOTE = { 2: '← 共 n − 1 轮', 3: '← 找最小：O(n)', 5: '← 更新邻居：O(n)' };
+function drawCode(o, dt) {
+  const x0 = 210, y0 = 180, lh = 66;
+  shadowCard(x0 - 40, y0 - 50, 1580, CODE.length * lh + 36, 24);
+  CODE.forEach(([ind, s, g], j) => {
+    const y = y0 + j * lh, hl = o.n >= 1 && (j === 3 || j === 5 || j === 2);
+    if (hl) { ctx.save(); ctx.globalAlpha = prog(dt, o.n === 1 ? 0.1 + 0.25 * [2, 3, 5].indexOf(j) : 0, 0.3); roundRect(x0 - 24, y - lh / 2 + 6, 1000, lh - 12, 12); ctx.fillStyle = '#FFF3EA'; ctx.fill(); ctx.restore(); }
+    text(s, x0 + ind * 72, y + 2, 42, g ? COL.ink3 : COL.ink, { align: 'left', mono: true, weight: g ? 600 : 700 });
+    if (o.n >= 1 && CODE_NOTE[j]) text(CODE_NOTE[j], 1230, y + 2, 40, COL.orangeDeep, { align: 'left', weight: 800, alpha: prog(dt, o.n === 1 ? 0.1 + 0.25 * [2, 3, 5].indexOf(j) : 0, 0.3) });
+  });
+  if (o.n >= 2) {
+    const a = prog(dt, 0.1, 0.45, easeOut);
+    drawParts([['总时间：', COL.ink], ['(n − 1) × O(n) = ', COL.ink], ['O(n²)', COL.orange]], 960, 860, 60, { alpha: a, weight: 800 });
+    text('（用小根堆找最小可以更快，课后了解）', 960, 950, 36, COL.ink3, { weight: 600, alpha: prog(dt, 0.6, 0.4) });
+  }
+}
+function codeExport() { return CODE.map(([ind, s]) => '    '.repeat(ind) + s); }
+
+// ---------------- 按钮、提示 ----------------
+const BTN = { prev: { x: 1648, y: 1002, w: 76, h: 60 }, next: { x: 1736, y: 1002, w: 168, h: 60 }, prac: { x: 1300, y: 884, w: 470, h: 56 } };
+const inRect = (p, r) => p && r && p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h;
+let MOUSE = null, hintsOn = true;
+try { hintsOn = localStorage.getItem('dij-hints') !== 'off'; } catch (e) { /* file:// 下可能不可用 */ }
+function drawButtons() {
+  const one = (r, label, enabled) => {
+    const hover = inRect(MOUSE, r) && enabled;
+    ctx.save(); ctx.globalAlpha = enabled ? 1 : 0.4;
+    roundRect(r.x, r.y, r.w, r.h, 16); ctx.fillStyle = hover ? '#FFFFFF' : 'rgba(255,255,255,0.75)'; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = hover ? COL.ink3 : COL.cardLine; ctx.stroke(); ctx.restore();
+    text(label, r.x + r.w / 2, r.y + r.h / 2 + 1, 30, hover ? COL.ink : COL.ink2, { weight: 600, alpha: enabled ? 1 : 0.4 });
+  };
+  one(BTN.prev, '‹', PH.i > 0);
+  one(BTN.next, '下一步 ›', PH.i < STEPS.length - 1);
+}
+function drawHints() {
+  if (!hintsOn) return;
+  const o = stepNow(), k = PH.i - SEC_FIRST[o.sec] + 1, n = lastOfSec(o.sec) - SEC_FIRST[o.sec] + 1;
+  text(`${o.sec} / 9  ${SEC_NAMES[o.sec - 1]}　·　${k} / ${n}`, 24, 1032, 22, COL.orange, { align: 'left', weight: 700 });
+  let s = '点击 / 空格 / →：下一步　右键 / ←：上一步　1–9：跳段　Enter：本段结尾　R：重来　F：全屏　H：隐藏提示';
+  if (o.sec === 1) s = '点顶点：换起点　点空白 / 空格 / →：下一步　← ：上一步　1–9：跳段　R：恢复起点 G　F：全屏　H：隐藏提示';
+  if (o.sec === 7) s = '点顶点：换练习起点　Enter：用它完整算一遍　空格 / →：下一步　←：上一步　1–9：跳段　R：重来　H：隐藏提示';
+  text(s, 1628, 1032, 22, COL.ink3, { align: 'right', weight: 400 });
+}
+function drawToast(t) {
+  if (!toast) return; const a = 1 - prog(t, toast.t0 + 1.6, 0.4); if (a <= 0) { toast = null; return; }
+  ctx.save(); ctx.globalAlpha = a; setFont(38, 600); const w = ctx.measureText(toast.text).width + 60;
+  roundRect(960 - w / 2, 900, w, 70, 35); ctx.fillStyle = 'rgba(31,36,48,0.86)'; ctx.fill(); ctx.restore();
+  text(toast.text, 960, 936, 38, '#FFFFFF', { alpha: a, weight: 600 });
+}
+
+// =====================================================================
+//  每帧
+// =====================================================================
+function render() {
+  const t = now(), o = stepNow(), dt = t - PH.t0;
+  LCUR = curLay();
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#E9ECF0'; ctx.fillRect(0, 0, cv.width, cv.height);
+  baseTransform(); ctx.fillStyle = COL.bg; ctx.fillRect(0, 0, 1920, 1080);
+  switch (o.kind) {
+    case 'nav': drawNavLook(dt); break;
+    case 'title': case 'all': drawTitle(o, dt); break;
+    case 'idea': case 'three': case 'code': case 'sum': case 'neg': drawGraph({}); break;   // 上一段的图淡出
+    case 'init': case 'q': case 'l': case 'u': drawRound(o, dt); break;
+    case 'rfinal': case 'read': case 'quiz': case 'tree': drawRead(o, dt); break;
+    case 'proof': drawProof(o, dt); break;
+    case 'prac': drawPractice(o, dt); break;
+  }
+  if (o.kind === 'neg') drawNeg(o, dt);
+  if (o.kind === 'code') drawCode(o, dt);
+  // 文字（读路径的倒推链按时间一跳一跳出现）
+  const items = content(o);
+  for (const it of items) {
+    if (it.chain) {
+      const parts = normParts(it.p), shown = [];
+      parts.forEach((q, j) => { const hop = Math.floor((j + 1) / 2); if (hop === 0 || dt >= 0.5 + 0.7 * (hop - 1)) shown.push(q); });   // 第 h 跳在 0.5 + 0.7(h−1) 秒出现
+      const all = it.p; it.p = shown; drawItems([Object.assign({}, it, { delay: undefined })], dt); it.p = all;
+    } else drawItems([it], dt);
+  }
+  drawToast(t); drawHints(); drawButtons();
+}
+function loop() { if (!REC) render(); requestAnimationFrame(loop); }
+
+// ---------------- 输入 ----------------
+function vertexAt(p) {
+  if (!p || LCUR.g < 0.5) return -1;
+  for (let i = 0; i < N; i++) { const q = vpos(i); if (Math.hypot(p.x - q.x, p.y - q.y) <= LCUR.R + 14) return i; }
+  return -1;
+}
+const canPickVertex = () => stepNow().sec === 1 || stepNow().sec === 7;
+function hitButton(p) {
+  if (inRect(p, BTN.next)) return 'next';
+  if (inRect(p, BTN.prev)) return 'prev';
+  if (stepNow().sec === 7 && inRect(p, BTN.prac)) return 'prac';
+  return null;
+}
+window.addEventListener('keydown', (e) => {
+  const k = e.key;
+  if (k === ' ' || k === 'ArrowRight' || k === 'PageDown' || k === 'ArrowDown') { e.preventDefault(); next(); }
+  else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'ArrowUp') { e.preventDefault(); prev(); }
+  else if (k === 'Enter') { e.preventDefault(); enter(); }
+  else if (k === 'r' || k === 'R') restart();
+  else if (k === 'f' || k === 'F') { if (!document.fullscreenElement) { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {}); } else document.exitFullscreen(); }
+  else if (k === 'h' || k === 'H') { hintsOn = !hintsOn; try { localStorage.setItem('dij-hints', hintsOn ? 'on' : 'off'); } catch (e2) { /* 忽略 */ } }
+  else if (/^[1-9]$/.test(k)) jumpSec(Number(k));
+});
+cv.addEventListener('mousemove', (e) => {
+  MOUSE = toStage(e);
+  cv.style.cursor = hitButton(MOUSE) || (canPickVertex() && vertexAt(MOUSE) >= 0) ? 'pointer' : 'default';
+});
+cv.addEventListener('mouseleave', () => { MOUSE = null; });
+cv.addEventListener('click', (e) => {
+  cv.focus();
+  const p = toStage(e); MOUSE = p;
+  const b = hitButton(p);
+  if (b === 'next') { next(); return; }
+  if (b === 'prev') { prev(); return; }
+  if (b === 'prac') { runPractice(); return; }
+  if (canPickVertex()) {
+    const v = vertexAt(p);
+    if (v >= 0) { if (stepNow().sec === 1) setStart(v); else setPractice(v); return; }
+  }
+  next();
+});
+cv.addEventListener('contextmenu', (e) => { e.preventDefault(); if (hitButton(toStage(e))) return; prev(); });
+
+// ---------------- 给测试 / 录屏用的接口 ----------------
+function stepDump() {
+  const o = stepNow();
+  const d = { idx: PH.i, sec: o.sec, kind: o.kind, i: o.i ?? null, n: o.n ?? null, v: o.v === undefined ? null : L(o.v), start: L(TR.s), texts: content(o).map(itemText) };
+  if (['init', 'q', 'l', 'u'].includes(o.kind)) d.table = histExport(o);
+  if (o.kind === 'code') d.code = codeExport();
+  if (['rfinal', 'read', 'quiz', 'tree'].includes(o.kind)) d.final = histRows().map((v) => `${L(v)} ${TR.dist[v]} ${L(TR.path[v])}`);
+  return d;
+}
+function exportCheck() {
+  const lt = (arr) => { const o = {}; BYLET.forEach((v) => { o[L(v)] = arr[v]; }); return o; };
+  const pi = practiceInfo();
+  return {
+    vertices: VS.map((v) => ({ id: v.id, letter: v.letter, xy: v.xy })), edges: ES.map((e) => ({ u: L(e.a), v: L(e.b), w: e.w })),
+    start: L(TR.s), order: TR.order.map(L),
+    states: TR.states.map((x) => ({ dist: lt(x.dist.map((d) => (d >= INF ? null : d))), path: lt(x.path.map((p) => (p < 0 ? null : L(p)))), S: BYLET.filter((v) => x.S[v]).map(L) })),
+    rounds: TR.rounds.map((r) => ({ u: L(r.u), du: r.du, tied: r.tied.map(L), skipped: r.skipped.map(L), ups: r.ups.map((q) => ({ v: L(q.v), w: q.w, du: q.du, nd: q.nd, old: q.old >= INF ? null : q.old, changed: q.changed })) })),
+    dist: lt(TR.dist), path: lt(TR.path.map((p) => (p < 0 ? null : L(p)))),
+    chains: Object.fromEntries(BYLET.filter((v) => v !== TR.s).map((v) => [L(v), chainOf(TR, v).map(L).join(' ← ')])),
+    read: { demo: READ.demo.map(L), quiz: L(READ.quiz) },
+    proof: { k: PROOF.k, B: L(PROOF.B), dB: PROOF.dB, X: L(PROOF.X), dX: PROOF.dX, S: BYLET.filter((v) => PROOF.st.S[v]).map(L) },
+    practice: { ps: L(pi.ps), first: L(pi.f), dfirst: pi.df, qt: L(pi.qt), dq: pi.dq, route: pi.ch.map(L), ws: pi.ws },
+    steps: STEPS.length, secFirst: SEC_FIRST,
+    basePos: Object.fromEntries(BYLET.map((v) => [L(v), [Math.round(BASE[v].x * 10) / 10, Math.round(BASE[v].y * 10) / 10]])),
+  };
+}
+window.__demo = {
+  setTime(t) { manualT = t; render(); },
+  render,
+  state() { const o = stepNow(); return { idx: PH.i, total: STEPS.length, sec: o.sec, kind: o.kind, i: o.i ?? null, n: o.n ?? null, start: L(TR.s), practice: L(CUR.ps), hints: hintsOn }; },
+  next, prev, enter, restart, jumpSec, goStep(i) { goStep(i, true); },
+  setStart(letter) { setStart(LI[letter]); }, setPractice(letter) { setPractice(LI[letter]); },
+  clientOfStage(x, y) { return { x: VIEW.ox + x * VIEW.s, y: VIEW.oy + y * VIEW.s }; },
+  vertexStage(letter) { const p = vpos(LI[letter]); return { x: p.x, y: p.y }; },
+  stepDump, exportCheck,
+  finishAnim() { PH.t0 = now() - 100; PH.layFrom = null; },
+  isFullscreen() { return !!document.fullscreenElement; },
+};
+window.__demoReady = true;
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

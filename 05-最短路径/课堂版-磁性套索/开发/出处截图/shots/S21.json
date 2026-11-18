@@ -1,0 +1,29 @@
+{
+  "backend": "playwright",
+  "files": [
+    "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\shots\\S21.png"
+  ],
+  "final_url": "https://helpx.adobe.com/photoshop/desktop/make-selections/automatic-color-based-selections/select-areas-by-color-with-the-magic-wand-tool.html",
+  "title": "Select areas by color with Magic Wand in Photoshop | Photoshop",
+  "viewport": {
+    "width": 1280,
+    "height": 900,
+    "scale": 1.0
+  },
+  "text_file": "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\shots\\S21.txt",
+  "text_chars": 2639,
+  "find_text": {
+    "found": true,
+    "region": {
+      "x": 346,
+      "y": 651.6666870117188,
+      "width": 325.5625,
+      "height": 262
+    },
+    "matched_text": "Contiguous"
+  },
+  "ok": true,
+  "url": "https://helpx.adobe.com/photoshop/desktop/make-selections/automatic-color-based-selections/select-areas-by-color-with-the-magic-wand-tool.html",
+  "captured_at": "2026-11-09T13:16:04+00:00",
+  "full_page": false
+}

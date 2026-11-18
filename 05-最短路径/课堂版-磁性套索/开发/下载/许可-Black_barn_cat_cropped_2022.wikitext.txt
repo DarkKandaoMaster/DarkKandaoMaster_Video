@@ -1,0 +1,21 @@
+=={{int:filedesc}}==
+{{Information
+|description={{en|1=black cat perched on a stump}}
+|date=2014-08-05 17:02:30
+|source={{own}}
+|author=[[User:Lisafern|Lisafern]]
+|permission=
+|other versions={{Extracted from|1=Black barn cat - Public Domain.jpg}}
+}}
+
+=={{int:license-header}}==
+{{self|cc-zero}}
+
+[[Category:Yellow-eyed solid black cats]]
+[[Category:Public domain]]
+[[Category:Prone perched cats]]
+[[Category:Black cats in trees]]
+[[Category:Cats looking at viewer]]
+[[Category:Wooden background]]
+[[Category:Bokeh photographs of cats]]
+[[Category:Catloaf]]

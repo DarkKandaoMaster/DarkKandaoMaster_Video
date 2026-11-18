@@ -1,0 +1,29 @@
+{
+  "backend": "playwright",
+  "files": [
+    "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\shots\\S10.png"
+  ],
+  "final_url": "https://news.byu.edu/news/trading-cuts-clicks-new-byu-software-performs-virtual-surgery",
+  "title": "Trading cuts for clicks: new BYU software performs 'virtual surgery' - BYU News",
+  "viewport": {
+    "width": 1280,
+    "height": 900,
+    "scale": 1.0
+  },
+  "text_file": "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\shots\\S10.txt",
+  "text_chars": 6478,
+  "find_text": {
+    "found": true,
+    "region": {
+      "x": 120,
+      "y": 1750.5729675292969,
+      "width": 1040,
+      "height": 373.59375
+    },
+    "matched_text": "Research for the software was partially funded by Adobe, makers of the popular image-editing program Photoshop. Barrett's lab has had a long-running relationship with Adobe – Live Surface builds on Barrett's development of Intelligent Scissors, a program that allows users to quickly pull 2-D objects"
+  },
+  "ok": true,
+  "url": "https://news.byu.edu/news/trading-cuts-clicks-new-byu-software-performs-virtual-surgery",
+  "captured_at": "2026-11-09T13:21:31+00:00",
+  "full_page": false
+}

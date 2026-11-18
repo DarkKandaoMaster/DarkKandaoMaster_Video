@@ -1,0 +1,52 @@
+{
+  "checked_at": "2026-11-09T13:12:03+00:00",
+  "summary": {
+    "GONE": 1,
+    "OK": 2
+  },
+  "results": [
+    {
+      "url": "https://docs.opencv.org/4.5.1/df/d6b/classcv_1_1segmentation_1_1IntelligentScissorsMB.html",
+      "final_url": "https://docs.opencv.org/4.5.1/df/d6b/classcv_1_1segmentation_1_1IntelligentScissorsMB.html",
+      "status": "GONE",
+      "http_status": 404,
+      "content_type": "text/html",
+      "redirects": 0,
+      "method": "GET",
+      "title": null,
+      "notes": [
+        "HTTP 404"
+      ],
+      "checked_at": "2026-11-09T13:11:59+00:00",
+      "elapsed_s": 3.81
+    },
+    {
+      "url": "https://docs.opencv.org/4.5.2/df/d6b/classcv_1_1segmentation_1_1IntelligentScissorsMB.html",
+      "final_url": "https://docs.opencv.org/4.5.2/df/d6b/classcv_1_1segmentation_1_1IntelligentScissorsMB.html",
+      "status": "OK",
+      "http_status": 200,
+      "content_type": "text/html",
+      "redirects": 0,
+      "method": "GET",
+      "title": "OpenCV: cv::segmentation::IntelligentScissorsMB Class Reference",
+      "notes": [],
+      "checked_at": "2026-11-09T13:11:59+00:00",
+      "elapsed_s": 3.63,
+      "text_chars_sampled": 8466
+    },
+    {
+      "url": "https://docs.opencv.org/4.13.0/df/d6b/classcv_1_1segmentation_1_1IntelligentScissorsMB.html",
+      "final_url": "https://docs.opencv.org/4.13.0/df/d6b/classcv_1_1segmentation_1_1IntelligentScissorsMB.html",
+      "status": "OK",
+      "http_status": 200,
+      "content_type": "text/html",
+      "redirects": 0,
+      "method": "GET",
+      "title": "OpenCV: cv::segmentation::IntelligentScissorsMB Class Reference",
+      "notes": [],
+      "checked_at": "2026-11-09T13:11:59+00:00",
+      "elapsed_s": 3.26,
+      "text_chars_sampled": 8738
+    }
+  ]
+}

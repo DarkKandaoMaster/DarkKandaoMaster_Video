@@ -1,0 +1,36 @@
+{
+  "id": "S16",
+  "url": "https://github.com/opencv/opencv/wiki/ChangeLog",
+  "final_url": "https://github.com/opencv/opencv/wiki/ChangeLog",
+  "fetched_at": "2026-11-09T13:12:10+00:00",
+  "method": "http",
+  "http_status": 200,
+  "content_type": "text/html",
+  "title": "ChangeLog · opencv/opencv Wiki · GitHub",
+  "published": null,
+  "published_from": null,
+  "canonical": null,
+  "lang": "en",
+  "error": null,
+  "description": "Open Source Computer Vision Library. Contribute to opencv/opencv development by creating an account on GitHub.",
+  "links_in_content": 64,
+  "text_chars": 1838,
+  "looks_like_blocked": false,
+  "looks_like_login_wall": false,
+  "looks_like_js_shell": false,
+  "looks_like_error_page": false,
+  "thin_content": false,
+  "truncated": false,
+  "full_text_chars": 1838,
+  "find": {
+    "Intelligent scissors": {
+      "found": false,
+      "match_ratio": 0.0,
+      "missing": [
+        "Intelligent scissors"
+      ],
+      "note": "partial match; the parts under 'missing' were NOT found on the page"
+    }
+  },
+  "page_file": "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\pages\\S16.md"
+}

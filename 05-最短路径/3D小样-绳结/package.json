@@ -1,0 +1,29 @@
+{
+  "name": "dkm-dijkstra-rope-3d",
+  "version": "1.0.0",
+  "description": "3D sketch: Dijkstra as beads and strings lifted off a table (2026-11-09)",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@react-three/fiber": "^9.8.2",
+    "@remotion/cli": "4.0.529",
+    "@remotion/fonts": "4.0.529",
+    "@remotion/media": "4.0.529",
+    "@remotion/three": "4.0.529",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.529",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.7",
+    "@types/three": "0.187.0",
+    "@types/web": "0.0.166",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "dev": "remotion studio src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "render": "remotion render src/index.ts DijkstraRope out/DijkstraRope.mp4 --gl=angle --concurrency=6"
+  }
+}

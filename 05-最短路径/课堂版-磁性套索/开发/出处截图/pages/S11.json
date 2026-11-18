@@ -1,0 +1,34 @@
+{
+  "id": "S11",
+  "url": "https://sciencedaily.com/releases/2006/08/060802003013.htm",
+  "final_url": "https://sciencedaily.com/releases/2006/08/060802003013.htm",
+  "fetched_at": "2026-11-09T13:10:03+00:00",
+  "method": "http",
+  "http_status": 200,
+  "content_type": "text/html",
+  "title": "Trading Cuts For Clicks: New Software Performs 'Virtual Surgery' | ScienceDaily",
+  "published": "Fri, 06 Nov 2026 11:28:15 GMT",
+  "published_from": "last-modified",
+  "canonical": "https://www.sciencedaily.com/releases/2006/08/060802003013.htm",
+  "lang": "en",
+  "error": null,
+  "description": "A new software tool developed by computer scientists at Brigham Young University will allow surgeons to instantly visualize any part of a patient&apos;s anatomy by extracting a 3-D computer image from an MRI, CT scan or similar data with just a few clicks of the mouse.",
+  "links_in_content": 81,
+  "text_chars": 9279,
+  "looks_like_blocked": false,
+  "looks_like_login_wall": false,
+  "looks_like_js_shell": false,
+  "looks_like_error_page": false,
+  "thin_content": false,
+  "truncated": false,
+  "full_text_chars": 9279,
+  "find": {
+    "Magnetic Lasso": {
+      "found": true,
+      "match_ratio": 1.0,
+      "missing": [],
+      "note": "exact (normalized) match"
+    }
+  },
+  "page_file": "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\pages\\S11.md"
+}

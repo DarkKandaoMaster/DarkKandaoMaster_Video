@@ -1,0 +1,23 @@
+{
+  "backend": "playwright",
+  "files": [
+    "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\shots\\S14.png"
+  ],
+  "final_url": "https://helpx.adobe.com/photoshop/desktop/make-selections/freehand-selections/snap-to-image-edges-using-magnetic-lasso-tool.html",
+  "title": "Use Magnetic Lasso tool to snap selections in Photoshop | Photoshop",
+  "viewport": {
+    "width": 1280,
+    "height": 900,
+    "scale": 1.0
+  },
+  "text_file": "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\shots\\S14.txt",
+  "text_chars": 3880,
+  "find_text": {
+    "found": false,
+    "note": "text not found in rendered DOM; captured the viewport instead"
+  },
+  "ok": true,
+  "url": "https://helpx.adobe.com/photoshop/desktop/make-selections/freehand-selections/snap-to-image-edges-using-magnetic-lasso-tool.html",
+  "captured_at": "2026-11-09T13:17:18+00:00",
+  "full_page": false
+}

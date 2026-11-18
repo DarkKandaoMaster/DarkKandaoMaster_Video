@@ -1,0 +1,104 @@
+Join us at Adobe MAX — The Creativity Conference Nov 10–12 in Miami Beach.
+
+Learn more
+Creativity & Design
+PDFs & E-signatures
+Marketing & Commerce
+Learn & Support
+Buy now
+Sign in
+
+Photoshop Help
+
+Desktop
+Tablet
+Mobile
+Web
+Open on desktop
+ Adobe Help Center
+Photoshop Desktop Help
+What's new
+Get started
+Generative AI in Photoshop
+Create, open, and import images
+Create and manage layers
+Crop, resize, and transform
+Make selections
+Get started with selections
+Automatic and color-based selections
+Improve Select Subject and Remove Background results
+Make precise selections using Select People
+Remove objects with Delete and Fill Selection
+Improve hair selections with the Refine Hair tool
+Mask all objects in a layer
+Detect subject using Select Subject
+Paint a selection with Quick Selection tool
+Select areas by color with the Magic Wand tool
+Freehand selections
+Refine and modify selections
+Create masks
+Repair and retouch
+Adjust color
+Apply painting techniques
+Draw shapes and paths
+Text and typography
+Effects and filters
+Quick actions
+Use grids and measurement guides
+Add video and animation
+Automate tasks
+Print
+Share and collaborate
+Save and export
+App integrations
+Troubleshoot
+Select areas by color with the Magic Wand tool
+Last updated on Feb 23, 2026
+
+Use the Magic Wand tool to select areas of similar color without tracing edges in Photoshop.
+
+Select the Magic Wand  tool from the toolbar.
+
+In the Options bar, choose one of the following selection modes:
+
+Add to selection 
+Subtract from selection 
+Intersect with selection 
+
+Adjust the following settings in the options bar:
+
+Sample Size: Define how much of the image is sampled to influence selection sensitivity.
+Tolerance: Set the range of the selected color values from 0 (narrow) to 255 (broad).
+Anti-alias: Enable to create smoother edges.
+Contiguous: Enable to select only adjacent areas of similar color.
+Sample All Layers  : Enable to base the selection on all visible layers.
+
+Select the color area in your image to make a selection based on the defined settings.
+
+Select Select and Mask to further refine or preview the selection as a mask.
+
+Create stunning images with Photoshop
+Edit, retouch, and transform photos with the industry-leading creative tools you know and love.
+
+Open the app
+
+Was this page helpful?
+
+Yes, thanks
+Not really
+
+Previous
+
+Paint a selection with Quick Selection tool
+
+Learn
+
+Learn with step-by-step video tutorials and hands-on guidance right in the app.
+
+Community
+
+Join discussions, find answers, learn from experts, and share your knowledge.
+
+Adobe Home
+
+Access your favorite Creative Cloud apps, services, file management, and more.

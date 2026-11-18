@@ -1,0 +1,29 @@
+{
+  "backend": "playwright",
+  "files": [
+    "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\shots\\S18.png"
+  ],
+  "final_url": "https://scikit-image.org/docs/stable/api/skimage.segmentation.html",
+  "title": "skimage.segmentation — skimage 0.26.0 documentation",
+  "viewport": {
+    "width": 1280,
+    "height": 900,
+    "scale": 1.0
+  },
+  "text_file": "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\shots\\S18.txt",
+  "text_chars": 60681,
+  "find_text": {
+    "found": true,
+    "region": {
+      "x": 280,
+      "y": 12463.06283569336,
+      "width": 832,
+      "height": 372.0416717529297
+    },
+    "matched_text": "Produces an oversegmentation of a multichannel (i.e. RGB) image using a fast, minimum spanning tree based clustering on the image grid. The parameter scale sets an observation level. Higher scale means less and larger segments. sigma is the diameter of a Gaussian kernel, used for smoothing the image"
+  },
+  "ok": true,
+  "url": "https://scikit-image.org/docs/stable/api/skimage.segmentation.html",
+  "captured_at": "2026-11-09T13:21:45+00:00",
+  "full_page": false
+}

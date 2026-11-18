@@ -1,0 +1,90 @@
+通过 | [1920×1080] 打开是第 1 段第 1 步，起点 G {'idx': 0, 'total': 50, 'sec': 1, 'kind': 'nav', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1920×1080] 一共 50 步 50
+通过 | [1920×1080] 第 1 段点顶点 C → 起点换成 C，仍在第 1 段 {'idx': 0, 'total': 50, 'sec': 1, 'kind': 'nav', 'i': None, 'n': None, 'start': 'C', 'practice': 'E', 'hints': True}
+通过 | [1920×1080] 再点 H → 起点换成 H {'idx': 0, 'total': 50, 'sec': 1, 'kind': 'nav', 'i': None, 'n': None, 'start': 'H', 'practice': 'E', 'hints': True}
+通过 | [1920×1080] R 恢复默认起点 G {'idx': 0, 'total': 50, 'sec': 1, 'kind': 'nav', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1920×1080] 动画没放完时再按一下：先放完，不跳步 {'idx': 1, 'total': 50, 'sec': 1, 'kind': 'title', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1920×1080] ← 回到第 1 步
+通过 | [1920×1080] 空格 / → / ↓ / PageDown / 左键 / 下一步按钮：从第 1 步按到第 50 步，每步都对 []
+通过 | [1920×1080] 最后一步是第 9 段小结 {'idx': 49, 'total': 50, 'sec': 9, 'kind': 'sum', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1920×1080] 最后一步再按：不动
+通过 | [1920×1080] ← / ↑ / PageUp / 右键 / ‹ 按钮：从第 50 步退回第 1 步，每步都对 []
+通过 | [1920×1080] 第 1 步再按 ←：不动
+通过 | [1920×1080] 数字键 1–9 跳到各段开头 [True, True, True, True, True, True, True, True, True]
+通过 | [1920×1080] Enter：跳到本段最后一步（第 4 段 → 第 7 轮锁定） {'idx': 29, 'total': 50, 'sec': 4, 'kind': 'l', 'i': 7, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1920×1080] 第 4 段点顶点：不换起点，只是下一步 {'idx': 10, 'total': 50, 'sec': 4, 'kind': 'q', 'i': 1, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1920×1080] 第 7 段默认练习起点 E {'idx': 43, 'total': 50, 'sec': 7, 'kind': 'prac', 'i': None, 'n': 0, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1920×1080] 第 7 段点顶点 D → 练习起点换成 D，回到小练第 1 步 {'idx': 43, 'total': 50, 'sec': 7, 'kind': 'prac', 'i': None, 'n': 0, 'start': 'G', 'practice': 'D', 'hints': True}
+通过 | [1920×1080] 点到正在讲的起点 G：被拒绝（练习起点还是 D） {'idx': 43, 'total': 50, 'sec': 7, 'kind': 'prac', 'i': None, 'n': 0, 'start': 'G', 'practice': 'D', 'hints': True}
+通过 | [1920×1080] 小练一按一步揭晓两问 {'idx': 45, 'total': 50, 'sec': 7, 'kind': 'prac', 'i': None, 'n': 2, 'start': 'G', 'practice': 'D', 'hints': True}
+通过 | [1920×1080] 练习起点 D：第一个锁 B（70），dist[C] = 150 {'ps': 'D', 'first': 'B', 'dfirst': 70, 'qt': 'C', 'dq': 150, 'route': ['D', 'B', 'C'], 'ws': [70, 80]}
+通过 | [1920×1080] 第 7 段 Enter：用 D 当起点完整算一遍（起点 = D，回到第 4 段开头） {'idx': 9, 'total': 50, 'sec': 4, 'kind': 'init', 'i': None, 'n': None, 'start': 'D', 'practice': 'E', 'hints': True}
+通过 | [1920×1080] 换成 D 后练习起点自动换成 E（不和起点相同） {'idx': 9, 'total': 50, 'sec': 4, 'kind': 'init', 'i': None, 'n': None, 'start': 'D', 'practice': 'E', 'hints': True}
+通过 | [1920×1080] 起点 D：后面整套流程跟着换（第 4 段最后锁定 H，dist[H] = 460） ['D', 'B', 'G', 'C', 'A', 'F', 'E', 'H']
+通过 | [1920×1080] 点按钮"用 E 当起点，完整算一遍" → 起点 = E，回到第 4 段 {'idx': 9, 'total': 50, 'sec': 4, 'kind': 'init', 'i': None, 'n': None, 'start': 'E', 'practice': 'G', 'hints': True}
+通过 | [1920×1080] R：起点恢复 G、练习起点恢复 E，回到本段开头 {'idx': 9, 'total': 50, 'sec': 4, 'kind': 'init', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1920×1080] H 隐藏 / 再按显示底部提示
+通过 | [1920×1080] F 全屏（无头浏览器里可能不允许全屏，只检查不报错） 进入全屏：True
+通过 | [1920×1080] 屏蔽浏览器右键菜单
+通过 | [1920×1080] 导出 8 个起点（每个起点 7 个练习起点）的核对数据
+通过 | [1920×1080] 没有脚本错误 []
+通过 | [1366×768] 打开是第 1 段第 1 步，起点 G {'idx': 0, 'total': 50, 'sec': 1, 'kind': 'nav', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1366×768] 一共 50 步 50
+通过 | [1366×768] 第 1 段点顶点 C → 起点换成 C，仍在第 1 段 {'idx': 0, 'total': 50, 'sec': 1, 'kind': 'nav', 'i': None, 'n': None, 'start': 'C', 'practice': 'E', 'hints': True}
+通过 | [1366×768] 再点 H → 起点换成 H {'idx': 0, 'total': 50, 'sec': 1, 'kind': 'nav', 'i': None, 'n': None, 'start': 'H', 'practice': 'E', 'hints': True}
+通过 | [1366×768] R 恢复默认起点 G {'idx': 0, 'total': 50, 'sec': 1, 'kind': 'nav', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1366×768] 动画没放完时再按一下：先放完，不跳步 {'idx': 1, 'total': 50, 'sec': 1, 'kind': 'title', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1366×768] ← 回到第 1 步
+通过 | [1366×768] 空格 / → / ↓ / PageDown / 左键 / 下一步按钮：从第 1 步按到第 50 步，每步都对 []
+通过 | [1366×768] 最后一步是第 9 段小结 {'idx': 49, 'total': 50, 'sec': 9, 'kind': 'sum', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1366×768] 最后一步再按：不动
+通过 | [1366×768] ← / ↑ / PageUp / 右键 / ‹ 按钮：从第 50 步退回第 1 步，每步都对 []
+通过 | [1366×768] 第 1 步再按 ←：不动
+通过 | [1366×768] 数字键 1–9 跳到各段开头 [True, True, True, True, True, True, True, True, True]
+通过 | [1366×768] Enter：跳到本段最后一步（第 4 段 → 第 7 轮锁定） {'idx': 29, 'total': 50, 'sec': 4, 'kind': 'l', 'i': 7, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1366×768] 第 4 段点顶点：不换起点，只是下一步 {'idx': 10, 'total': 50, 'sec': 4, 'kind': 'q', 'i': 1, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1366×768] 第 7 段默认练习起点 E {'idx': 43, 'total': 50, 'sec': 7, 'kind': 'prac', 'i': None, 'n': 0, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1366×768] 第 7 段点顶点 D → 练习起点换成 D，回到小练第 1 步 {'idx': 43, 'total': 50, 'sec': 7, 'kind': 'prac', 'i': None, 'n': 0, 'start': 'G', 'practice': 'D', 'hints': True}
+通过 | [1366×768] 点到正在讲的起点 G：被拒绝（练习起点还是 D） {'idx': 43, 'total': 50, 'sec': 7, 'kind': 'prac', 'i': None, 'n': 0, 'start': 'G', 'practice': 'D', 'hints': True}
+通过 | [1366×768] 小练一按一步揭晓两问 {'idx': 45, 'total': 50, 'sec': 7, 'kind': 'prac', 'i': None, 'n': 2, 'start': 'G', 'practice': 'D', 'hints': True}
+通过 | [1366×768] 练习起点 D：第一个锁 B（70），dist[C] = 150 {'ps': 'D', 'first': 'B', 'dfirst': 70, 'qt': 'C', 'dq': 150, 'route': ['D', 'B', 'C'], 'ws': [70, 80]}
+通过 | [1366×768] 第 7 段 Enter：用 D 当起点完整算一遍（起点 = D，回到第 4 段开头） {'idx': 9, 'total': 50, 'sec': 4, 'kind': 'init', 'i': None, 'n': None, 'start': 'D', 'practice': 'E', 'hints': True}
+通过 | [1366×768] 换成 D 后练习起点自动换成 E（不和起点相同） {'idx': 9, 'total': 50, 'sec': 4, 'kind': 'init', 'i': None, 'n': None, 'start': 'D', 'practice': 'E', 'hints': True}
+通过 | [1366×768] 起点 D：后面整套流程跟着换（第 4 段最后锁定 H，dist[H] = 460） ['D', 'B', 'G', 'C', 'A', 'F', 'E', 'H']
+通过 | [1366×768] 点按钮"用 E 当起点，完整算一遍" → 起点 = E，回到第 4 段 {'idx': 9, 'total': 50, 'sec': 4, 'kind': 'init', 'i': None, 'n': None, 'start': 'E', 'practice': 'G', 'hints': True}
+通过 | [1366×768] R：起点恢复 G、练习起点恢复 E，回到本段开头 {'idx': 9, 'total': 50, 'sec': 4, 'kind': 'init', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1366×768] H 隐藏 / 再按显示底部提示
+通过 | [1366×768] F 全屏（无头浏览器里可能不允许全屏，只检查不报错） 进入全屏：True
+通过 | [1366×768] 屏蔽浏览器右键菜单
+通过 | [1366×768] 没有脚本错误 []
+通过 | [1280×1024] 打开是第 1 段第 1 步，起点 G {'idx': 0, 'total': 50, 'sec': 1, 'kind': 'nav', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1280×1024] 一共 50 步 50
+通过 | [1280×1024] 第 1 段点顶点 C → 起点换成 C，仍在第 1 段 {'idx': 0, 'total': 50, 'sec': 1, 'kind': 'nav', 'i': None, 'n': None, 'start': 'C', 'practice': 'E', 'hints': True}
+通过 | [1280×1024] 再点 H → 起点换成 H {'idx': 0, 'total': 50, 'sec': 1, 'kind': 'nav', 'i': None, 'n': None, 'start': 'H', 'practice': 'E', 'hints': True}
+通过 | [1280×1024] R 恢复默认起点 G {'idx': 0, 'total': 50, 'sec': 1, 'kind': 'nav', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1280×1024] 动画没放完时再按一下：先放完，不跳步 {'idx': 1, 'total': 50, 'sec': 1, 'kind': 'title', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1280×1024] ← 回到第 1 步
+通过 | [1280×1024] 空格 / → / ↓ / PageDown / 左键 / 下一步按钮：从第 1 步按到第 50 步，每步都对 []
+通过 | [1280×1024] 最后一步是第 9 段小结 {'idx': 49, 'total': 50, 'sec': 9, 'kind': 'sum', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1280×1024] 最后一步再按：不动
+通过 | [1280×1024] ← / ↑ / PageUp / 右键 / ‹ 按钮：从第 50 步退回第 1 步，每步都对 []
+通过 | [1280×1024] 第 1 步再按 ←：不动
+通过 | [1280×1024] 数字键 1–9 跳到各段开头 [True, True, True, True, True, True, True, True, True]
+通过 | [1280×1024] Enter：跳到本段最后一步（第 4 段 → 第 7 轮锁定） {'idx': 29, 'total': 50, 'sec': 4, 'kind': 'l', 'i': 7, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1280×1024] 第 4 段点顶点：不换起点，只是下一步 {'idx': 10, 'total': 50, 'sec': 4, 'kind': 'q', 'i': 1, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1280×1024] 第 7 段默认练习起点 E {'idx': 43, 'total': 50, 'sec': 7, 'kind': 'prac', 'i': None, 'n': 0, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1280×1024] 第 7 段点顶点 D → 练习起点换成 D，回到小练第 1 步 {'idx': 43, 'total': 50, 'sec': 7, 'kind': 'prac', 'i': None, 'n': 0, 'start': 'G', 'practice': 'D', 'hints': True}
+通过 | [1280×1024] 点到正在讲的起点 G：被拒绝（练习起点还是 D） {'idx': 43, 'total': 50, 'sec': 7, 'kind': 'prac', 'i': None, 'n': 0, 'start': 'G', 'practice': 'D', 'hints': True}
+通过 | [1280×1024] 小练一按一步揭晓两问 {'idx': 45, 'total': 50, 'sec': 7, 'kind': 'prac', 'i': None, 'n': 2, 'start': 'G', 'practice': 'D', 'hints': True}
+通过 | [1280×1024] 练习起点 D：第一个锁 B（70），dist[C] = 150 {'ps': 'D', 'first': 'B', 'dfirst': 70, 'qt': 'C', 'dq': 150, 'route': ['D', 'B', 'C'], 'ws': [70, 80]}
+通过 | [1280×1024] 第 7 段 Enter：用 D 当起点完整算一遍（起点 = D，回到第 4 段开头） {'idx': 9, 'total': 50, 'sec': 4, 'kind': 'init', 'i': None, 'n': None, 'start': 'D', 'practice': 'E', 'hints': True}
+通过 | [1280×1024] 换成 D 后练习起点自动换成 E（不和起点相同） {'idx': 9, 'total': 50, 'sec': 4, 'kind': 'init', 'i': None, 'n': None, 'start': 'D', 'practice': 'E', 'hints': True}
+通过 | [1280×1024] 起点 D：后面整套流程跟着换（第 4 段最后锁定 H，dist[H] = 460） ['D', 'B', 'G', 'C', 'A', 'F', 'E', 'H']
+通过 | [1280×1024] 点按钮"用 E 当起点，完整算一遍" → 起点 = E，回到第 4 段 {'idx': 9, 'total': 50, 'sec': 4, 'kind': 'init', 'i': None, 'n': None, 'start': 'E', 'practice': 'G', 'hints': True}
+通过 | [1280×1024] R：起点恢复 G、练习起点恢复 E，回到本段开头 {'idx': 9, 'total': 50, 'sec': 4, 'kind': 'init', 'i': None, 'n': None, 'start': 'G', 'practice': 'E', 'hints': True}
+通过 | [1280×1024] H 隐藏 / 再按显示底部提示
+通过 | [1280×1024] F 全屏（无头浏览器里可能不允许全屏，只检查不报错） 进入全屏：True
+通过 | [1280×1024] 屏蔽浏览器右键菜单
+通过 | [1280×1024] 没有脚本错误 []
+
+总结： 88 项全部通过

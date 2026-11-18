@@ -1,0 +1,99 @@
+Skip to main content
+University Communications
+News
+Search
+Faith
+ 
+Intellect
+ 
+Character
+ 
+Events
+ 
+Announcements
+ 
+School of Medicine
+INTELLECT
+Trading cuts for clicks: new BYU software performs 'virtual surgery'
+July 24, 2006
+Surgeons could instantly extract patient's 3-D anatomy without incisions
+
+A new software tool developed by computer scientists at Brigham Young University will allow surgeons to instantly visualize any part of a patient's anatomy by extracting a 3-D computer image from an MRI, CT scan or similar data with just a few clicks of the mouse. Click to see video.
+
+The tool, dubbed "Live Surface" by its creators BYU professor William Barrett and graduate student Chris Armstrong, also has special-effects applications – in similar fashion it can be used to extract a single actor's performance or inanimate objects from video clips. Click to see video.
+
+"The main goal in developing Live Surface was to give the physician a powerful, practical tool that can be used interactively," said Barrett, explaining that existing software and techniques that are used to give doctors a look at a patient's anatomy are either too simplistic or take too long to be of immediate use. "A program like this has to be incredibly fast and very interactive, or else it's very frustrating for the user, who currently has to go get a sandwich and come back before he has what he wants."
+
+Live Surface has the additional benefit of allowing users to easily isolate "tricky" anatomy such as soft tissue – blood vessels, hearts and muscles – that a lot of other techniques can't readily extract, said Barrett. Click to see video.
+
+"The hard stuff (meaning bones) is easy to see using traditional methods, but even there, the simpler techniques sometimes overestimate, underestimate, or fuse joints, whereas Live Surface neatly and accurately separates them," said Barrett. "Our program also provides more robust isolation of soft tissue, which is quite a breakthrough." Click to see video.
+
+The BYU software works by extracting information from data collected in 3-D volumes – CT scans, MRIs or 3-D ultrasounds. With a click and drag of the mouse, a user identifies the object he wishes to extract. Next, he identifies those portions of the data that surround the object. Immediately, the desired object is extracted from the data. Click to see video.
+
+"This is the object I want, and this is not the object I want. And in less than half a second, it pulls the object you want out of the data," said Armstrong, who will present the computer science research behind Live Surface at the International Workshop on Volume Graphics July 31 in Boston. "It's really that simple."
+
+The program works in a rapid manner because it extracts the object using a hierarchical algorithm, or set of mathematical rules, that tells the computer to eliminate irrelevant information in broad, coarse cuts. Once the bulk of unwanted data is gone, the computer is free to make more refined calculations more quickly.
+
+"It's how you might envision cutting a toothpick out of a redwood tree," said Armstrong. "You'd start with a chain saw and make very big cuts at first. By the end you'd use a knife to delicately shape the toothpick. Instead of 'cuts' our program intelligently identifies shapes. As you refine more and more, that shape becomes more exact."
+
+After a surgeon had extracted a 3-D image of a person's heart or brain, for example, the image could then be projected onto the patient's body, fitted to create a road map for the surgeon as he operated. Additionally, doctors could use the tool to make better diagnoses after visualizing a patient's organs from multiple angles or do a better job of locating cancerous tumors.
+
+Research for the software was partially funded by Adobe, makers of the popular image-editing program Photoshop. Barrett's lab has had a long-running relationship with Adobe – Live Surface builds on Barrett's development of Intelligent Scissors, a program that allows users to quickly pull 2-D objects out of images. The program, renamed "magnetic lasso," was incorporated into 5.0 and subsequent versions of Photoshop and is used by millions of designers, artists and photographers.
+
+BYU's Technology Transfer Office recently applied for a patent on Live Surface. Parties interested in knowing more about licensing opportunities may contact Burt Knudson at (801) 422-3676.
+
+Chris Armstrong
+Chris Armstrong
+Chris Armstrong
+Chris Armstrong
+Chris Armstrong
+Chris Armstrong
+1 of 6
+DOWNLOAD THIS GALLERY By clicking this link you agree to our Terms & Conditions
+
+RELATED ARTICLES
+INTELLECT
+BYU preclinical research shows macrophages can be programmed to fight solid cancer tumors
+BYU preclinical research shows a promising new immunotechnology called MOTO-CAR that genetically engineers macrophages — immune cells that can enter solid tumors — to recognize cancer-associated markers, attack the tumor cells, and activate other immune cells with a memory to fight the cancer. Researchers hope it will eventually lead to treatments for difficult-to-cure cancers, including glioblastoma, triple-negative breast cancer and pancreatic cancer.
+4 Min Read
+INTELLECT
+BYU professor helps translate nutrition research into a global food guide
+BYU nutritional science professor Karen Della Corte led a global team of nutrition scientists to develop an International Food Guide Pyramid that reflects broad scientific agreement and can be adapted across cultures and borders.
+4 Min Read
+INTELLECT
+Forum: Convergence of Faith
+Ross G. Douthat, an American author, journalist and television correspondent for CBS News’ 60 Minutes spoke at Tuesday's forum and encouraged BYU students to hold on to their belief in God.
+1 Min Read
+Next
+CONTACT US
+
+BYU University Communications
+ASB C-347
+Provo, UT 84602
+801-422-4511
+
+Submit Story Idea
+NEWS CATEGORIES
+Faith
+Intellect
+Character
+Announcements
+Events
+RELATED LINKS
+BYU.edu
+Mission & Aims of BYU
+BYU Alumni
+Give to BYU
+CONNECT WITH US
+Link to facebook
+ 
+Link to instagram
+ 
+Link to twitter
+ 
+Link to youtube
+PROVO, UT 84602, USA | 801-422-4636 | © 2026 ALL RIGHTS RESERVED
+Privacy Notice | Cookie Preferences
+WE VALUE YOUR PRIVACY
+This site uses cookies and related technologies, as described in our privacy policy, for purposes that may include site operation, analytics, enhanced user experience, or advertising. You may choose to consent to our use of these technologies, or manage your own preferences.
+MANAGE CHOICES AGREE & PROCEED

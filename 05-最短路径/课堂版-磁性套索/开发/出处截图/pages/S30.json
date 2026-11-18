@@ -1,0 +1,36 @@
+{
+  "id": "S30",
+  "url": "https://mlanthology.org/eccv/2020/li2020eccv-structured",
+  "final_url": "https://mlanthology.org/eccv/2020/li2020eccv-structured/",
+  "fetched_at": "2026-11-09T13:19:16+00:00",
+  "method": "http",
+  "http_status": 200,
+  "content_type": "text/html",
+  "title": "Structured Landmark Detection via Topology-Adapting Deep Graph Learning | ML Anthology",
+  "published": "2020",
+  "published_from": "citation_publication_date",
+  "canonical": "https://mlanthology.org/eccv/2020/li2020eccv-structured/",
+  "lang": "en",
+  "error": null,
+  "description": "Image landmark detection aims to automatically identify the locations of predefined fiducial points. Despite recent success in this field, higher-ordered …",
+  "links_in_content": 17,
+  "text_chars": 2589,
+  "looks_like_blocked": false,
+  "looks_like_login_wall": false,
+  "looks_like_js_shell": false,
+  "looks_like_error_page": false,
+  "thin_content": false,
+  "truncated": false,
+  "full_text_chars": 2589,
+  "find": {
+    "adjacency matrix": {
+      "found": false,
+      "match_ratio": 0.0,
+      "missing": [
+        "adjacency matrix"
+      ],
+      "note": "partial match; the parts under 'missing' were NOT found on the page"
+    }
+  },
+  "page_file": "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\pages\\S30.md"
+}

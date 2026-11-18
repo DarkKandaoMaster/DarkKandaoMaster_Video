@@ -1,0 +1,59 @@
+Join us at Adobe MAX — The Creativity Conference Nov 10–12 in Miami Beach.
+
+Learn more
+Creativity & Design
+PDFs & E-signatures
+Marketing & Commerce
+Learn & Support
+Make selections with the Magnetic Lasso tool
+Last updated on May 24, 2023
+
+Make selections that snap to the edges in an image as you drag
+
+Select the Magnetic Lasso tool  (L) from the toolbar. If you can't find the Magnetic Lasso tool, click and hold the Lasso tool to show the other related tools, and then select the Magnetic Lasso tool.
+
+In the tool options bar, specify a selection option: New Selection, Add to Selection, Subtract from Selection, or Intersect with Selection.
+
+In the tool options bar, choose to turn on feathering and anti-aliasing. Also, set any of these options - Width, Contrast, Frequency, and Stylus Pressure.
+
+Click anywhere in your image to set the first fastening point. Move the pointer along the edge you want to trace. As you move the pointer, the active segment snaps to the strongest edge in the image.
+
+Click once to add a fastening point manually. Continue to trace the edge of your image and add fastening points as needed.
+
+Get help faster and easier
+Sign in
+
+New user?
+
+Create an account ›
+
+Legal Notices    |    Online Privacy Policy
+
+Create stunning images with Photoshop
+Edit, retouch, and transform photos with the industry-leading creative tools you know and love.
+
+Open the app
+Share this page
+   
+
+Was this page helpful?
+
+Yes, thanks
+Not really
+ADOBE PHOTOSHOP
+< Visit Adobe Help Center
+Learn & Support
+Get Started
+User Guide
+Tutorials
+Ask the Community 
+
+Post questions and get answers from experts.
+
+Ask now
+Contact Us 
+
+Expert support for your issues.
+
+Start now
+^ Back to top

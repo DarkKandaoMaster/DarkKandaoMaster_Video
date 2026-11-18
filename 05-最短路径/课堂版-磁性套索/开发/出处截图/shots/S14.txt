@@ -1,0 +1,119 @@
+Join us at Adobe MAX — The Creativity Conference Nov 10–12 in Miami Beach.
+
+Learn more
+Creativity & Design
+PDFs & E-signatures
+Marketing & Commerce
+Learn & Support
+Buy now
+Sign in
+
+Photoshop Help
+
+Desktop
+Tablet
+Mobile
+Web
+Open on desktop
+ Adobe Help Center
+Photoshop Desktop Help
+What's new
+Get started
+Generative AI in Photoshop
+Create, open, and import images
+Create and manage layers
+Crop, resize, and transform
+Make selections
+Get started with selections
+Automatic and color-based selections
+Freehand selections
+Create quick selections with the Selection Brush Tool
+Select a Color Range in Photoshop
+Draw freeform selections with the Lasso tool
+Draw straight-edged segments of a selection border
+Snap to image edges using Magnetic Lasso tool
+Save Skin Tones settings as a preset
+Refine and modify selections
+Create masks
+Repair and retouch
+Adjust color
+Apply painting techniques
+Draw shapes and paths
+Text and typography
+Effects and filters
+Quick actions
+Use grids and measurement guides
+Add video and animation
+Automate tasks
+Print
+Share and collaborate
+Save and export
+App integrations
+Troubleshoot
+Snap to image edges using Magnetic Lasso tool
+Last updated on Feb 23, 2026
+
+Learn to use the Magnetic Lasso tool in Adobe Photoshop to snap selection borders to the edges of clearly defined areas in an image.
+
+The Magnetic Lasso  tool in Photoshop lets you create precise selections with ease. As you trace along an object’s edge, the tool snaps the selection border to defined areas, making it useful for complex outlines against high-contrast backgrounds. This tool isn’t available for 32-bit images.
+
+
+Select the Magnetic Lasso  tool from the toolbar.
+
+Select one of the selection modes in the Options bar.
+
+Select the Current Tool Only checkbox.
+
+Set the following settings in the Options bar.
+
+Feather: Soften the edges of a selection by gradually fading it into the surrounding pixels.
+Anti-alias: Smooth the selection boundary by blending the edge pixels with the background.
+Width: Define how far the tool detects edges from the pointer.
+Contrast: Adjust the tool’s sensitivity to edge differences in the image.
+Frequency: Control how often fastening points are automatically placed.
+
+Select Use tablet pressure to change pen width to reduce edge width with increased pen pressure when using a stylus.
+
+Select in the image to set the first fastening point, then drag along the edge you want to trace.
+
+Select to add fastening points manually if the border doesn't snap to the desired edge.
+
+Press Delete to remove recently added segments or fastening points if needed.
+
+Close the selection border by selecting back at the starting point when the circular icon appears. If you're not at the starting point, double-click or press Ctrl + click (Windows) or Command + click (macOS) to close the selection.
+
+Tip
+
+Press Caps Lock to change the lasso pointer so that it indicates the lasso width. You can change the pointer while the tool is selected, but not in use. Press the right bracket ] key to increase the Magnetic Lasso edge width by 1 pixel and press the left bracket [ key to decrease the width by 1 pixel.
+
+On an image with well-defined edges, try a higher width and contrast setting and trace the border roughly. For softer edges, use a lower width and contrast and trace more precisely.
+
+Create stunning images with Photoshop
+Edit, retouch, and transform photos with the industry-leading creative tools you know and love.
+
+Open the app
+
+Was this page helpful?
+
+Yes, thanks
+Not really
+
+Previous
+
+Draw straight-edged segments of a selection border
+
+Next
+
+Save Skin Tones settings as a preset
+
+Learn
+
+Learn with step-by-step video tutorials and hands-on guidance right in the app.
+
+Community
+
+Join discussions, find answers, learn from experts, and share your knowledge.
+
+Adobe Home
+
+Access your favorite Creative Cloud apps, services, file management, and more.

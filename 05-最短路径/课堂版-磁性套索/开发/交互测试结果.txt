@@ -1,0 +1,77 @@
+通过 | [1920×1080] 点击落点换算正确 [[168, 87], [318, 90], [468, 99]]
+通过 | [1920×1080] 右键撤销一个点 
+通过 | [1920×1080] Backspace 撤销一个点 
+通过 | [1920×1080] 一次点击（整图 Dijkstra + 回溯）耗时 24 ms
+通过 | [1920×1080] 双击闭合 {'phase': 'draw', 'k': 0, 'K': None, 'play': False, 'paused': False, 'closed': True, 'seeds': 8, 'win': None}
+通过 | [1920×1080] 双击没有留下零长度的段 [220, 266, 251, 119, 291, 130, 136, 137]
+通过 | [1920×1080] 前进到第 3 步 ['edges', 'edges', 'dij', 'dij', 'dij', 'dij', 'dij', 'dij']
+通过 | [1920×1080] 第 3 步按 R 回到 k=0 
+通过 | [1920×1080] Enter 直接跳到揭晓 {'phase': 'reveal', 'k': 13, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 8, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1920×1080] ← 一路退回第 1 步，轮廓保留 
+通过 | [1920×1080] 数字键 3 跳到第 3 步 
+通过 | [1920×1080] 第 1 步按 R 清空轮廓 
+通过 | [1920×1080] 空白时按 → 自动描轮廓（再按一下立即描完） {'phase': 'draw', 'k': 0, 'K': None, 'play': False, 'paused': False, 'closed': True, 'seeds': 13, 'win': None}
+通过 | [1920×1080] 闭合前点“下一步”按钮：闭合且不多落点 {'phase': 'draw', 'k': 0, 'K': None, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': None}
+通过 | [1920×1080] 闭合后左键点画面 = 下一步（进入放大） {'phase': 'zoom', 'k': 0, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1920×1080] 第 2 步右键 = 上一步（回到抠图） {'phase': 'draw', 'k': 0, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1920×1080] 翻页笔 PageDown = 下一步 
+通过 | [1920×1080] 翻页笔 PageUp = 上一步 
+通过 | [1920×1080] 点“下一步 ›”按钮前进 
+通过 | [1920×1080] 点“‹”按钮后退 
+通过 | [1920×1080] 一路左键点到第 3 步 {'phase': 'dij', 'k': 0, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1920×1080] 前 3 下一按一步 {'phase': 'dij', 'k': 3, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1920×1080] 第 4 下开始自动播放 {'phase': 'dij', 'k': 6, 'K': 13, 'play': True, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1920×1080] 自动播放中点击 = 暂停 {'phase': 'dij', 'k': 6, 'K': 13, 'play': False, 'paused': True, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1920×1080] 第 3 步右键 = 退回一次锁定 {'phase': 'dij', 'k': 5, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1920×1080] 再按一次 = 继续自动播放 {'phase': 'dij', 'k': 6, 'K': 13, 'play': True, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1920×1080] 自动播放到终点锁定后自动揭晓，且只锁到终点为止 {'phase': 'reveal', 'k': 13, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1920×1080] 屏蔽浏览器右键菜单 
+通过 | 拖入照片后回到第 1 步、轮廓清空、没有报错（画布未被污染） []
+通过 | 换照片后空白按 → 不会自动描（提示先点几下） 
+通过 | 换照片后能闭合 
+通过 | [1920×1080] 没有脚本错误 []
+通过 | [1366×768] 点击落点换算正确 [[168, 87], [318, 90], [468, 99]]
+通过 | [1366×768] 右键撤销一个点 
+通过 | [1366×768] Backspace 撤销一个点 
+通过 | [1366×768] 一次点击（整图 Dijkstra + 回溯）耗时 26 ms
+通过 | [1366×768] 双击闭合 {'phase': 'draw', 'k': 0, 'K': None, 'play': False, 'paused': False, 'closed': True, 'seeds': 8, 'win': None}
+通过 | [1366×768] 双击没有留下零长度的段 [220, 266, 251, 119, 291, 130, 136, 137]
+通过 | [1366×768] 前进到第 3 步 ['edges', 'edges', 'dij', 'dij', 'dij', 'dij', 'dij', 'dij']
+通过 | [1366×768] 第 3 步按 R 回到 k=0 
+通过 | [1366×768] Enter 直接跳到揭晓 {'phase': 'reveal', 'k': 13, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 8, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1366×768] ← 一路退回第 1 步，轮廓保留 
+通过 | [1366×768] 数字键 3 跳到第 3 步 
+通过 | [1366×768] 第 1 步按 R 清空轮廓 
+通过 | [1366×768] 空白时按 → 自动描轮廓（再按一下立即描完） {'phase': 'draw', 'k': 0, 'K': None, 'play': False, 'paused': False, 'closed': True, 'seeds': 13, 'win': None}
+通过 | [1366×768] 闭合前点“下一步”按钮：闭合且不多落点 {'phase': 'draw', 'k': 0, 'K': None, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': None}
+通过 | [1366×768] 闭合后左键点画面 = 下一步（进入放大） {'phase': 'zoom', 'k': 0, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1366×768] 第 2 步右键 = 上一步（回到抠图） {'phase': 'draw', 'k': 0, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1366×768] 翻页笔 PageDown = 下一步 
+通过 | [1366×768] 翻页笔 PageUp = 上一步 
+通过 | [1366×768] 点“下一步 ›”按钮前进 
+通过 | [1366×768] 点“‹”按钮后退 
+通过 | [1366×768] 一路左键点到第 3 步 {'phase': 'dij', 'k': 0, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1366×768] 前 3 下一按一步 {'phase': 'dij', 'k': 3, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1366×768] 第 4 下开始自动播放 {'phase': 'dij', 'k': 6, 'K': 13, 'play': True, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1366×768] 自动播放中点击 = 暂停 {'phase': 'dij', 'k': 6, 'K': 13, 'play': False, 'paused': True, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1366×768] 第 3 步右键 = 退回一次锁定 {'phase': 'dij', 'k': 5, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1366×768] 再按一次 = 继续自动播放 {'phase': 'dij', 'k': 6, 'K': 13, 'play': True, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1366×768] 自动播放到终点锁定后自动揭晓，且只锁到终点为止 {'phase': 'reveal', 'k': 13, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 3, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1366×768] 屏蔽浏览器右键菜单 
+通过 | [1366×768] 没有脚本错误 []
+通过 | [1280×1024] 点击落点换算正确 [[168, 87], [318, 90], [468, 99]]
+通过 | [1280×1024] 右键撤销一个点 
+通过 | [1280×1024] Backspace 撤销一个点 
+通过 | [1280×1024] 一次点击（整图 Dijkstra + 回溯）耗时 25 ms
+通过 | [1280×1024] 双击闭合 {'phase': 'draw', 'k': 0, 'K': None, 'play': False, 'paused': False, 'closed': True, 'seeds': 8, 'win': None}
+通过 | [1280×1024] 双击没有留下零长度的段 [220, 266, 251, 115, 295, 131, 135, 137]
+通过 | [1280×1024] 前进到第 3 步 ['edges', 'edges', 'dij', 'dij', 'dij', 'dij', 'dij', 'dij']
+通过 | [1280×1024] 第 3 步按 R 回到 k=0 
+通过 | [1280×1024] Enter 直接跳到揭晓 {'phase': 'reveal', 'k': 13, 'K': 13, 'play': False, 'paused': False, 'closed': True, 'seeds': 8, 'win': {'x0': 543, 'y0': 118, 'same': True, 'score': 19.140058823529415}}
+通过 | [1280×1024] ← 一路退回第 1 步，轮廓保留 
+通过 | [1280×1024] 数字键 3 跳到第 3 步 
+通过 | [1280×1024] 第 1 步按 R 清空轮廓 
+通过 | [1280×1024] 空白时按 → 自动描轮廓（再按一下立即描完） {'phase': 'draw', 'k': 0, 'K': None, 'play': False, 'paused': False, 'closed': True, 'seeds': 13, 'win': None}
+通过 | [1280×1024] 没有脚本错误 []
+
+总结： 全部通过

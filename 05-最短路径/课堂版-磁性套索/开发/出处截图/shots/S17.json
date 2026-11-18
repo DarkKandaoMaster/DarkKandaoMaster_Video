@@ -1,0 +1,29 @@
+{
+  "backend": "playwright",
+  "files": [
+    "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\shots\\S17.png"
+  ],
+  "final_url": "https://opencv.org/opencv-4-5-2/",
+  "title": "OpenCV 4.5.2 - OpenCV",
+  "viewport": {
+    "width": 1280,
+    "height": 900,
+    "scale": 1.0
+  },
+  "text_file": "D:\\Release\\DarkKandaoMaster_Video\\05-最短路径\\课堂版-磁性套索\\开发\\出处截图\\shots\\S17.txt",
+  "text_chars": 4049,
+  "find_text": {
+    "found": true,
+    "region": {
+      "x": 78,
+      "y": 922.78125,
+      "width": 1139,
+      "height": 270.59375
+    },
+    "matched_text": "Added IntelligentScissors algorithm implementation"
+  },
+  "ok": true,
+  "url": "https://opencv.org/opencv-4-5-2/",
+  "captured_at": "2026-11-09T13:22:04+00:00",
+  "full_page": false
+}

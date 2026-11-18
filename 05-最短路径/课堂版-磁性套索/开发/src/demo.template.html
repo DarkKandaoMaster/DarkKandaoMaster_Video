@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>磁性套索 = 最短路径</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #FAF7F0; overflow: hidden; }
+  canvas { display: block; outline: none; }
+</style>
+</head>
+<body>
+<canvas id="cv" tabindex="0"></canvas>
+<script>const PHOTO_DATA_URI = "__PHOTO_DATA_URI__";</script>
+<script>
+'use strict';
+/* =====================================================================
+   磁性套索（Intelligent Scissors, Mortensen & Barrett 1995）= 迪杰斯特拉最短路径
+   课堂演示，单文件、离线。按 1920×1080 设计，按窗口大小等比缩放。
+   第 1 步 抠图：像素 = 顶点，上下左右相邻连边，边权 1–9（越像边缘越小）；
+                每点一下就从这一点跑一遍 Dijkstra（二叉堆）得到整张前驱图，鼠标移动时只回溯。
+   第 2 步 放大：自动在刚抠出的轮廓上挑一块 6×4 像素，镜头拉近，像素变顶点，连边标权值。
+   第 3 步 揭晓：在这张小图上一步一步跑 Dijkstra，最后亮出最短路径 —— 与第 1 步那段线逐像素相同。
+   ===================================================================== */
+
+// ---------------- 配色与字体（与图论系列 src/graph/theme.ts 一致） ----------------
+const COL = {
+  bg: '#FAF7F0', ink: '#1F2430', ink2: '#555B6B', ink3: '#959AA6', edge: '#CFC8BA',
+  vStroke: '#2A2F3B', card: '#FFFFFF', cardLine: '#E5DED0',
+  orange: '#E8590C', orangeDeep: '#B5460A', orangeTint: '#FBE4D5', blue: '#1C7ED6',
+};
+const FONT_SANS = '"Microsoft YaHei", "微软雅黑", "PingFang SC", sans-serif';
+const FONT_MONO = 'Consolas, "Microsoft YaHei", monospace';
+
+// ---------------- 参数 ----------------
+const CFG = {
+  computeLong: 800,                              // 计算用的图：长边缩到 800 像素
+  photoBox: { x: 100, y: 128, w: 1720, h: 852 }, // 第 1 步照片放在这个框里（设计坐标）
+  snapSeed: 4,                                   // 点击时吸附到附近梯度最大的像素（半径，计算像素）
+  snapMove: 2,                                   // 鼠标移动时的吸附半径
+  closeRadius: 30,                               // 回到起点多近算闭合（设计坐标 px）
+  cols: 6, rows: 4,                              // 放大的小块：6×4 个像素
+  spacing: 210, R: 50, gridCY: 560,              // 小图布局
+  manualSteps: 3,                                // 第 3 步前几次锁定一按一步，之后再按一次就自动播放
+  playEvery: 0.6,                                // 自动播放：每隔多少秒锁定一个顶点
+  // 局部代价 = wG·(1−梯度) + wZ·(不是过零点) + wD·(走向和边缘方向不一致)，再除以三者之和，量化成 1–9
+  wG: 0.72, wZ: 0.28, wD: 0.25,
+  sigma: 2.0,                                    // 算梯度前的高斯模糊（压掉木纹这类细纹理）
+  lsigma: 1.0,                                   // 算 Laplacian 前的高斯模糊
+  zGate: 0.25,                                   // 梯度太弱处的过零点不算
+  gradPct: 0.985,                                // 梯度归一化用的分位数
+};
+
+// 预设轮廓点（内嵌那张黑猫，计算坐标 800×420）：第 1 步什么都没点就按 → 时自动描一遍
+const PRESET = [[170, 84], [240, 108], [318, 90], [400, 104], [500, 101], [560, 128], [592, 152], [616, 215], [613, 309], [420, 312], [206, 311], [178, 210], [168, 140]];
+
+const QS = new URLSearchParams(location.search);
+const REC = QS.has('record');           // 录屏模式：手动时钟 + 画一个假鼠标
+let DEBUG = QS.get('debug') === 'cost'; // 调试：第 1 步显示边权图
+
+// ---------------- 小工具 ----------------
+const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeIO = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+const easeBack = (t) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+const prog = (t, start, dur, ease) => { const x = clamp01((t - start) / dur); return ease ? ease(x) : x; };
+const hex2rgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+const rgbStr = (c, a) => (a === undefined ? `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})` : `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`);
+const mixRGB = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+const mixHex = (a, b, t) => rgbStr(mixRGB(hex2rgb(a), hex2rgb(b), t));
+
+let manualT = 0;
+const now = () => (REC ? manualT : performance.now() / 1000); // 秒
+
+// ---------------- 画布与缩放 ----------------
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let VIEW = { s: 1, ox: 0, oy: 0, dpr: 1 };
+function resize() {
+  const w = window.innerWidth, h = window.innerHeight, dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  cv.style.width = w + 'px'; cv.style.height = h + 'px';
+  const s = Math.min(w / 1920, h / 1080);
+  VIEW = { s, ox: (w - 1920 * s) / 2, oy: (h - 1080 * s) / 2, dpr };
+}
+window.addEventListener('resize', resize);
+resize();
+const baseTransform = () => ctx.setTransform(VIEW.dpr * VIEW.s, 0, 0, VIEW.dpr * VIEW.s, VIEW.dpr * VIEW.ox, VIEW.dpr * VIEW.oy);
+const toStage = (e) => ({ x: (e.clientX - VIEW.ox) / VIEW.s, y: (e.clientY - VIEW.oy) / VIEW.s });
+
+// =====================================================================
+//  照片 → 代价图
+// =====================================================================
+const P = { ready: false, img: null, iw: 0, ih: 0, rect: null, cw: 0, ch: 0, k: 1, rgba: null, small: null, mag: null, wR: null, wD: null, custom: false, dbg: null };
+
+function loadPhoto(url, custom) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => { setupPhoto(img, custom); resolve(); };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+function setupPhoto(img, custom) {
+  const iw = img.naturalWidth, ih = img.naturalHeight;
+  const B = CFG.photoBox;
+  const s = Math.min(B.w / iw, B.h / ih);
+  const rw = iw * s, rh = ih * s;
+  const sc = Math.min(1, CFG.computeLong / Math.max(iw, ih));
+  const cw = Math.max(16, Math.round(iw * sc)), ch = Math.max(16, Math.round(ih * sc));
+  const small = document.createElement('canvas');
+  small.width = cw; small.height = ch;
+  const sctx = small.getContext('2d', { willReadFrequently: true });
+  sctx.imageSmoothingEnabled = true; sctx.imageSmoothingQuality = 'high';
+  sctx.drawImage(img, 0, 0, cw, ch);
+  const rgba = sctx.getImageData(0, 0, cw, ch).data;
+  Object.assign(P, { img, iw, ih, rect: { x: B.x + (B.w - rw) / 2, y: B.y + (B.h - rh) / 2, w: rw, h: rh }, cw, ch, k: rw / cw, rgba, small, custom: !!custom });
+  buildCost();
+  P.ready = true;
+  resetAll();
+}
+
+// 局部代价（照 Mortensen & Barrett 1995 的思路）：
+//   fG 梯度幅值项（梯度越大越便宜）、fZ Laplacian 过零点项（在边缘正中间更便宜）、
+//   fD 方向项（沿着边缘走便宜，横穿边缘贵；用三个通道的梯度平方和估方向）。
+// 每条无向边（上下左右相邻的两个像素）的代价 = 两端点的平均，量化成 1–9 的整数。第 1 步和第 3 步用的是同一份整数权。
+function gaussKernel(sigma) {
+  const r = Math.floor(4 * sigma + 0.5), k = []; let s = 0;
+  for (let x = -r; x <= r; x++) { const v = Math.exp(-0.5 * x * x / (sigma * sigma)); k.push(v); s += v; }
+  return { r, k: k.map((v) => v / s) };
+}
+function gaussBlur(a, w, h, sigma) {
+  if (sigma <= 0) return a.slice();
+  const { r, k } = gaussKernel(sigma), tmp = new Float32Array(w * h), out = new Float32Array(w * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    let s = 0; for (let d = -r; d <= r; d++) { const xx = Math.min(w - 1, Math.max(0, x + d)); s += k[d + r] * a[y * w + xx]; }
+    tmp[y * w + x] = s;
+  }
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    let s = 0; for (let d = -r; d <= r; d++) { const yy = Math.min(h - 1, Math.max(0, y + d)); s += k[d + r] * tmp[yy * w + x]; }
+    out[y * w + x] = s;
+  }
+  return out;
+}
+function buildCost() {
+  const w = P.cw, h = P.ch, N = w * h, src = P.rgba;
+  const raw = [new Float32Array(N), new Float32Array(N), new Float32Array(N)];
+  for (let i = 0; i < N; i++) { raw[0][i] = src[4 * i]; raw[1][i] = src[4 * i + 1]; raw[2][i] = src[4 * i + 2]; }
+  const ch3 = raw.map((a) => gaussBlur(a, w, h, CFG.sigma));
+  // 梯度（三个通道 Sobel）：幅值 + 方向（gx²、gy² 之和）
+  const mag = new Float32Array(N), gxx = new Float32Array(N), gyy = new Float32Array(N);
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+    const i = y * w + x; let sx = 0, sy = 0;
+    for (let c = 0; c < 3; c++) {
+      const a = ch3[c];
+      const gx = a[i - w + 1] + 2 * a[i + 1] + a[i + w + 1] - a[i - w - 1] - 2 * a[i - 1] - a[i + w - 1];
+      const gy = a[i + w - 1] + 2 * a[i + w] + a[i + w + 1] - a[i - w - 1] - 2 * a[i - w] - a[i - w + 1];
+      sx += gx * gx; sy += gy * gy;
+    }
+    gxx[i] = sx; gyy[i] = sy; mag[i] = Math.sqrt(sx + sy);
+  }
+  // 亮度的 Laplacian 与过零点
+  const L0 = new Float32Array(N);
+  for (let i = 0; i < N; i++) L0[i] = 0.299 * raw[0][i] + 0.587 * raw[1][i] + 0.114 * raw[2][i];
+  const L = gaussBlur(L0, w, h, CFG.lsigma);
+  const lap = new Float32Array(N);
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) { const i = y * w + x; lap[i] = L[i - 1] + L[i + 1] + L[i - w] + L[i + w] - 4 * L[i]; }
+  // 归一化：按分位数，超过的记为 1
+  const sample = []; for (let i = 0; i < N; i += 3) sample.push(mag[i]);
+  sample.sort((a, b) => a - b);
+  const gref = Math.max(1e-6, sample[Math.floor((sample.length - 1) * CFG.gradPct)]);
+  const gN = new Float32Array(N); for (let i = 0; i < N; i++) gN[i] = Math.min(1, mag[i] / gref);
+  const zc = new Uint8Array(N);
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+    const i = y * w + x, a = lap[i];
+    if (gN[i] <= CFG.zGate) continue;
+    for (const j of [i - 1, i + 1, i - w, i + w]) { const b = lap[j]; if (a * b < 0 && Math.abs(a) <= Math.abs(b)) { zc[i] = 1; break; } }
+  }
+  const cost = new Float32Array(N), hor = new Float32Array(N), ver = new Float32Array(N);
+  for (let i = 0; i < N; i++) {
+    cost[i] = CFG.wG * (1 - gN[i]) + CFG.wZ * (1 - zc[i]);
+    const den = Math.max(gxx[i] + gyy[i], 1e-9);
+    hor[i] = gyy[i] / den; // 梯度竖直 = 横向的边：横着走顺
+    ver[i] = gxx[i] / den;
+  }
+  const tot = CFG.wG + CFG.wZ + CFG.wD;
+  const q = (c) => 1 + Math.round(8 * clamp01(c / tot));
+  const wR = new Uint8Array(N), wD = new Uint8Array(N);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = y * w + x;
+    if (x < w - 1) wR[i] = q((cost[i] + cost[i + 1]) / 2 + CFG.wD * (1 - (hor[i] + hor[i + 1]) / 2));
+    if (y < h - 1) wD[i] = q((cost[i] + cost[i + w]) / 2 + CFG.wD * (1 - (ver[i] + ver[i + w]) / 2));
+  }
+  Object.assign(P, { mag, wR, wD, gref });
+  // 调试图：每个像素取它右、下两条边里较小的权
+  const dbg = document.createElement('canvas'); dbg.width = w; dbg.height = h;
+  const dctx = dbg.getContext('2d'); const im = dctx.createImageData(w, h);
+  for (let i = 0; i < N; i++) {
+    const a = Math.min(wR[i] || 9, wD[i] || 9); const v = Math.round(255 * (a - 1) / 8);
+    im.data[4 * i] = v; im.data[4 * i + 1] = v; im.data[4 * i + 2] = v; im.data[4 * i + 3] = 255;
+  }
+  dctx.putImageData(im, 0, 0); P.dbg = dbg;
+}
+
+// ---------------- 二叉堆 + 整图 Dijkstra ----------------
+const HEAP = { k: new Int32Array(1 << 16), v: new Int32Array(1 << 16), n: 0, topKey: 0 };
+function hpush(key, val) {
+  if (HEAP.n >= HEAP.k.length) { const k2 = new Int32Array(HEAP.k.length * 2), v2 = new Int32Array(HEAP.k.length * 2); k2.set(HEAP.k); v2.set(HEAP.v); HEAP.k = k2; HEAP.v = v2; }
+  const K = HEAP.k, V = HEAP.v; let i = HEAP.n++;
+  while (i > 0) { const p = (i - 1) >> 1; if (K[p] <= key) break; K[i] = K[p]; V[i] = V[p]; i = p; }
+  K[i] = key; V[i] = val;
+}
+function hpop() {
+  const K = HEAP.k, V = HEAP.v; const top = V[0]; HEAP.topKey = K[0];
+  const n = --HEAP.n; if (n === 0) return top;
+  const key = K[n], val = V[n]; let i = 0;
+  for (;;) {
+    let c = 2 * i + 1; if (c >= n) break;
+    if (c + 1 < n && K[c + 1] < K[c]) c++;
+    if (K[c] >= key) break;
+    K[i] = K[c]; V[i] = V[c]; i = c;
+  }
+  K[i] = key; V[i] = val; return top;
+}
+const INF = 0x3fffffff;
+function dijkstraFrom(src) {
+  const w = P.cw, N = P.cw * P.ch, wR = P.wR, wD = P.wD;
+  const dist = new Int32Array(N).fill(INF), pred = new Int32Array(N).fill(-1), done = new Uint8Array(N);
+  HEAP.n = 0; dist[src] = 0; hpush(0, src);
+  while (HEAP.n) {
+    const u = hpop(), d = HEAP.topKey;
+    if (done[u]) continue; done[u] = 1;
+    const x = u % w;
+    let v, nd;
+    if (x < w - 1) { v = u + 1; nd = d + wR[u]; if (nd < dist[v]) { dist[v] = nd; pred[v] = u; hpush(nd, v); } }
+    if (x > 0) { v = u - 1; nd = d + wR[v]; if (nd < dist[v]) { dist[v] = nd; pred[v] = u; hpush(nd, v); } }
+    if (u + w < N) { v = u + w; nd = d + wD[u]; if (nd < dist[v]) { dist[v] = nd; pred[v] = u; hpush(nd, v); } }
+    if (u >= w) { v = u - w; nd = d + wD[v]; if (nd < dist[v]) { dist[v] = nd; pred[v] = u; hpush(nd, v); } }
+  }
+  return { dist, pred, src };
+}
+function pathTo(pred, t) { const p = []; for (let v = t; v !== -1; v = pred[v]) p.push(v); p.reverse(); return p; }
+function snap(px, py, r) {
+  const w = P.cw, h = P.ch; px = Math.round(px); py = Math.round(py);
+  px = Math.max(0, Math.min(w - 1, px)); py = Math.max(0, Math.min(h - 1, py));
+  let best = py * w + px, bm = -1, bd = 1e9;
+  for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+    if (dx * dx + dy * dy > r * r) continue;
+    const x = px + dx, y = py + dy; if (x < 1 || y < 1 || x >= w - 1 || y >= h - 1) continue;
+    const m = P.mag[y * w + x], d = dx * dx + dy * dy;
+    if (m > bm + 1e-6 || (Math.abs(m - bm) <= 1e-6 && d < bd)) { bm = m; bd = d; best = y * w + x; }
+  }
+  return best;
+}
+
+// =====================================================================
+//  第 1 步：轮廓
+// =====================================================================
+const C = { seeds: [], segs: [], pred: null, closed: false, closedAt: -99, live: null, mouse: null, auto: null, lastClickT: -99 };
+const idxXY = (i) => [i % P.cw, (i / P.cw) | 0];
+const worldOfStage = (p) => ({ x: (p.x - P.rect.x) / P.k, y: (p.y - P.rect.y) / P.k });
+const insidePhoto = (p) => p.x >= P.rect.x && p.y >= P.rect.y && p.x <= P.rect.x + P.rect.w && p.y <= P.rect.y + P.rect.h;
+function stageOfIdx(i) { const [x, y] = idxXY(i); return { x: P.rect.x + (x + 0.5) * P.k, y: P.rect.y + (y + 0.5) * P.k }; }
+
+function resetContour() {
+  Object.assign(C, { seeds: [], segs: [], pred: null, closed: false, closedAt: -99, live: null, auto: null });
+  WIN = null;
+}
+function addSeed(idx) {
+  if (C.seeds.length) C.segs.push(pathTo(C.pred, idx));
+  C.seeds.push(idx);
+  C.pred = dijkstraFrom(idx).pred;
+  C.live = null; WIN = null;
+}
+function closeContour() {
+  if (C.closed || C.seeds.length < 2) return false;
+  C.segs.push(pathTo(C.pred, C.seeds[0]));
+  C.closed = true; C.closedAt = now(); C.live = null; WIN = null;
+  return true;
+}
+function undoSeed() {
+  if (C.auto) return;
+  if (C.closed) { C.segs.pop(); C.closed = false; WIN = null; return; }
+  if (!C.seeds.length) return;
+  C.seeds.pop(); if (C.segs.length) C.segs.pop();
+  C.pred = C.seeds.length ? dijkstraFrom(C.seeds[C.seeds.length - 1]).pred : null;
+  C.live = null; WIN = null; updateLive();
+}
+function nearFirstSeed(p) {
+  if (C.seeds.length < 2) return false;
+  const s = stageOfIdx(C.seeds[0]);
+  return Math.hypot(p.x - s.x, p.y - s.y) < CFG.closeRadius;
+}
+function updateLive() {
+  if (PH.name !== 'draw' || C.closed || !C.pred || !C.mouse || !insidePhoto(C.mouse)) { C.live = null; return; }
+  let t;
+  if (nearFirstSeed(C.mouse)) t = C.seeds[0];
+  else { const w = worldOfStage(C.mouse); t = snap(w.x - 0.5, w.y - 0.5, CFG.snapMove); }
+  C.live = pathTo(C.pred, t);
+}
+function contourPixels() {
+  const out = [];
+  C.segs.forEach((s, k) => { for (let i = k === 0 ? 0 : 1; i < s.length; i++) out.push(s[i]); });
+  return out;
+}
+
+// 自动描（预设点）：像有人拿鼠标在描
+function startAutoTrace() {
+  resetContour();
+  const pts = PRESET.map(([x, y]) => [x * P.cw / 800, y * P.ch / 420]);
+  C.auto = { pts, i: 0, t0: now(), from: null };
+}
+function stepAutoTrace() {
+  const A = C.auto; if (!A) return;
+  const t = now();
+  if (A.i === 0) { addSeed(snap(A.pts[0][0], A.pts[0][1], CFG.snapSeed)); A.i = 1; A.t0 = t; A.from = A.pts[0]; return; }
+  const target = A.i < A.pts.length ? A.pts[A.i] : A.pts[0];
+  const u = clamp01((t - A.t0) / 0.42);
+  const x = lerp(A.from[0], target[0], easeIO(u)), y = lerp(A.from[1], target[1], easeIO(u));
+  C.mouse = { x: P.rect.x + (x + 0.5) * P.k, y: P.rect.y + (y + 0.5) * P.k };
+  updateLive();
+  if (u >= 1) {
+    if (A.i < A.pts.length) { addSeed(snap(target[0], target[1], CFG.snapSeed)); A.i++; A.t0 = t; A.from = target; }
+    else { C.auto = null; closeContour(); }
+  }
+}
+function finishAutoTrace() {
+  const A = C.auto; if (!A) return;
+  C.auto = null;
+  if (A.i === 0) { addSeed(snap(A.pts[0][0], A.pts[0][1], CFG.snapSeed)); A.i = 1; }
+  for (; A.i < A.pts.length; A.i++) addSeed(snap(A.pts[A.i][0], A.pts[A.i][1], CFG.snapSeed));
+  closeContour(); C.closedAt = now() - 10;
+}
+
+// =====================================================================
+//  第 2 步：在轮廓上挑一块 6×4 的小窗
+// =====================================================================
+let WIN = null;
+function winNeighbors(Wd, v) {
+  const { cols, rows, wr, wd } = Wd; const i = v % cols, j = (v / cols) | 0; const out = [];
+  if (i < cols - 1) out.push([v + 1, wr[j][i]]);
+  if (i > 0) out.push([v - 1, wr[j][i - 1]]);
+  if (j < rows - 1) out.push([v + cols, wd[j][i]]);
+  if (j > 0) out.push([v - cols, wd[j - 1][i]]);
+  return out;
+}
+// 课堂上看到的那一版 Dijkstra：每次锁定“没锁定的里距离最小的”（同距离取编号小的），然后松弛邻居
+function windowTrace(Wd, a, b, full) {
+  const V = Wd.cols * Wd.rows;
+  const dist = new Array(V).fill(INF), pred = new Array(V).fill(-1), locked = new Array(V).fill(false);
+  dist[a] = 0;
+  const states = [{ dist: dist.slice(), pred: pred.slice(), locked: locked.slice(), u: -1, changed: [a] }];
+  for (;;) {
+    let u = -1;
+    for (let v = 0; v < V; v++) if (!locked[v] && dist[v] < INF && (u < 0 || dist[v] < dist[u])) u = v;
+    if (u < 0) break;
+    locked[u] = true; const changed = [];
+    for (const [v, w] of winNeighbors(Wd, u)) if (!locked[v] && dist[u] + w < dist[v]) { dist[v] = dist[u] + w; pred[v] = u; changed.push(v); }
+    states.push({ dist: dist.slice(), pred: pred.slice(), locked: locked.slice(), u, changed });
+    if (u === b && !full) break;
+  }
+  return states;
+}
+function countShortest(Wd, a, dist) {
+  const V = Wd.cols * Wd.rows; const order = [...Array(V).keys()].filter((v) => dist[v] < INF).sort((x, y) => dist[x] - dist[y]);
+  const cnt = new Array(V).fill(0); cnt[a] = 1;
+  for (const v of order) { if (v === a) continue; for (const [u, w] of winNeighbors(Wd, v)) if (dist[u] + w === dist[v]) cnt[v] += cnt[u]; }
+  return cnt;
+}
+function makeWin(x0, y0, cols, rows) {
+  const w = P.cw; const wr = [], wd = [], colors = [];
+  for (let j = 0; j < rows; j++) {
+    wr.push([]); colors.push([]);
+    for (let i = 0; i < cols; i++) {
+      const g = (y0 + j) * w + (x0 + i);
+      if (i < cols - 1) wr[j].push(P.wR[g]);
+      colors[j].push([P.rgba[4 * g], P.rgba[4 * g + 1], P.rgba[4 * g + 2]]);
+    }
+    if (j < rows - 1) { wd.push([]); for (let i = 0; i < cols; i++) wd[j].push(P.wD[(y0 + j) * w + (x0 + i)]); }
+  }
+  return { x0, y0, cols, rows, wr, wd, colors };
+}
+function chooseWindow() {
+  const cols = CFG.cols, rows = CFG.rows, w = P.cw, h = P.ch;
+  const cands = [];
+  const tried = new Set();
+  C.segs.forEach((seg0, si) => {
+    for (const dir of [1, -1]) {
+      const seg = dir === 1 ? seg0 : seg0.slice().reverse();
+      for (let i = 0; i < seg.length; i++) {
+        const [xa, ya] = idxXY(seg[i]);
+        const x0 = xa;
+        if (x0 < 2 || x0 + cols > w - 2) continue;
+        for (let dy = 0; dy < rows; dy++) {
+          const y0 = ya - dy; if (y0 < 2 || y0 + rows > h - 2) continue;
+          const key = `${si},${dir},${i},${y0}`; if (tried.has(key)) continue; tried.add(key);
+          let j = i; const inside = (q) => { const [x, y] = idxXY(q); return x >= x0 && x < x0 + cols && y >= y0 && y < y0 + rows; };
+          while (j + 1 < seg.length && inside(seg[j + 1])) j++;
+          const [xb, yb] = idxXY(seg[j]);
+          if (xb !== x0 + cols - 1) continue;
+          if (i > 0 && inside(seg[i - 1])) continue; // A 必须是“进入小窗”的那个像素
+          const run = seg.slice(i, j + 1).map((q) => { const [x, y] = idxXY(q); return [x - x0, y - y0]; });
+          const Wd = makeWin(x0, y0, cols, rows);
+          const a = run[0][1] * cols + run[0][0], b = run[run.length - 1][1] * cols + run[run.length - 1][0];
+          const fullStates = windowTrace(Wd, a, b, true);
+          const D = fullStates[fullStates.length - 1].dist;
+          let runCost = 0; for (let t = 1; t < run.length; t++) { const p = run[t - 1], q = run[t]; const vp = p[1] * cols + p[0], vq = q[1] * cols + q[0]; runCost += winNeighbors(Wd, vp).find(([v]) => v === vq)[1]; }
+          if (D[b] !== runCost) continue; // 理论上必等（最短路的子路也是最短路），防御一下
+          const cnt = countShortest(Wd, a, D);
+          if (cnt[b] !== 1) continue;      // 小图上的最短路必须唯一，才保证和第 1 步那段线逐像素相同
+          const K = windowTrace(Wd, a, b, false).length - 1;
+          let turns = 0; for (let t = 2; t < run.length; t++) { const d1 = [run[t - 1][0] - run[t - 2][0], run[t - 1][1] - run[t - 2][1]], d2 = [run[t][0] - run[t - 1][0], run[t][1] - run[t - 1][1]]; if (d1[0] !== d2[0] || d1[1] !== d2[1]) turns++; }
+          const all = []; Wd.wr.forEach((r) => all.push(...r)); Wd.wd.forEach((r) => all.push(...r));
+          const sumAll = all.reduce((s, x) => s + x, 0);
+          const meanRun = runCost / (run.length - 1);
+          const meanOff = (sumAll - runCost) / (all.length - (run.length - 1));
+          const ya2 = run[0][1], yb2 = run[run.length - 1][1];
+          const distinct = new Set(all).size;
+          // 越“一眼看出边缘”越好：路上的权小、路外的权大；再要一点拐弯，别是一条直线
+          // 路要走在中间几行，两边都看得到像素；两边像素的明暗差越大越好（一边是猫，一边是背景）
+          if (run.some(([, y]) => y === 0 || y === rows - 1)) continue;
+          const lum = (i2, j2) => { const c = Wd.colors[j2][i2]; return 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]; };
+          let side = 0;
+          for (let i2 = 0; i2 < cols; i2++) {
+            const ys = run.filter(([x]) => x === i2).map(([, y]) => y); const lo = Math.min(...ys), hi = Math.max(...ys);
+            let sa = 0, na = 0, sb = 0, nb = 0;
+            for (let j2 = 0; j2 < rows; j2++) { if (j2 < lo) { sa += lum(i2, j2); na++; } else if (j2 > hi) { sb += lum(i2, j2); nb++; } }
+            if (na && nb) side += Math.abs(sa / na - sb / nb) / 255;
+          }
+          side /= cols;
+          let score = (meanOff - meanRun) * 3 + side * 12 + Math.min(turns, 3) * 1.5 + Math.min(Math.abs(yb2 - ya2), 2) + Math.min(distinct, 7) * 0.5;
+          if (meanRun > 3) score -= (meanRun - 3) * 6;
+          // 第 3 步要锁定的顶点越少越好（课堂上不拖沓），但太少就没得讲
+          if (K > 12) score -= (K - 12) * 0.9;
+          if (K < 7) score -= (7 - K) * 2;
+          if (run.length > 12) score -= (run.length - 12) * 2;
+          cands.push({ score, turns, ...Wd, run, a, b, K, runCost, segIndex: si, dir });
+        }
+      }
+    }
+  });
+  if (!cands.length) return null;
+  // 优先要有拐弯的，没有再退而求其次（直线）
+  const bent = cands.filter((c) => c.turns >= 1);
+  const pool = bent.length ? bent : cands;
+  let best = pool[0]; for (const c of pool) if (c.score > best.score) best = c;
+  best.trace = windowTrace(best, best.a, best.b, false);
+  const last = best.trace[best.trace.length - 1];
+  const path = []; for (let v = best.b; v !== -1; v = last.pred[v]) path.push([v % best.cols, (v / best.cols) | 0]);
+  best.path = path.reverse();
+  best.same = best.path.length === best.run.length && best.path.every((p, t) => p[0] === best.run[t][0] && p[1] === best.run[t][1]);
+  return best;
+}
+
+// =====================================================================
+//  阶段
+// =====================================================================
+// draw → zoom → dots → edges → dij(k = 0..K) → reveal
+const PH = { name: 'draw', t0: 0, k: 0, play: false, paused: false, playT: 0, endAt: -1, intro: true };
+let toast = null;
+function showToast(text) { toast = { text, t0: now() }; }
+function setPhase(name, opts) {
+  PH.name = name; PH.t0 = now(); PH.intro = true;
+  if (opts && opts.instant) { PH.t0 = now() - 100; PH.intro = false; }
+  C.live = null;
+  cv.style.cursor = name === 'draw' ? 'crosshair' : 'default';
+}
+function resetAll() { resetContour(); PH.k = 0; stopPlay(); setPhase('draw'); }
+const PHASE_DUR = { zoom: 2.8, dots: 1.3, edges: 1.4, reveal: 2.6 };
+
+function ensureWindow() {
+  if (!WIN) WIN = chooseWindow();
+  if (!WIN) { showToast('这条轮廓上没挑到合适的小块，换个位置多点几下再试'); return false; }
+  return true;
+}
+function next() {
+  const t = now();
+  switch (PH.name) {
+    case 'draw':
+      if (C.auto) { finishAutoTrace(); return; }
+      if (!C.closed) {
+        if (C.seeds.length >= 2) { closeContour(); return; }
+        if (C.seeds.length === 0 && !P.custom) { startAutoTrace(); return; }
+        showToast('先沿着轮廓点几下'); return;
+      }
+      if (t - C.closedAt < 1.0) { C.closedAt = t - 10; return; }
+      if (!ensureWindow()) return;
+      setPhase('zoom'); return;
+    case 'zoom': if (t - PH.t0 < PHASE_DUR.zoom) { PH.t0 = t - 100; return; } setPhase('dots'); return;
+    case 'dots': if (t - PH.t0 < PHASE_DUR.dots) { PH.t0 = t - 100; return; } setPhase('edges'); return;
+    case 'edges': if (t - PH.t0 < PHASE_DUR.edges) { PH.t0 = t - 100; return; } PH.k = 0; stopPlay(); setPhase('dij'); return;
+    case 'dij':
+      if (PH.play) { PH.play = false; PH.paused = true; return; }          // 自动播放中：暂停
+      if (PH.k < WIN.K) {
+        if (PH.k < CFG.manualSteps && !PH.paused) { lockOne(t); return; }  // 前几步一按一步
+        PH.play = true; PH.paused = false; PH.playT = t - CFG.playEvery; return; // 之后：自动播放 / 继续
+      }
+      stopPlay(); setPhase('reveal'); return;
+    case 'reveal': if (t - PH.t0 < PHASE_DUR.reveal) PH.t0 = t - 100; return;
+  }
+}
+function lockOne(t) { PH.k++; PH.t0 = t; PH.intro = false; if (PH.k >= WIN.K) PH.endAt = t; }
+function stopPlay() { PH.play = false; PH.paused = false; PH.endAt = -1; }
+function prev() {
+  stopPlay();
+  switch (PH.name) {
+    case 'draw': return;
+    case 'zoom': setPhase('draw', { instant: true }); C.closedAt = now() - 10; return;
+    case 'dots': setPhase('zoom', { instant: true }); return;
+    case 'edges': setPhase('dots', { instant: true }); return;
+    case 'dij': if (PH.k > 0) { PH.k--; PH.t0 = now() - 100; PH.intro = false; return; } setPhase('edges', { instant: true }); return;
+    case 'reveal': PH.k = WIN.K; setPhase('dij', { instant: true }); return;
+  }
+}
+// Enter：直接跳到结束（第 1 步里等于“下一步”）
+function fastForward() {
+  if (PH.name === 'draw') { next(); return; }
+  if (PH.name === 'reveal') { PH.t0 = now() - 100; return; }
+  stopPlay(); PH.k = WIN.K; setPhase('reveal');
+}
+// 自动播放：每隔 playEvery 秒锁定一个；终点锁定后停一下，自动进入揭晓
+function stepAuto() {
+  if (PH.name !== 'dij') return;
+  const t = now();
+  if (PH.play && PH.k < WIN.K && t - PH.playT >= CFG.playEvery) { PH.playT = t; lockOne(t); }
+  if (PH.play && PH.k >= WIN.K && PH.endAt >= 0 && t - PH.endAt >= 1.0) { stopPlay(); setPhase('reveal'); }
+}
+function restart() {
+  stopPlay();
+  if (PH.name === 'draw') { resetContour(); C.closedAt = -99; return; }
+  if (PH.name === 'dij' || PH.name === 'reveal') { PH.k = 0; setPhase('dij'); return; }
+  setPhase('zoom');
+}
+function jumpTo(n) {
+  stopPlay();
+  if (n === 1) { setPhase('draw', { instant: true }); C.closedAt = now() - 10; return; }
+  if (!C.closed) { showToast('先把轮廓闭合'); return; }
+  if (!ensureWindow()) return;
+  if (n === 2) setPhase('zoom');
+  if (n === 3) { PH.k = 0; setPhase('dij'); }
+}
+
+// ---------------- 输入 ----------------
+let hintsOn = true;
+try { hintsOn = localStorage.getItem('lasso-hints') !== 'off'; } catch (e) { /* file:// 下可能不可用 */ }
+window.addEventListener('keydown', (e) => {
+  const k = e.key;
+  if (k === ' ' || k === 'ArrowRight' || k === 'PageDown' || k === 'ArrowDown') { e.preventDefault(); next(); }
+  else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'ArrowUp') { e.preventDefault(); prev(); }
+  else if (k === 'Enter') { e.preventDefault(); fastForward(); }
+  else if (k === 'r' || k === 'R') restart();
+  else if (k === 'Backspace' || k === 'z' || k === 'Z') { e.preventDefault(); if (PH.name === 'draw') undoSeed(); }
+  else if (k === 'f' || k === 'F') { if (!document.fullscreenElement) document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(() => {}); else document.exitFullscreen(); }
+  else if (k === 'h' || k === 'H') { hintsOn = !hintsOn; try { localStorage.setItem('lasso-hints', hintsOn ? 'on' : 'off'); } catch (e2) { /* 忽略 */ } }
+  else if (k === 'd' || k === 'D') { DEBUG = !DEBUG; }
+  else if (k === '1' || k === '2' || k === '3') jumpTo(Number(k));
+});
+// 右下角的“‹ / 下一步 ›”按钮（第 1 步闭合前，左键要用来落点，靠它前进）
+const BTN = { prev: { x: 1648, y: 998, w: 76, h: 64 }, next: { x: 1736, y: 998, w: 168, h: 64 } };
+const inRect = (p, r) => p && p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h;
+const prevVisible = () => PH.name !== 'draw';
+function hitButton(p) { if (inRect(p, BTN.next)) return 'next'; if (prevVisible() && inRect(p, BTN.prev)) return 'prev'; return null; }
+cv.addEventListener('mousemove', (e) => {
+  C.mouse = toStage(e); if (!C.auto) updateLive();
+  cv.style.cursor = hitButton(C.mouse) ? 'pointer' : PH.name === 'draw' && !C.closed ? 'crosshair' : 'default';
+});
+cv.addEventListener('mouseleave', () => { if (!C.auto) { C.mouse = null; C.live = null; } });
+cv.addEventListener('click', (e) => {
+  cv.focus();
+  if (!P.ready) return;
+  const p = toStage(e); C.mouse = p;
+  const b = hitButton(p);
+  if (b) { if (b === 'next') next(); else prev(); return; }
+  if (PH.name !== 'draw') { next(); return; }            // 第 2、3 步：左键 = 下一步（自动播放中 = 暂停 / 继续）
+  if (C.auto) return;
+  if (C.closed) { if (now() - C.closedAt > 0.45) next(); return; } // 闭合后：左键 = 下一步（双击闭合的第二下不算）
+  if (!insidePhoto(p)) return;
+  C.lastClickT = now();
+  if (nearFirstSeed(p)) { closeContour(); return; }
+  const w = worldOfStage(p);
+  addSeed(snap(w.x - 0.5, w.y - 0.5, CFG.snapSeed));
+  updateLive();
+});
+cv.addEventListener('dblclick', (e) => {
+  if (PH.name !== 'draw' || C.closed || C.auto || hitButton(toStage(e))) return;
+  // 双击的第二下会多落一个点：如果它和前一个点几乎重合就去掉，再闭合
+  const segs = C.segs;
+  if (segs.length && segs[segs.length - 1].length <= 4) { C.seeds.pop(); segs.pop(); C.pred = dijkstraFrom(C.seeds[C.seeds.length - 1]).pred; }
+  if (C.seeds.length >= 2) closeContour();
+});
+// 右键：第 1 步撤销一个点；第 2、3 步 = 上一步。一律不弹浏览器菜单
+cv.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  if (hitButton(toStage(e))) return;
+  if (PH.name === 'draw') undoSeed(); else prev();
+});
+// 拖一张照片进来替换（FileReader 读成 data URL，画布不会被“污染”）
+let dragOn = false;
+window.addEventListener('dragover', (e) => { e.preventDefault(); dragOn = true; });
+window.addEventListener('dragleave', (e) => { if (!e.relatedTarget) dragOn = false; });
+window.addEventListener('drop', (e) => {
+  e.preventDefault(); dragOn = false;
+  const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (!f || !/^image\//.test(f.type)) { showToast('请拖入一张图片（jpg / png）'); return; }
+  const fr = new FileReader();
+  fr.onload = () => loadPhoto(fr.result, true).catch(() => showToast('这张图片读不出来'));
+  fr.readAsDataURL(f);
+});
+
+// =====================================================================
+//  绘制
+// =====================================================================
+function text(str, x, y, size, color, opts) {
+  const o = opts || {};
+  ctx.font = `${o.weight || 600} ${size}px ${o.mono ? FONT_MONO : FONT_SANS}`;
+  ctx.fillStyle = color; ctx.textAlign = o.align || 'center'; ctx.textBaseline = o.baseline || 'middle';
+  ctx.globalAlpha = o.alpha === undefined ? 1 : o.alpha;
+  ctx.fillText(str, x, y); ctx.globalAlpha = 1;
+}
+function caption(str, alpha) { if (alpha > 0.001) text(str, 960, 74, 50, COL.ink, { alpha, weight: 700 }); }
+
+// 镜头：screen = world·s + (tx, ty)，world = 计算图的像素坐标（像素 (x,y) 占 [x,x+1)×[y,y+1)）
+const camFull = () => ({ s: P.k, tx: P.rect.x, ty: P.rect.y });
+const gx = (i) => 960 + (i - (CFG.cols - 1) / 2) * CFG.spacing;
+const gy = (j) => CFG.gridCY + (j - (CFG.rows - 1) / 2) * CFG.spacing;
+const camZoom = () => ({ s: CFG.spacing, tx: gx(0) - (WIN.x0 + 0.5) * CFG.spacing, ty: gy(0) - (WIN.y0 + 0.5) * CFG.spacing });
+function camAt(u) {
+  const A = camFull(), B = camZoom();
+  const wc = { x: WIN.x0 + CFG.cols / 2, y: WIN.y0 + CFG.rows / 2 };
+  const e = easeIO(clamp01(u)), ep = easeIO(clamp01(u / 0.55));
+  const s = A.s * Math.pow(B.s / A.s, e);
+  const cx = lerp(wc.x * A.s + A.tx, wc.x * B.s + B.tx, ep), cy = lerp(wc.y * A.s + A.ty, wc.y * B.s + B.ty, ep);
+  return { s, tx: cx - wc.x * s, ty: cy - wc.y * s };
+}
+function withCam(cam, fn) { ctx.save(); ctx.transform(cam.s, 0, 0, cam.s, cam.tx, cam.ty); fn(); ctx.restore(); }
+
+function drawPhoto(cam, alpha) {
+  if (alpha <= 0.001) return;
+  const s = cam.s;
+  const wx0 = Math.max(0, Math.floor((0 - cam.tx) / s)), wy0 = Math.max(0, Math.floor((0 - cam.ty) / s));
+  const wx1 = Math.min(P.cw, Math.ceil((1920 - cam.tx) / s)), wy1 = Math.min(P.ch, Math.ceil((1080 - cam.ty) / s));
+  if (wx1 <= wx0 || wy1 <= wy0) return;
+  const hi = 1 - clamp01((s - 5) / 9);
+  ctx.save(); ctx.globalAlpha = alpha;
+  if (DEBUG && PH.name === 'draw') { ctx.imageSmoothingEnabled = false; ctx.drawImage(P.dbg, 0, 0, P.cw, P.ch, cam.tx, cam.ty, P.cw * s, P.ch * s); ctx.restore(); return; }
+  if (hi < 1) {
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(P.small, wx0, wy0, wx1 - wx0, wy1 - wy0, cam.tx + wx0 * s, cam.ty + wy0 * s, (wx1 - wx0) * s, (wy1 - wy0) * s);
+  }
+  if (hi > 0) {
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; ctx.globalAlpha = alpha * hi;
+    const r = P.iw / P.cw;
+    ctx.drawImage(P.img, wx0 * r, wy0 * r, (wx1 - wx0) * r, (wy1 - wy0) * r, cam.tx + wx0 * s, cam.ty + wy0 * s, (wx1 - wx0) * s, (wy1 - wy0) * s);
+  }
+  ctx.restore();
+  // 放大到一定程度后画出像素之间的细缝，让人看出“一格一格”
+  const ga = clamp01((s - 24) / 50) * 0.9 * alpha;
+  if (ga > 0.01) {
+    ctx.save(); ctx.strokeStyle = COL.bg; ctx.globalAlpha = ga; ctx.lineWidth = Math.min(4, s * 0.025); ctx.beginPath();
+    for (let x = wx0; x <= wx1; x++) { ctx.moveTo(cam.tx + x * s, cam.ty + wy0 * s); ctx.lineTo(cam.tx + x * s, cam.ty + wy1 * s); }
+    for (let y = wy0; y <= wy1; y++) { ctx.moveTo(cam.tx + wx0 * s, cam.ty + y * s); ctx.lineTo(cam.tx + wx1 * s, cam.ty + y * s); }
+    ctx.stroke(); ctx.restore();
+  }
+}
+function pixelsPath(arr) { // 像素序号 → 世界坐标折线（像素中心）
+  const p = new Path2D();
+  arr.forEach((q, i) => { const x = (q % P.cw) + 0.5, y = ((q / P.cw) | 0) + 0.5; if (i) p.lineTo(x, y); else p.moveTo(x, y); });
+  return p;
+}
+function strokeWorld(cam, path, widthPx, color, alpha, halo) {
+  if (alpha <= 0.001) return;
+  withCam(cam, () => {
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.globalAlpha = alpha;
+    if (halo) { ctx.strokeStyle = 'rgba(255,255,255,0.92)'; ctx.lineWidth = (widthPx + halo * 2) / cam.s; ctx.stroke(path); }
+    ctx.strokeStyle = color; ctx.lineWidth = widthPx / cam.s; ctx.stroke(path);
+  });
+}
+function cutoutOverlay(cam, alpha) {
+  if (alpha <= 0.001 || !C.closed) return;
+  const pts = contourPixels();
+  withCam(cam, () => {
+    const p = new Path2D();
+    p.rect(0, 0, P.cw, P.ch);
+    pts.forEach((q, i) => { const x = (q % P.cw) + 0.5, y = ((q / P.cw) | 0) + 0.5; if (i) p.lineTo(x, y); else p.moveTo(x, y); });
+    p.closePath();
+    ctx.globalAlpha = alpha; ctx.fillStyle = COL.bg; ctx.fill(p, 'evenodd');
+  });
+}
+function seedDot(x, y, r, ring) {
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fillStyle = '#FFFFFF'; ctx.fill();
+  ctx.lineWidth = ring; ctx.strokeStyle = COL.orange; ctx.stroke();
+}
+
+function drawStep1(t) {
+  const cam = camFull();
+  if (!C.closed) caption('磁性套索', 1);
+  drawPhoto(cam, 1);
+  const cutK = C.closed ? prog(t, C.closedAt, 0.9, easeIO) : 0;
+  cutoutOverlay(cam, 0.86 * cutK);
+  if (C.closed) caption('抠出来了', cutK);
+  const lw = 5;
+  if (C.segs.length) strokeWorld(cam, pixelsPath(contourPixels()), lw, COL.orange, 1, 2.5);
+  if (C.live && C.live.length > 1) strokeWorld(cam, pixelsPath(C.live), lw, COL.orange, 0.95, 2.5);
+  if (!C.closed || cutK < 1) {
+    C.seeds.forEach((q, i) => { const s = stageOfIdx(q); seedDot(s.x, s.y, i === 0 ? 8 : 6.5, 3); });
+    if (C.mouse && !C.closed && nearFirstSeed(C.mouse)) {
+      const s = stageOfIdx(C.seeds[0]); ctx.beginPath(); ctx.arc(s.x, s.y, 18 + 3 * Math.sin(t * 8), 0, Math.PI * 2);
+      ctx.lineWidth = 4; ctx.strokeStyle = COL.orange; ctx.stroke();
+    }
+  }
+}
+
+function drawZoom(t, u, overlay) {
+  const cam = camAt(u);
+  drawPhoto(cam, 1);
+  cutoutOverlay(cam, 0.86 * (1 - clamp01(u / 0.45)));
+  // 小窗以外淡掉
+  const dimK = clamp01((u - 0.55) / 0.45) * 0.62;
+  if (dimK > 0.001) {
+    withCam(cam, () => {
+      const p = new Path2D(); p.rect(-10, -10, P.cw + 20, P.ch + 20); p.rect(WIN.x0, WIN.y0, CFG.cols, CFG.rows);
+      ctx.globalAlpha = dimK; ctx.fillStyle = COL.bg; ctx.fill(p, 'evenodd');
+    });
+  }
+  strokeWorld(cam, pixelsPath(contourPixels()), lerp(5, 11, clamp01(u)), COL.orange, overlay === undefined ? 1 : overlay, lerp(2.5, 4, clamp01(u)));
+}
+
+function pixColor(i, j) { return WIN.colors[j][i]; }
+function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); }
+
+function drawDots(t, m) {
+  // m：0 = 方块像素，1 = 圆点
+  const S = CFG.spacing, R = CFG.R;
+  if (m < 1) {
+    drawZoom(t, 1, 1 - clamp01(m * 1.6));
+    ctx.save(); ctx.globalAlpha = m; ctx.fillStyle = COL.bg; ctx.fillRect(-10, -10, 1940, 1100); ctx.restore();
+  }
+  for (let j = 0; j < CFG.rows; j++) for (let i = 0; i < CFG.cols; i++) {
+    const size = lerp(S, 2 * R, m), r = lerp(0, R, m);
+    ctx.save();
+    ctx.globalAlpha = clamp01(m * 3);
+    roundRect(gx(i) - size / 2, gy(j) - size / 2, size, size, r);
+    ctx.fillStyle = rgbStr(pixColor(i, j)); ctx.fill();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = rgbStr(hex2rgb(COL.vStroke), m); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function edgeList() {
+  const out = [];
+  for (let j = 0; j < CFG.rows; j++) for (let i = 0; i < CFG.cols; i++) {
+    const v = j * CFG.cols + i;
+    if (i < CFG.cols - 1) out.push({ a: v, b: v + 1, w: WIN.wr[j][i], i, j, horiz: true });
+    if (j < CFG.rows - 1) out.push({ a: v, b: v + CFG.cols, w: WIN.wd[j][i], i, j, horiz: false });
+  }
+  return out;
+}
+const vx = (v) => gx(v % CFG.cols), vy = (v) => gy((v / CFG.cols) | 0);
+function edgeStyle(w) { const k = (w - 1) / 8; return { width: lerp(13, 3, Math.pow(k, 0.8)), color: mixHex(COL.ink, COL.edge, Math.pow(k, 0.7)) }; }
+function drawEdgeLine(a, b, k, width, color, alpha) {
+  if (k <= 0.001 || alpha <= 0.001) return;
+  const R = CFG.R; const x1 = vx(a), y1 = vy(a), x2 = vx(b), y2 = vy(b); const L = Math.hypot(x2 - x1, y2 - y1);
+  const ux = (x2 - x1) / L, uy = (y2 - y1) / L; const sx = x1 + ux * R * 0.9, sy = y1 + uy * R * 0.9, ex = x2 - ux * R * 0.9, ey = y2 - uy * R * 0.9;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.lineCap = 'round'; ctx.strokeStyle = color; ctx.lineWidth = width;
+  ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(lerp(sx, ex, k), lerp(sy, ey, k)); ctx.stroke(); ctx.restore();
+}
+function drawWeight(e, k, alpha, hot) {
+  if (k <= 0.001 || alpha <= 0.001) return;
+  const x = (vx(e.a) + vx(e.b)) / 2, y = (vy(e.a) + vy(e.b)) / 2; const sc = easeBack(clamp01(k));
+  ctx.save(); ctx.globalAlpha = alpha; ctx.translate(x, y); ctx.scale(sc, sc);
+  roundRect(-27, -26, 54, 52, 14); ctx.fillStyle = hot ? COL.orangeTint : '#FFFFFF'; ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = hot ? COL.orange : COL.cardLine; ctx.stroke();
+  const kk = (e.w - 1) / 8;
+  ctx.font = `700 40px ${FONT_MONO}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = hot ? COL.orangeDeep : mixHex(COL.ink, COL.ink2, kk); ctx.fillText(String(e.w), 0, 2);
+  ctx.restore();
+}
+function drawEdgesPhase(t, appear) {
+  const E = edgeList();
+  for (const e of E) { const k = appear(e); const st = edgeStyle(e.w); drawEdgeLine(e.a, e.b, k, st.width, st.color, 1); }
+  for (const e of E) drawWeight(e, clamp01((appear(e) - 0.6) / 0.4), 1, false);
+}
+function plainVertex(v, alpha) {
+  const i = v % CFG.cols, j = (v / CFG.cols) | 0;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.beginPath(); ctx.arc(gx(i), gy(j), CFG.R, 0, Math.PI * 2);
+  ctx.fillStyle = rgbStr(pixColor(i, j)); ctx.fill(); ctx.lineWidth = 2.5; ctx.strokeStyle = COL.vStroke; ctx.stroke(); ctx.restore();
+}
+function endTags(alpha, hot) {
+  if (alpha <= 0.001) return;
+  const tag = (v, str) => {
+    const i = v % CFG.cols, j = (v / CFG.cols) | 0; let x = gx(i), y = gy(j), al = 'center';
+    if (i === 0) { x -= CFG.R + 24; al = 'right'; } else if (i === CFG.cols - 1) { x += CFG.R + 24; al = 'left'; } else { y -= CFG.R + 36; }
+    text(str, x, y, 42, hot ? COL.orangeDeep : COL.ink, { align: al, alpha, weight: 700 });
+  };
+  tag(WIN.a, '起点'); tag(WIN.b, '终点');
+}
+
+function distStr(d) { return d >= INF ? '∞' : String(d); }
+function drawDij(t, k, revealT) {
+  const st = WIN.trace[k], prevSt = k > 0 ? WIN.trace[k - 1] : null;
+  const dt = PH.name === 'dij' ? t - PH.t0 : 99;
+  const introK = PH.name === 'dij' && k === 0 && PH.intro ? prog(t, PH.t0, 0.7, easeOut) : 1;
+  const E = edgeList();
+  const pathSet = new Set(); const pathEdges = new Set();
+  if (revealT !== undefined) {
+    WIN.path.forEach(([i, j]) => pathSet.add(j * CFG.cols + i));
+    for (let q = 1; q < WIN.path.length; q++) { const a = WIN.path[q - 1][1] * CFG.cols + WIN.path[q - 1][0], b = WIN.path[q][1] * CFG.cols + WIN.path[q][0]; pathEdges.add(Math.min(a, b) + ',' + Math.max(a, b)); }
+  }
+  const dimK = revealT !== undefined ? prog(revealT, 0.9, 0.6) * 0.72 : 0;
+  // 揭晓：照片里这一小块像素淡淡地回到背后
+  if (revealT !== undefined) {
+    const pa = prog(revealT, 1.3, 0.8) * 0.32;
+    if (pa > 0) {
+      const S = CFG.spacing; ctx.save(); ctx.globalAlpha = pa;
+      for (let j = 0; j < CFG.rows; j++) for (let i = 0; i < CFG.cols; i++) { ctx.fillStyle = rgbStr(pixColor(i, j)); ctx.fillRect(gx(i) - S / 2, gy(j) - S / 2, S + 0.5, S + 0.5); }
+      ctx.restore();
+    }
+  }
+  // 边
+  for (const e of E) {
+    const s = edgeStyle(e.w); const onPath = pathEdges.has(e.a + ',' + e.b);
+    drawEdgeLine(e.a, e.b, 1, s.width, s.color, onPath ? 1 : 1 - dimK);
+  }
+  // 已锁定顶点的前驱边（最短路径树）
+  for (let v = 0; v < st.dist.length; v++) {
+    if (!st.locked[v] || st.pred[v] < 0) continue;
+    const onPath = pathEdges.has(Math.min(v, st.pred[v]) + ',' + Math.max(v, st.pred[v]));
+    const born = prevSt && !prevSt.locked[v] ? prog(dt, 0, 0.45, easeOut) : 1;
+    drawEdgeLine(st.pred[v], v, born, 12, COL.orange, (onPath ? 0.55 : 0.4 * (1 - dimK)));
+  }
+  // 刚松弛的边一闪
+  if (st.u >= 0 && dt < 1.2) {
+    for (const v of st.changed) drawEdgeLine(st.u, v, 1, 14, COL.orange, 0.85 * (1 - clamp01((dt - 0.35) / 0.85)));
+  }
+  // 揭晓：最短路径一节一节亮起来
+  if (revealT !== undefined) {
+    const n = WIN.path.length - 1; const pk = prog(revealT, 0, 0.9) * n;
+    for (let q = 1; q <= n; q++) {
+      const a = WIN.path[q - 1][1] * CFG.cols + WIN.path[q - 1][0], b = WIN.path[q][1] * CFG.cols + WIN.path[q][0];
+      drawEdgeLine(a, b, clamp01(pk - (q - 1)), 20, COL.orange, 1);
+    }
+  }
+  // 揭晓：第 1 步那条线（同样的样式）沿着同一串像素描一遍
+  if (revealT !== undefined) {
+    const lk = prog(revealT, 1.3, 0.8);
+    if (lk > 0) {
+      const pts = WIN.run.map(([i, j]) => [gx(i), gy(j)]); const n = pts.length - 1; const upto = lk * n;
+      ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      const pathTo2 = () => { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let q = 1; q <= n; q++) { const f = clamp01(upto - (q - 1)); if (f <= 0) break; ctx.lineTo(lerp(pts[q - 1][0], pts[q][0], f), lerp(pts[q - 1][1], pts[q][1], f)); } };
+      pathTo2(); ctx.strokeStyle = 'rgba(255,255,255,0.95)'; ctx.lineWidth = 16; ctx.stroke();
+      pathTo2(); ctx.strokeStyle = COL.orangeDeep; ctx.lineWidth = 7; ctx.stroke();
+      ctx.restore();
+    }
+  }
+  // 权值
+  for (const e of E) {
+    const onPath = pathEdges.has(e.a + ',' + e.b);
+    const hot = st.u >= 0 && dt < 1.2 && ((e.a === st.u && st.changed.includes(e.b)) || (e.b === st.u && st.changed.includes(e.a)));
+    drawWeight(e, 1, onPath ? 1 : 1 - dimK * 0.85, hot || (onPath && revealT !== undefined && revealT > 0.9));
+  }
+  // 顶点
+  for (let v = 0; v < st.dist.length; v++) {
+    const i = v % CFG.cols, j = (v / CFG.cols) | 0, x = gx(i), y = gy(j), R = CFG.R;
+    const onPath = pathSet.has(v); const alpha = onPath ? 1 : 1 - dimK;
+    const isNew = st.u === v; const newK = isNew ? prog(dt, 0, 0.35, easeOut) : 1;
+    let fill = '#FFFFFF', tcol = COL.ink;
+    if (st.locked[v]) { fill = COL.orangeTint; tcol = COL.orangeDeep; }
+    if (isNew) { fill = mixHex('#FFFFFF', COL.orange, newK); tcol = newK > 0.5 ? '#FFFFFF' : COL.ink; }
+    if (revealT !== undefined && onPath) { const pk = prog(revealT, 0.1, 0.9); fill = mixHex(st.locked[v] ? COL.orangeTint : '#FFFFFF', COL.orange, pk); tcol = pk > 0.5 ? '#FFFFFF' : COL.orangeDeep; }
+    if (st.dist[v] >= INF) tcol = COL.ink3;
+    ctx.save(); ctx.globalAlpha = alpha;
+    // 外圈 = 像素原来的颜色
+    ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fillStyle = rgbStr(pixColor(i, j)); ctx.fill();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = COL.vStroke; ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, y, (R - 9) * introK, 0, Math.PI * 2); ctx.fillStyle = fill; ctx.fill();
+    // 距离
+    const changed = st.changed.includes(v) && dt < 1.0 && (st.u >= 0 || PH.intro);
+    const pop = changed ? 1 + 0.28 * Math.sin(Math.PI * clamp01(dt / 0.5)) : 1;
+    if (introK > 0.6) {
+      ctx.translate(x, y); ctx.scale(pop, pop);
+      const s = distStr(st.dist[v]);
+      ctx.font = `700 ${s.length >= 3 ? 36 : 44}px ${FONT_MONO}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = changed && !isNew && st.u >= 0 ? mixHex(COL.orange, tcol, clamp01(dt / 1.0)) : tcol;
+      ctx.globalAlpha = alpha * clamp01((introK - 0.6) / 0.4);
+      ctx.fillText(s, 0, s === '∞' ? 0 : 2);
+    }
+    ctx.restore();
+    if (isNew && dt < 0.8) { // 锁定时的脉冲圈
+      const rk = clamp01(dt / 0.8); ctx.save(); ctx.globalAlpha = 1 - rk; ctx.beginPath(); ctx.arc(x, y, R + 6 + 30 * rk, 0, Math.PI * 2);
+      ctx.lineWidth = 6 - 3 * rk; ctx.strokeStyle = COL.orange; ctx.stroke(); ctx.restore();
+    }
+  }
+  endTags(introK, revealT !== undefined && revealT > 0.9);
+}
+
+function drawButtons(t) {
+  const one = (r, label, enabled) => {
+    const hover = inRect(C.mouse, r) && enabled;
+    ctx.save(); ctx.globalAlpha = enabled ? 1 : 0.4;
+    roundRect(r.x, r.y, r.w, r.h, 16); ctx.fillStyle = hover ? '#FFFFFF' : 'rgba(255,255,255,0.7)'; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = hover ? COL.ink3 : COL.cardLine; ctx.stroke(); ctx.restore();
+    text(label, r.x + r.w / 2, r.y + r.h / 2 + 1, 30, hover ? COL.ink : COL.ink2, { weight: 600, alpha: enabled ? 1 : 0.4 });
+  };
+  if (prevVisible()) one(BTN.prev, '‹', true);
+  const label = PH.name === 'dij' && PH.play ? '暂停 ❚❚' : PH.name === 'dij' && PH.paused ? '继续 ›' : '下一步 ›';
+  one(BTN.next, label, PH.name !== 'reveal');
+}
+function drawHints(t) {
+  if (!hintsOn) return;
+  let s;
+  if (PH.name === 'draw' && !C.closed) s = '点击：落点　回到起点点击 / 双击：闭合　右键 / Backspace：撤销　R：重来　→ / 右下角按钮：下一步';
+  else s = '点击 / 空格 / →：下一步　右键 / ←：上一步　Enter：跳到结束　R：重来　1 2 3：跳步　F：全屏　H：隐藏提示';
+  text(s, 1628, 1031, 22, COL.ink3, { align: 'right', weight: 400 });
+  const step = PH.name === 'draw' ? 1 : PH.name === 'dij' || PH.name === 'reveal' ? 3 : 2;
+  ['抠图', '放大', '揭晓'].forEach((n, i) => text(`${i + 1} ${n}`, 24 + i * 108, 1031, 22, i + 1 === step ? COL.orange : COL.ink3, { align: 'left', weight: i + 1 === step ? 700 : 400 }));
+}
+function drawToast(t) {
+  if (!toast) return; const a = 1 - prog(t, toast.t0 + 1.6, 0.4); if (a <= 0) { toast = null; return; }
+  ctx.save(); ctx.globalAlpha = a; ctx.font = `600 38px ${FONT_SANS}`; const w = ctx.measureText(toast.text).width + 60;
+  roundRect(960 - w / 2, 960, w, 70, 35); ctx.fillStyle = 'rgba(31,36,48,0.86)'; ctx.fill(); ctx.restore();
+  text(toast.text, 960, 996, 38, '#FFFFFF', { alpha: a });
+}
+function drawCursor() {
+  if (!REC || !C.mouse || PH.name !== 'draw') return;
+  const { x, y } = C.mouse; ctx.save(); ctx.translate(x, y); ctx.beginPath();
+  ctx.moveTo(0, 0); ctx.lineTo(0, 30); ctx.lineTo(8, 23); ctx.lineTo(14, 36); ctx.lineTo(20, 33); ctx.lineTo(14, 21); ctx.lineTo(24, 21); ctx.closePath();
+  ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#000000'; ctx.stroke(); ctx.restore();
+}
+
+function render() {
+  const t = now();
+  stepAutoTrace(); stepAuto();
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = COL.bg; ctx.fillRect(0, 0, cv.width, cv.height);
+  baseTransform();
+  if (!P.ready) { text('正在载入…', 960, 540, 48, COL.ink3); return; }
+  const dt = t - PH.t0;
+  switch (PH.name) {
+    case 'draw': drawStep1(t); break;
+    case 'zoom': {
+      const u = clamp01(dt / PHASE_DUR.zoom);
+      drawZoom(t, u);
+      caption('放大看：一格一格的像素', prog(dt, PHASE_DUR.zoom - 0.6, 0.6));
+      break;
+    }
+    case 'dots': {
+      const m = prog(dt, 0, PHASE_DUR.dots, easeIO);
+      drawDots(t, m);
+      caption('放大看：一格一格的像素', 1 - clamp01(m * 2));
+      caption('每个像素 = 一个顶点', clamp01(m * 2 - 1));
+      break;
+    }
+    case 'edges': {
+      const appear = (e) => prog(dt, 0.05 * (e.i + e.j), 0.6, easeOut);
+      drawEdgesPhase(t, appear);
+      for (let v = 0; v < CFG.cols * CFG.rows; v++) plainVertex(v, 1);
+      caption('每个像素 = 一个顶点', 1 - prog(dt, 0, 0.4));
+      caption('相邻像素连一条边：越像边缘，权越小', prog(dt, 0.3, 0.5));
+      break;
+    }
+    case 'dij': {
+      drawDij(t, PH.k);
+      caption('迪杰斯特拉：每次锁定距离最小的顶点', PH.intro && PH.k === 0 ? prog(dt, 0.2, 0.5) : 1);
+      break;
+    }
+    case 'reveal': {
+      drawDij(t, WIN.K, dt);
+      caption('迪杰斯特拉：每次锁定距离最小的顶点', 1 - prog(dt, 0, 0.4));
+      const tk = prog(dt, 1.7, 0.6, easeOut);
+      if (tk > 0) {
+        ctx.save(); ctx.globalAlpha = tk; ctx.translate(0, (1 - tk) * 14);
+        ctx.font = `800 76px ${FONT_SANS}`; ctx.textBaseline = 'middle';
+        const a = '这条线 ', b = '=', c = ' 最短路径';
+        const wa = ctx.measureText(a).width, wb = ctx.measureText(b).width, wc = ctx.measureText(c).width; let x = 960 - (wa + wb + wc) / 2;
+        ctx.textAlign = 'left'; ctx.fillStyle = COL.ink; ctx.fillText(a, x, 76); x += wa;
+        ctx.fillStyle = COL.orange; ctx.fillText(b, x, 76); x += wb; ctx.fillStyle = COL.ink; ctx.fillText(c, x, 76);
+        ctx.restore();
+      }
+      break;
+    }
+  }
+  if (dragOn) {
+    ctx.save(); ctx.setLineDash([18, 14]); ctx.lineWidth = 5; ctx.strokeStyle = COL.orange; roundRect(40, 40, 1840, 1000, 30); ctx.stroke(); ctx.restore();
+    text('松开鼠标，换成这张照片', 960, 540, 56, COL.orangeDeep, { weight: 700 });
+  }
+  drawToast(t); drawHints(t); drawButtons(t); drawCursor();
+}
+function loop() { if (!REC) render(); requestAnimationFrame(loop); }
+
+// ---------------- 给测试 / 录屏用的接口 ----------------
+window.__demo = {
+  setTime(t) { manualT = t; render(); },
+  render,
+  state() { return { phase: PH.name, k: PH.k, K: WIN ? WIN.K : null, play: PH.play, paused: PH.paused, closed: C.closed, seeds: C.seeds.length, win: WIN ? { x0: WIN.x0, y0: WIN.y0, same: WIN.same, score: WIN.score } : null }; },
+  stageOfWorld(x, y) { return { x: P.rect.x + (x + 0.5) * P.k, y: P.rect.y + (y + 0.5) * P.k }; },
+  clientOfStage(x, y) { return { x: VIEW.ox + x * VIEW.s, y: VIEW.oy + y * VIEW.s }; },
+  preset: PRESET,
+  next, prev, fastForward, restart,
+  exportCheck(withFull) {
+    const seg = WIN ? C.segs[WIN.segIndex] : null;
+    const o = {
+      cw: P.cw, ch: P.ch, cfg: CFG,
+      contourSegs: C.segs.map((s) => s.map(idxXY)),
+      seeds: C.seeds.map(idxXY),
+      win: WIN && { x0: WIN.x0, y0: WIN.y0, cols: WIN.cols, rows: WIN.rows, wr: WIN.wr, wd: WIN.wd, a: WIN.a, b: WIN.b, K: WIN.K, run: WIN.run, path: WIN.path, same: WIN.same, segIndex: WIN.segIndex, dir: WIN.dir,
+        trace: WIN.trace.map((s) => ({ dist: s.dist.map((d) => (d >= INF ? null : d)), locked: s.locked, pred: s.pred, u: s.u, changed: s.changed })) },
+      seg: seg && seg.map(idxXY),
+    };
+    if (withFull) { o.wR = Array.from(P.wR); o.wD = Array.from(P.wD); o.rgba = Array.from(P.rgba); o.gref = P.gref; }
+    return o;
+  },
+};
+
+loadPhoto(PHOTO_DATA_URI, false).then(() => { window.__demoReady = true; });
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
