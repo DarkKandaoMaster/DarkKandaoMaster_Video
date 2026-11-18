@@ -1,0 +1,97 @@
+{
+ "s1": {
+  "sig": "579afaadeb20cf9a267218cb4f569163f6793e02",
+  "model": "speech-2.8-hd",
+  "seconds": 3.136
+ },
+ "s2": {
+  "sig": "b245881c588a439ea15ba2b371158170feca1d1c",
+  "model": "speech-2.8-hd",
+  "seconds": 7.407
+ },
+ "s3": {
+  "sig": "3075febb8e427d234e5e24cda2195fbfb0be2d65",
+  "model": "speech-2.8-hd",
+  "seconds": 9.614
+ },
+ "s4a": {
+  "sig": "74901556868ced2950071aebd8f72969db82b628",
+  "model": "speech-2.8-hd",
+  "seconds": 1.939
+ },
+ "s4b": {
+  "sig": "cdf382f87c28ac2fb46204cc61074a429c3488d8",
+  "model": "speech-2.8-hd",
+  "seconds": 2.903
+ },
+ "s4c": {
+  "sig": "985ab3612fa2e75d79a5e44f4080f6d9abcf0e1b",
+  "model": "speech-2.8-hd",
+  "seconds": 5.852
+ },
+ "s4d": {
+  "sig": "ea4b9870ab34eb3afb777c75db2500878ee8dfc8",
+  "model": "speech-2.8-hd",
+  "seconds": 3.136
+ },
+ "s5a": {
+  "sig": "193768fe3a69b8b5861a00a7dab99a84953c09b6",
+  "model": "speech-2.8-hd",
+  "seconds": 1.858
+ },
+ "s5b": {
+  "sig": "cfc9e7a658000ad4d402bb4b20f87a83f2b20761",
+  "model": "speech-2.8-hd",
+  "seconds": 7.524
+ },
+ "s5c": {
+  "sig": "1b16b130d044bf90135f50d7107d71dbc8a67768",
+  "model": "speech-2.8-hd",
+  "seconds": 6.166
+ },
+ "s6a": {
+  "sig": "150dad04c1df3f5820c822004bfc92b6f0282e2d",
+  "model": "speech-2.8-hd",
+  "seconds": 2.438
+ },
+ "s6b": {
+  "sig": "08a1554dd00cdf06e1bfc559f2368a852bdc774f",
+  "model": "speech-2.8-hd",
+  "seconds": 9.416
+ },
+ "s7": {
+  "sig": "2d29c210d7a2322afcaa0a8a7d5232adfdc213e6",
+  "model": "speech-2.8-hd",
+  "seconds": 8.371
+ },
+ "s8": {
+  "sig": "6bc76dd6468435dc6beed07c033b2f5b4dc82955",
+  "model": "speech-2.8-hd",
+  "seconds": 8.371
+ },
+ "s9a": {
+  "sig": "9c2135f2c04b511f52aa543c053f98c7f3a9c2b8",
+  "model": "speech-2.8-hd",
+  "seconds": 5.12
+ },
+ "s9b": {
+  "sig": "f7ca5b0766ef2685cc6f9110b5e755ce68cb1a43",
+  "model": "speech-2.8-hd",
+  "seconds": 9.845
+ },
+ "s9c": {
+  "sig": "df40be7a098c83c7a92490883f5876a570a6924b",
+  "model": "speech-2.8-hd",
+  "seconds": 2.404
+ },
+ "s10": {
+  "sig": "0b019d990ee7f17c92eeabbb54ea229636c94cf4",
+  "model": "speech-2.8-hd",
+  "seconds": 5.584
+ },
+ "s11": {
+  "sig": "fd04d6da07d0cf8cb870e55d06a290c9b3ff684e",
+  "model": "speech-2.8-hd",
+  "seconds": 5.933
+ }
+}

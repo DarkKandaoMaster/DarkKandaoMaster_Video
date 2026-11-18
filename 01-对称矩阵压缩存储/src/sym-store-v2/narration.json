@@ -1,0 +1,167 @@
+[
+  {
+    "id": "s1",
+    "scene": "1 片头",
+    "speak": "今天我们来讲对称矩阵的压缩存储。",
+    "subs": [
+      { "at": "今天", "text": "今天我们来讲对称矩阵的压缩存储。", "en": "Today: compressed storage of symmetric matrices." }
+    ]
+  },
+  {
+    "id": "s2",
+    "scene": "2 只存一半",
+    "speak": "对称矩阵沿主对角线两边的元素是一样的，a i j 等于 a j i，所以存的时候只要存一半。",
+    "subs": [
+      { "at": "对称矩阵", "text": "对称矩阵沿主对角线两边的元素是一样的，", "en": "In a symmetric matrix, the two sides of the main diagonal are the same:" },
+      { "at": "a i j", "text": "a_{ij}等于a_{ji}，所以存的时候只要存一半。", "en": "a_{ij} equals a_{ji}, so we only need to store half." }
+    ]
+  },
+  {
+    "id": "s3",
+    "scene": "3 按行存下三角",
+    "speak": "最常见的做法是按行存下三角，也就是把主对角线和它下面的元素，一行接一行放进一维数组，下标 k 从零开始。",
+    "subs": [
+      { "at": "最常见", "text": "最常见的做法是按行存下三角，", "en": "The usual way is to store the lower triangle row by row:" },
+      { "at": "也就是", "text": "也就是把主对角线和它下面的元素，", "en": "take the main diagonal and everything below it," },
+      { "at": "一行接一行", "text": "一行接一行放进一维数组，下标k从0开始。", "en": "and put them into a 1-D array row after row, with index k starting from 0." }
+    ]
+  },
+  {
+    "id": "s4a",
+    "scene": "4 数出 a43",
+    "speak": "那 a 四 三 会存在哪儿？",
+    "subs": [
+      { "at": "那", "text": "那a_{43}会存在哪儿？", "en": "So where does a_{43} go?" }
+    ]
+  },
+  {
+    "id": "s4b",
+    "scene": "4 数出 a43",
+    "speak": "数一数它前面有几个元素就知道了。",
+    "subs": [
+      { "at": "数一数", "text": "数一数它前面有几个元素就知道了。", "en": "Just count how many elements come before it." }
+    ]
+  },
+  {
+    "id": "s4c",
+    "scene": "4 数出 a43",
+    "speak": "上面三行有一、二、三个，一共六个；本行左边还有 a 四 一、a 四 二 两个。",
+    "subs": [
+      { "at": "上面三行", "text": "上面三行有1、2、3个，一共6个；", "en": "The three rows above hold 1, 2 and 3, six in all;" },
+      { "at": "本行左边", "text": "本行左边还有a_{41}、a_{42}两个。", "en": "in its own row, a_{41} and a_{42} sit to its left: two more." }
+    ]
+  },
+  {
+    "id": "s4d",
+    "scene": "4 数出 a43",
+    "speak": "前面一共八个，所以 k 等于八。",
+    "subs": [
+      { "at": "前面", "text": "前面一共8个，所以k等于8。", "en": "Eight before it, so k = 8." }
+    ]
+  },
+  {
+    "id": "s5a",
+    "scene": "5 下三角公式",
+    "speak": "一般的 a i j 也这样数。",
+    "subs": [
+      { "at": "一般的", "text": "一般的a_{ij}也这样数。", "en": "A general a_{ij} is counted the same way." }
+    ]
+  },
+  {
+    "id": "s5b",
+    "scene": "5 下三角公式",
+    "speak": "上面 i 减 1 行一共有一加二，一直加到 i 减 1，也就是 i 乘 i 减 1 除以 2 个，",
+    "subs": [
+      { "at": "上面", "text": "上面i−1行一共有1+2+…+(i−1)，", "en": "The i − 1 rows above hold 1 + 2 + … + (i − 1)," },
+      { "at": "也就是", "text": "也就是i(i−1)/2个，", "en": "that is, i(i − 1)/2 elements;" }
+    ]
+  },
+  {
+    "id": "s5c",
+    "scene": "5 下三角公式",
+    "speak": "本行左边有 j 减 1 个，所以 k 等于 i 乘 i 减 1 除以 2，再加 j 减 1。",
+    "subs": [
+      { "at": "本行", "text": "本行左边有j−1个，", "en": "its own row has j − 1 to its left," },
+      { "at": "所以", "text": "所以k=i(i−1)/2+(j−1)。", "en": "so k = i(i − 1)/2 + (j − 1)." }
+    ]
+  },
+  {
+    "id": "s6a",
+    "scene": "6 i<j 交换",
+    "speak": "这个公式只能算下三角的元素。",
+    "subs": [
+      { "at": "这个", "text": "这个公式只能算下三角的元素。", "en": "This formula only works for the lower triangle." }
+    ]
+  },
+  {
+    "id": "s6b",
+    "scene": "6 i<j 交换",
+    "speak": "像 a 三 四 在上三角，没有存，但它和 a 四 三 相等，所以 i 小于 j 的时候，把 i 和 j 交换一下再算就行。",
+    "subs": [
+      { "at": "像", "text": "像a_{34}在上三角，没有存，但它和a_{43}相等，", "en": "a_{34} is in the upper triangle and isn't stored, but it equals a_{43}," },
+      { "at": "所以", "text": "所以i<j的时候，把i和j交换一下再算就行。", "en": "so when i < j, just swap i and j, then compute." }
+    ]
+  },
+  {
+    "id": "s7",
+    "scene": "7 按行存上三角",
+    "speak": "如果改成按行存上三角，还是数前面有几个，只是每行的个数变了：第一行 n 个，往下每行少一个。",
+    "subs": [
+      { "at": "如果", "text": "如果改成按行存上三角，还是数前面有几个，", "en": "If we store the upper triangle row by row instead, we still count what comes before;" },
+      { "at": "只是", "text": "只是每行的个数变了：", "en": "only the row lengths change:" },
+      { "at": "第一行", "text": "第一行n个，往下每行少一个。", "en": "n in the first row, one fewer in each row below." }
+    ]
+  },
+  {
+    "id": "s8",
+    "scene": "8 数出 a34",
+    "speak": "比如五阶矩阵的 a 三 四，上面两行有五个和四个，本行从 a 三 三 开始存，左边只有一个，所以 k 等于十。",
+    "subs": [
+      { "at": "比如", "text": "比如5阶矩阵的a_{34}，上面两行有5个和4个，", "en": "Take a_{34} in a 5×5 matrix: the two rows above hold 5 and 4," },
+      { "at": "本行", "text": "本行从a_{33}开始存，左边只有1个，", "en": "its row starts at a_{33}, so only 1 lies to its left," },
+      { "at": "所以", "text": "所以k等于10。", "en": "so k = 10." }
+    ]
+  },
+  {
+    "id": "s9a",
+    "scene": "9 上三角公式",
+    "speak": "一般的 a i j，上面 i 减 1 行是从 n 个递减到 n 减 i 加 2 个，",
+    "subs": [
+      { "at": "一般的", "text": "一般的a_{ij}，上面i−1行是从n个递减到n−i+2个，", "en": "For a general a_{ij}, the i − 1 rows above shrink from n down to n − i + 2;" }
+    ]
+  },
+  {
+    "id": "s9b",
+    "scene": "9 上三角公式",
+    "speak": "用等差数列求和是 i 减 1，乘 二 n 减 i 加 2，再除以 2，本行左边有 j 减 i 个，加起来就是上三角的公式。",
+    "subs": [
+      { "at": "用等差", "text": "用等差数列求和是(i−1)(2n−i+2)/2，", "en": "the arithmetic series sums to (i − 1)(2n − i + 2)/2;" },
+      { "at": "本行", "text": "本行左边有j−i个，加起来就是上三角的公式。", "en": "add the j − i to its left, and that's the upper-triangle formula." }
+    ]
+  },
+  {
+    "id": "s9c",
+    "scene": "9 上三角公式",
+    "speak": "i 大于 j 的时候，同样先交换。",
+    "subs": [
+      { "at": "i 大于", "text": "i>j的时候，同样先交换。", "en": "When i > j, swap first, just the same." }
+    ]
+  },
+  {
+    "id": "s10",
+    "scene": "10 小题",
+    "speak": "最后留一道题：五阶矩阵按行存上三角，a 五 二 的 k 是几？",
+    "subs": [
+      { "at": "最后", "text": "最后留一道题：5阶矩阵按行存上三角，a_{52}的k是几？", "en": "One last question: 5×5, upper triangle stored row by row. What is k for a_{52}?" }
+    ]
+  },
+  {
+    "id": "s11",
+    "scene": "11 答案",
+    "speak": "答案是八。先换成 a 二 五，上面一行五个，左边三个，一共八个。",
+    "subs": [
+      { "at": "答案", "text": "答案是8。", "en": "The answer is 8." },
+      { "at": "先换成", "text": "先换成a_{25}，上面一行5个，左边3个，一共8个。", "en": "Swap to a_{25}: 5 in the row above, 3 to its left, 8 in all." }
+    ]
+  }
+]

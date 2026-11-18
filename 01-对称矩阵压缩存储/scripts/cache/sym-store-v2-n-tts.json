@@ -1,0 +1,116 @@
+{
+ "s1": {
+  "sig": "e42e481e6fd83a56ed6588d77d6530fe47271d49",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 3.17
+ },
+ "s2": {
+  "sig": "bef93ea4c20c7c290e5d722b65d032b994fd2546",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 7.906
+ },
+ "s3": {
+  "sig": "5c80a1ca0626e8a4539afda1cfa9222b225af715",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 10.704
+ },
+ "s4a": {
+  "sig": "6af7966f3234adf1aef3a6e9b91db649e9e546c8",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 2.171
+ },
+ "s4b": {
+  "sig": "01961e445f226364be7d0e9bb1182e17032b0eb8",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 2.937
+ },
+ "s4c": {
+  "sig": "7015e68347575e1459013a7e74e1d03bf4b366d6",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 8.29
+ },
+ "s4d": {
+  "sig": "42bf8d4e4bd5ab78b6c5d1217bb82071c036a932",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 2.67
+ },
+ "s5a": {
+  "sig": "c46499b5c4070b499d9a53795f529c1e0a8e65b2",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 2.091
+ },
+ "s5b": {
+  "sig": "a66a0d851ab4cab39df9ae92a4c9c54497880b66",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 8.29
+ },
+ "s5c": {
+  "sig": "f7c6e37c76b46f15fa24af13657594ae09da5123",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 6.78
+ },
+ "s6a": {
+  "sig": "f3e53f326550e6dde18fa9a79f775ff99aafbf27",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 3.053
+ },
+ "s6b": {
+  "sig": "83136b4d6b88b2c9fbf53074e066d73fd71523c2",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 9.416
+ },
+ "s7": {
+  "sig": "2f5188252ce5cc0dd290089f3b54a666fe5c7b83",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 8.916
+ },
+ "s8": {
+  "sig": "6c690e0793c30ed5aa56d9407bcf635df0bfa744",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 10.275
+ },
+ "s9a": {
+  "sig": "2dc900bda98e6f0df717cd2f2ac7337baf67732a",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 5.387
+ },
+ "s9b": {
+  "sig": "8b94d38f2bf2157cea7e27f59686c77e94b3a1bb",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 10.659
+ },
+ "s9c": {
+  "sig": "b00b837db6b10649b8cf4cd3bd48ac461e885101",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 2.786
+ },
+ "s10": {
+  "sig": "5db174adc97d3fcc37136369543ce4c92de8a1ec",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 6.548
+ },
+ "s11": {
+  "sig": "741a18b7815f7221ca20c60cd91ebe90e0321151",
+  "model": "speech-2.8-hd",
+  "voice": "DarkKandaoMaster_voice",
+  "seconds": 5.619
+ }
+}
