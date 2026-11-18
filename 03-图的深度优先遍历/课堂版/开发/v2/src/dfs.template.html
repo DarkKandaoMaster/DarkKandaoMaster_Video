@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>图的深度优先遍历（DFS）</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #E9E4DA; overflow: hidden; }
+  canvas { position: absolute; left: 0; top: 0; display: block; outline: none; }
+  #gl { pointer-events: none; visibility: hidden; }
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<canvas id="cv" tabindex="0"></canvas>
+<script>/*THREE*/</script>
+<script>const DATA = /*DATA*/null;</script>
+<script>
+'use strict';
+/* =====================================================================
+   图的深度优先遍历（DFS）· 正课（课堂版第二版，单文件、离线、不配音，老师自己讲）
+   按 1920×1080 设计，按窗口大小等比缩放。全部手动，一按一步；一步只出一样新东西，字只留标题 + 最多一行。九段：
+   1 走迷宫（3D）  2 两样工具（3D 棋盘）  3 走一遍（3D 棋盘）  4 序列不唯一（3D 棋盘）  5 邻接表
+   6 非连通图（3D 小岛）  7 算法与复杂度  8 课堂小练  9 小结（生成树，3D 提起来）
+   没有 WebGL / 显卡太慢 / 网址带 ?mode=2d 时自动用 2D 画法，内容和步数完全一样。
+   做 BFS 时复制本文件：图数据、配色、文字绘制、播放器、面板（visited / 栈 / 序列）、3D 棋盘和叠方块都能照用，
+   换掉"算法"和"步骤表 + content() + 各段画面"三块即可。
+   ===================================================================== */
+
+// ---------------- 配色与字体（"图论·暖白"，和 B 站视频一致） ----------------
+const COL = {
+  bg: '#FAF7F0', dot: 'rgba(70, 60, 40, 0.085)', ink: '#1F2430', ink2: '#555B6B', ink3: '#959AA6',
+  edge: '#CFC8BA', vStroke: '#2A2F3B', card: '#FFFFFF', cardLine: '#E5DED0', line: '#E5DED0',
+  bad: '#E03131', badDeep: '#B02525',
+  orange: '#E8590C', blue: '#1C7ED6', green: '#2B8A3E', purple: '#9C36B5',
+  wallTop: '#E9DFCC', wallSide: '#CDBFA6', letterbox: '#E9E4DA', slab: '#EFE6D5',
+};
+const RUNC = [COL.orange, COL.blue, COL.green, COL.purple];     // 每一遍遍历一种颜色
+const FONT_SANS = '"Microsoft YaHei", "微软雅黑", "PingFang SC", sans-serif';
+const FONT_MONO = 'Consolas, "Microsoft YaHei", monospace';
+const FONT_V = 'Cambria, "Times New Roman", serif';              // 斜体 v
+const DEFAULT_PRACTICE = 6;        // 课堂小练默认起点 v6（v7 就在旁边，却是最后一个）
+const PRACTICE_SECONDS = 120;      // 小练限时
+
+const QS = new URLSearchParams(location.search);
+const REC = QS.has('record');      // 录屏 / 截图模式：手动时钟
+
+// ---------------- 小工具 ----------------
+const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeIO = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+const easeBack = (t) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+const prog = (t, start, dur, ease) => { const x = clamp01((t - start) / dur); return ease ? ease(x) : x; };
+const hex2rgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+const mixHex = (a, b, t) => { const x = hex2rgb(a), y = hex2rgb(b); const c = (i) => Math.round(lerp(x[i], y[i], t)).toString(16).padStart(2, '0'); return '#' + c(0) + c(1) + c(2); };
+const tint = (c, k) => mixHex('#FFFFFF', c, k === undefined ? 0.18 : k);
+const deep = (c, k) => mixHex(c, '#000000', k === undefined ? 0.22 : k);
+const vn = (v) => 'v' + v;
+const vlist = (a, sep) => a.map(vn).join(sep === undefined ? '、' : sep);
+
+let manualT = 0;
+const now = () => (REC ? manualT : performance.now() / 1000);
+
+// ---------------- 画布与缩放 ----------------
+const cv = document.getElementById('cv');
+const glc = document.getElementById('gl');
+const ctx = cv.getContext('2d');
+let VIEW = { s: 1, ox: 0, oy: 0, dpr: 1 };
+let BGIMG = null;
+function resize() {
+  const w = window.innerWidth, h = window.innerHeight, dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  cv.style.width = w + 'px'; cv.style.height = h + 'px';
+  const s = Math.min(w / 1920, h / 1080);
+  VIEW = { s, ox: (w - 1920 * s) / 2, oy: (h - 1080 * s) / 2, dpr };
+  glc.style.left = VIEW.ox + 'px'; glc.style.top = VIEW.oy + 'px'; glc.style.width = 1920 * s + 'px'; glc.style.height = 1080 * s + 'px';
+  if (W3 && W3.ok) W3.r.setSize(Math.round(1920 * s * Math.min(dpr, 1.5)), Math.round(1080 * s * Math.min(dpr, 1.5)), false);
+}
+const baseTransform = () => ctx.setTransform(VIEW.dpr * VIEW.s, 0, 0, VIEW.dpr * VIEW.s, VIEW.dpr * VIEW.ox, VIEW.dpr * VIEW.oy);
+const toStage = (e) => ({ x: (e.clientX - VIEW.ox) / VIEW.s, y: (e.clientY - VIEW.oy) / VIEW.s });
+function makeBg() {        // 暖白底 + 淡点阵（画一次，之后整张贴）
+  const c = document.createElement('canvas'); c.width = 1920; c.height = 1080; const g = c.getContext('2d');
+  g.fillStyle = COL.bg; g.fillRect(0, 0, 1920, 1080); g.fillStyle = COL.dot;
+  for (let y = 18; y < 1080; y += 36) for (let x = 18; x < 1920; x += 36) { g.beginPath(); g.arc(x, y, 1.4, 0, Math.PI * 2); g.fill(); }
+  BGIMG = c;
+}
+
+// =====================================================================
+//  图数据（build.py 从 data/graphs.json 内联）
+// =====================================================================
+function mkGraph(d) {
+  const n = d.n, edges = d.edges.map((e) => [e[0], e[1]]);
+  const nb = {}; for (let v = 1; v <= n; v++) nb[v] = [];
+  edges.forEach(([a, b]) => { nb[a].push(b); nb[b].push(a); });
+  const asc = {}, desc = {};
+  for (let v = 1; v <= n; v++) { asc[v] = nb[v].slice().sort((x, y) => x - y); desc[v] = asc[v].slice().reverse(); }
+  const pos = {}; for (let v = 1; v <= n; v++) pos[v] = { x: d.pos[v][0], y: d.pos[v][1] };
+  return { n, edges, asc, desc, pos };
+}
+const G4 = mkGraph(DATA.G4), G6 = mkGraph(DATA.G6);
+const hasEdge = (G, a, b) => G.asc[a].includes(b);
+
+// =====================================================================
+//  算法：教材的递归 DFS，记下画面要用的每一个事件
+//  visit（入栈、visited 置 T、写进序列）/ check（看到已访问的邻接点，跳过）/ back（出栈，退回父顶点）/ done（起点出栈，栈空）
+//  arc = 这个邻接点在 from 的邻接表里是第几个（0 起），给邻接表那一段画扫描框用
+// =====================================================================
+function dfsRun(G, order, start, visInit) {
+  const vis = visInit ? visInit.slice() : Array(G.n).fill(false);
+  const init = vis.slice();
+  const stack = [], seq = [], ev = [], parent = {};
+  const snap = () => ({ stack: stack.slice(), visited: vis.slice(), seq: seq.slice() });
+  function dfs(v, from, arc) {
+    vis[v - 1] = true; stack.push(v); seq.push(v); parent[v] = from;
+    ev.push(Object.assign({ t: 'visit', v, frm: from, arc }, snap()));
+    order[v].forEach((w, k) => {
+      if (!vis[w - 1]) dfs(w, v, k);
+      else ev.push(Object.assign({ t: 'check', v: w, frm: v, arc: k }, snap()));
+    });
+    stack.pop();
+    if (from !== null) ev.push(Object.assign({ t: 'back', v, frm: from, arc: null }, snap()));
+    else ev.push(Object.assign({ t: 'done', v, frm: null, arc: null }, snap()));
+  }
+  dfs(start, null, null);
+  return { G, order, start, ev, seq, parent, empty: { stack: [], visited: init, seq: [] }, n: G.n };
+}
+// 事件分组：每个 visit / back / done 开一个新组，紧跟着的 check 归到这一组
+function groupsOf(ev) { const gs = []; ev.forEach((e, i) => { if (e.t === 'check' && gs.length) gs[gs.length - 1][1] = i; else gs.push([i, i]); }); return gs; }
+// 第 3 段一按一步：到一个顶点拆成两步（"走到"= visit；"往哪走"= 后面的 check + 还没来过的路），退回 / 结束各一步
+function walkSteps(run) {
+  const out = [];
+  groupsOf(run.ev).forEach(([a, b], g) => {
+    const e = run.ev[a];
+    if (e.t === 'visit') { out.push({ mode: 'arrive', a, b: a, g }); out.push({ mode: 'look', a: a + 1, b, g, first: g === 0 }); }
+    else out.push({ mode: e.t === 'back' ? 'back' : 'done', a, b, g });
+  });
+  return out;
+}
+const stateIdx = (w) => Math.max(w.b, w.a - 1);     // 这一步放完以后的状态 = 第几个事件之后
+function maxDepth(run) { let best = run.ev[0]; run.ev.forEach((e) => { if (e.stack.length > best.stack.length) best = e; }); return { d: best.stack.length, chain: best.stack.slice() }; }
+function depthOf(run) { const d = {}; run.ev.forEach((e) => { if (e.t === 'visit') d[e.v] = e.stack.length; }); return d; }
+function treeEdges(run) { return run.ev.filter((e) => e.t === 'visit' && e.frm !== null).map((e) => [e.frm, e.v]); }
+// 从 start 出发的全部 DFS 序列个数（回溯枚举每一步的挑法）
+function countAll(G, start) {
+  const seen = new Set();
+  (function go(stack, vis, seq) {
+    while (stack.length && G.asc[stack[stack.length - 1]].every((w) => vis[w - 1])) stack = stack.slice(0, -1);
+    if (!stack.length) { seen.add(seq.join(',')); return; }
+    for (const w of G.asc[stack[stack.length - 1]]) if (!vis[w - 1]) { const v2 = vis.slice(); v2[w - 1] = true; go(stack.concat([w]), v2, seq.concat([w])); }
+  })([start], Array(G.n).fill(false).map((x, i) => i === start - 1), [start]);
+  return seen.size;
+}
+// 非连通图：DFSTraverse（for v = 1..n，没访问过就调一次 DFS）
+function traverse(G) {
+  let vis = Array(G.n).fill(false); const calls = [];
+  for (let v = 1; v <= G.n; v++) if (!vis[v - 1]) { const r = dfsRun(G, G.asc, v, vis); calls.push(r); vis = r.ev[r.ev.length - 1].visited.slice(); }
+  return calls;
+}
+
+const RUN_A = dfsRun(G4, G4.asc, 1);            // 先挑编号小的（= 按邻接表）
+const RUN_D = dfsRun(G4, G4.desc, 1);           // 先挑编号大的
+const ADJ_REV = {}; for (let v = 1; v <= G4.n; v++) ADJ_REV[v] = G4.asc[v].slice().reverse();
+const RUN_REV = dfsRun(G4, ADJ_REV, 1);         // 邻接表的链全部倒过来
+const WALK = groupsOf(RUN_A.ev);
+const WALK2 = walkSteps(RUN_A);
+const ALLN = countAll(G4, 1);
+const NC = traverse(G6);
+const NC_COMP = NC.map((r) => r.seq.slice());
+const DEEP_A = maxDepth(RUN_A), DEPTH_A = depthOf(RUN_A), TREE_A = treeEdges(RUN_A);
+const CUR = { ps: DEFAULT_PRACTICE };
+let PR = null, PRD = null;
+function practiceOf(ps) { const r = dfsRun(G4, G4.asc, ps); return { run: r, deep: maxDepth(r) }; }
+
+// =====================================================================
+//  步骤表（每按一下走一步）
+// =====================================================================
+const SEC_NAMES = ['走迷宫', '两样工具', '走一遍', '序列不唯一', '邻接表', '非连通图', '算法与复杂度', '课堂小练', '小结'];
+const SUMMARY_N = 5;
+let STEPS = [], SEC_FIRST = {};
+function buildSteps() {
+  const p = practiceOf(CUR.ps); PR = p.run; PRD = p.deep;
+  const S = [], add = (o) => S.push(o);
+  for (let n = 0; n <= 5; n++) add({ sec: 1, kind: 'maze', n, lay: n < 5 ? 'maze2d' : 'walk', d3: true });
+  for (let n = 0; n <= 2; n++) add({ sec: 2, kind: 'tools', n, lay: 'walk', d3: true });
+  WALK2.forEach((w, k) => add(Object.assign({ sec: 3, kind: 'walk', n: k, lay: 'walk', d3: true }, w)));
+  for (let n = 0; n <= 3; n++) add({ sec: 4, kind: 'redo', n, lay: 'walk', d3: true });
+  for (let n = 0; n <= 7; n++) add({ sec: 5, kind: 'adj', n, lay: 'adj' });
+  for (let n = 0; n <= 6; n++) add({ sec: 6, kind: 'nc', n, lay: null, d3: true });
+  for (let n = 0; n <= 5; n++) add({ sec: 7, kind: 'algo', n, lay: null });
+  for (let n = 0; n <= 2; n++) add({ sec: 8, kind: 'prac', n, lay: 'prac' });
+  add({ sec: 9, kind: 'end', n: 0, lay: 'walk' });
+  add({ sec: 9, kind: 'end', n: 1, lay: 'walk', d3: true });
+  add({ sec: 9, kind: 'end', n: 2, lay: 'walk', d3: true });
+  for (let k = 1; k <= SUMMARY_N; k++) add({ sec: 9, kind: 'end', n: 2 + k, lay: null });
+  let last = 'maze2d';
+  S.forEach((o) => { if (o.lay) last = o.lay; else o.lay = last; });
+  SEC_FIRST = {}; S.forEach((o, i) => { if (SEC_FIRST[o.sec] === undefined) SEC_FIRST[o.sec] = i; });
+  STEPS = S;
+}
+buildSteps();
+
+// =====================================================================
+//  事件时间表：一步里的事件一个接一个放（sp = 速度倍数，越小越快）
+// =====================================================================
+const EVD = { start: 0.7, visit: 1.25, back: 1.2, check: 0.95, done: 0.9 };
+const SP_REDO = 0.62, SP_ADJ = 0.7, SP_NC = 0.75, SP_PRAC = 0.6;
+function schedule(ev, a, b, sp, t0) {
+  const list = []; let t = t0 === undefined ? 0.15 : t0;
+  for (let i = a; i <= b; i++) {
+    const e = ev[i], key = e.t === 'visit' && e.frm === null ? 'start' : e.t;
+    const d = EVD[key] * sp, land = (key === 'visit' ? 0.55 : 0.06) * sp;
+    list.push({ i, t, d, land, key }); t += d;
+  }
+  return { list, end: t };
+}
+// 这一刻的画面状态：snap = 已经"落地"的最后一个事件之后的栈 / visited / 序列；外加正在放的动画
+// keepBars：红栅栏（看到来过的邻接点）一直留着（第 3 段一步只看一个顶点）；否则过一会儿就收起来（整遍快放时）
+function runView(run, a, b, dt, sp, t0, keepBars) {
+  const S = schedule(run.ev, a, b, sp, t0);
+  let si = a - 1; const v = { move: null, probe: null, push: null, pop: null, hold: null, doneK: null, bars: [] };
+  for (const s of S.list) {
+    const e = run.ev[s.i];
+    if (dt >= s.t + s.land) si = s.i;
+    if (e.t === 'check') {
+      const t1 = s.t + s.d * 0.2;
+      if (dt >= t1) { const up = prog(dt, t1, 0.4, easeBack), down = keepBars ? 0 : prog(dt, s.t + s.d, 0.3); if (down < 1) v.bars.push({ a: e.frm, b: e.v, k: up, alpha: 1 - down }); }
+    }
+    const u = (dt - s.t) / s.d;
+    if (u < 0 || u >= 1) continue;
+    if (s.key === 'visit') { const m = s.land / s.d; if (u < m) v.move = { from: e.frm, to: e.v, k: easeIO(u / m) }; else v.push = { v: e.v, k: (u - m) / (1 - m) }; }
+    else if (s.key === 'start') v.push = { v: e.v, k: u };
+    else if (s.key === 'back') { v.pop = { v: e.v, k: u, depth: e.stack.length }; const k = clamp01((u - 0.15) / 0.7); if (k <= 0) v.hold = e.v; else if (k < 1) v.move = { from: e.v, to: e.frm, k: easeIO(k) }; }
+    else if (s.key === 'check') v.probe = { from: e.frm, to: e.v, k: Math.sin(Math.PI * u) };
+    else if (s.key === 'done') { v.pop = { v: e.v, k: u, depth: 0 }; v.doneK = u; v.hold = e.v; }
+  }
+  v.snap = si >= 0 ? run.ev[si] : run.empty;
+  v.end = S.end; v.run = run;
+  return v;
+}
+const finalView = (run) => runView(run, 0, run.ev.length - 1, 1e6, 1);
+const emptyView = (run) => runView(run, 0, -1, 0, 1);
+function wallAfter(run, i) {   // 第 i 个事件之后：当前顶点（栈顶）还有没有没来过的邻接点
+  const e = run.ev[i]; if (!e.stack.length) return { cur: null, U: [] };
+  const cur = e.stack[e.stack.length - 1];
+  return { cur, U: run.order[cur].filter((w) => !e.visited[w - 1]) };
+}
+
+// ---------------- 播放状态 ----------------
+const PH = { i: 0, t0: 0, layFrom: null, layT0: -100, timerT0: 0 };
+const stepNow = () => STEPS[PH.i];
+function goStep(i, instant) {
+  i = Math.max(0, Math.min(STEPS.length - 1, i));
+  const was3D = use3D(STEPS[PH.i]);
+  PH.i = i; PH.t0 = instant ? now() - 100 : now();
+  PH.layFrom = instant ? null : Object.assign({}, LCUR); PH.layT0 = now();
+  camStepChange(instant || !was3D);
+  const o = STEPS[i];
+  if (o.kind === 'prac' && o.n === 0) PH.timerT0 = now();
+}
+const walkEnd = (o) => schedule(RUN_A.ev, o.a, o.b, 1).end;
+function stepDur(o) {
+  switch (o.kind) {
+    case 'maze': return [1.0, MAZE_T1, 1.3, 1.0, MAZE_BACK[1] + 0.2, 2.6][o.n];
+    case 'tools': return 1.0;
+    case 'walk': return walkEnd(o) + (o.mode === 'look' || o.mode === 'back' ? 0.7 : 0.35);
+    case 'redo': return o.n === 1 ? schedule(RUN_D.ev, 0, RUN_D.ev.length - 1, SP_REDO).end + 0.6 : 1.0;
+    case 'adj': return [1.2, 0.3 + 0.32 * G4.n + 0.6, 1.0, schedule(RUN_A.ev, 0, RUN_A.ev.length - 1, SP_ADJ).end + 0.6, 1.0, 1.6, 1.0, 0.8][o.n];
+    case 'nc': return o.n === 1 ? schedule(NC[0].ev, 0, NC[0].ev.length - 1, SP_NC).end + 0.6 : o.n === 4 || o.n === 5 ? ncPlan(o.n - 3).end + 0.4 : o.n === 6 ? 1.6 : 1.0;
+    case 'algo': return [1.4, 0.8, 0.8, 0.8, 2.6, 2.6][o.n];
+    case 'prac': return o.n === 1 ? schedule(PR.ev, 0, PR.ev.length - 1, SP_PRAC).end + 0.4 : 1.2;
+    case 'end': return o.n === 0 ? 1.4 : o.n === 1 ? 3.6 : 1.0;
+    default: return 1.0;
+  }
+}
+function next() {
+  const dt = now() - PH.t0;
+  if (dt < stepDur(stepNow())) { PH.t0 = now() - 100; PH.layFrom = null; camFinish(); return; }   // 动画没放完：先放完
+  if (PH.i < STEPS.length - 1) goStep(PH.i + 1);
+}
+function prev() { if (PH.i > 0) goStep(PH.i - 1, true); }
+function jumpSec(n) { if (SEC_FIRST[n] !== undefined) goStep(SEC_FIRST[n]); }
+function lastOfSec(sec) { let k = SEC_FIRST[sec]; while (k + 1 < STEPS.length && STEPS[k + 1].sec === sec) k++; return k; }
+function enter() { goStep(lastOfSec(stepNow().sec)); }                      // Enter：跳到本段最后一步
+function restart() { CUR.ps = DEFAULT_PRACTICE; buildSteps(); goStep(SEC_FIRST[stepNow().sec]); }   // R：本段从头（小练起点恢复 v6）
+function setPractice(v) {                                                   // 第 8 段：点顶点换起点，重新计时
+  if (v === CUR.ps && stepNow().n === 0) return;
+  CUR.ps = v; buildSteps(); goStep(SEC_FIRST[8]);
+  showToast(`起点换成 v${v}`);
+}
+let toast = null;
+function showToast(text) { toast = { text, t0: now() }; }
+
+// =====================================================================
+//  文字：v1 这种写法自动排成"斜体 v + 下标"
+// =====================================================================
+function fontOf(size, weight, mono) { return `${weight || 700} ${size}px ${mono ? FONT_MONO : FONT_SANS}`; }
+const vFont = (size) => `italic 600 ${Math.round(size * 1.08)}px ${FONT_V}`;
+const subFont = (size) => `700 ${Math.round(size * 0.62)}px ${FONT_SANS}`;
+function segsOf(str, mono) {
+  if (mono) return [{ s: str }];
+  const out = [], re = /v(\d+)/g; let last = 0, m;
+  while ((m = re.exec(str))) { if (m.index > last) out.push({ s: str.slice(last, m.index) }); out.push({ v: m[1] }); last = re.lastIndex; }
+  if (last < str.length) out.push({ s: str.slice(last) });
+  return out;
+}
+function segW(g, size, weight, mono) {
+  if (g.s !== undefined) { ctx.font = fontOf(size, weight, mono); return ctx.measureText(g.s).width; }
+  ctx.font = vFont(size); const a = ctx.measureText('v').width; ctx.font = subFont(size); return a + ctx.measureText(g.v).width + size * 0.06;
+}
+function segDraw(g, x, y, size, weight, mono, color, halo) {      // halo > 0：只描底边（第一遍）；否则只填字（第二遍）
+  const strokeFill = (s, xx, yy) => { if (halo) { ctx.lineJoin = 'round'; ctx.lineWidth = halo; ctx.strokeStyle = 'rgba(250,247,240,0.96)'; ctx.strokeText(s, xx, yy); } else { ctx.fillStyle = color; ctx.fillText(s, xx, yy); } };
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  if (g.s !== undefined) { ctx.font = fontOf(size, weight, mono); strokeFill(g.s, x, y); return; }
+  ctx.font = vFont(size); const a = ctx.measureText('v').width; strokeFill('v', x, y - size * 0.06);
+  ctx.font = subFont(size); strokeFill(g.v, x + a + size * 0.03, y + size * 0.26);
+}
+function normParts(p) { return typeof p === 'string' ? [[p, COL.ink]] : p; }
+function partsText(p) { return normParts(p).map((q) => q[0]).join(''); }
+function measureParts(parts, size, weight, mono) { let w = 0; for (const q of parts) for (const g of segsOf(q[0], mono)) w += segW(g, size, weight, mono); return w; }
+function drawParts(parts, x, y, size, o) {
+  o = o || {}; parts = normParts(parts);
+  const W = measureParts(parts, size, o.weight, o.mono);
+  let x0 = o.align === 'left' ? x : o.align === 'right' ? x - W : x - W / 2;
+  ctx.save(); ctx.globalAlpha = o.alpha === undefined ? 1 : o.alpha;
+  for (const pass of o.halo ? [o.halo, 0] : [0]) {
+    let xx = x0;
+    for (const q of parts) for (const g of segsOf(q[0], o.mono)) { segDraw(g, xx, y, size, o.weight, o.mono, q[1] || COL.ink, pass); xx += segW(g, size, o.weight, o.mono); }
+  }
+  ctx.restore();
+  return W;
+}
+function drawItems(items, dt) {
+  for (const it of items) {
+    const a = it.delay === undefined ? 1 : prog(dt, it.delay, 0.5, easeOut);
+    if (a <= 0.001) continue;
+    ctx.save(); ctx.translate(0, (1 - a) * 14);
+    drawParts(it.p, it.x, it.y, it.size, { align: it.align, mono: it.mono, weight: it.weight || 700, alpha: a * (it.alpha === undefined ? 1 : it.alpha), halo: it.halo });
+    ctx.restore();
+  }
+}
+function vname(v, x, y, size, color, alpha) { drawParts([['v' + v, color]], x, y, size, { alpha, weight: 700 }); }
+function roundRect(x, y, w, h, r) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); }
+function card(x, y, w, h, r, alpha) {
+  ctx.save(); ctx.globalAlpha = alpha === undefined ? 1 : alpha; ctx.shadowColor = 'rgba(90,70,30,0.12)'; ctx.shadowBlur = 22; ctx.shadowOffsetY = 5;
+  roundRect(x, y, w, h, r); ctx.fillStyle = COL.card; ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha = alpha === undefined ? 1 : alpha; roundRect(x, y, w, h, r); ctx.lineWidth = 2; ctx.strokeStyle = COL.cardLine; ctx.stroke(); ctx.restore();
+}
+
+// =====================================================================
+//  图的摆放（2D 画法，随步骤平滑移动）：pos' = (pos − (560, 530)) × s + (cx, cy)
+// =====================================================================
+const LAYS = {
+  walk:   { s: 1,    cx: 560,  cy: 530, R: 46, vf: 44 },
+  maze2d: { s: 0.9,  cx: 1000, cy: 610, R: 41, vf: 40 },
+  adj:    { s: 0.56, cx: 270,  cy: 640, R: 31, vf: 36 },
+  prac:   { s: 0.84, cx: 500,  cy: 610, R: 40, vf: 42 },
+};
+let LCUR = Object.assign({}, LAYS.maze2d);
+function curLay() {
+  const T = LAYS[stepNow().lay];
+  if (!PH.layFrom) return Object.assign({}, T);
+  const k = prog(now() - PH.layT0, 0, 0.8, easeIO);
+  if (k >= 1) { PH.layFrom = null; return Object.assign({}, T); }
+  const out = {}; for (const key in T) out[key] = lerp(PH.layFrom[key], T[key], k); return out;
+}
+const vpos = (v) => ({ x: (G4.pos[v].x - 560) * LCUR.s + LCUR.cx, y: (G4.pos[v].y - 530) * LCUR.s + LCUR.cy });
+
+// ---------------- 2D 画图（顶点 / 边 / 指针 / 红栅栏 / 问号） ----------------
+function vstyle(kind, c) {
+  if (kind === 'in') return { fill: c, stroke: deep(c), text: '#FFFFFF' };
+  if (kind === 'out') return { fill: tint(c, 0.2), stroke: c, text: deep(c, 0.12) };
+  if (kind === 'start') return { fill: '#FFFFFF', stroke: COL.green, text: COL.green, ring: COL.green };
+  return { fill: '#FFFFFF', stroke: COL.vStroke, text: COL.ink };
+}
+function drawVertexAt(v, p, R, vf, st, alpha) {
+  if (alpha <= 0.001) return;
+  ctx.save(); ctx.globalAlpha = alpha;
+  if (st.ring) { ctx.beginPath(); ctx.arc(p.x, p.y, R + 11, 0, Math.PI * 2); ctx.lineWidth = 5; ctx.strokeStyle = st.ring; ctx.globalAlpha = alpha * (st.ringA === undefined ? 1 : st.ringA); if (st.ringDash) ctx.setLineDash(st.ringDash); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = alpha; }
+  ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, Math.PI * 2); ctx.fillStyle = st.fill; ctx.fill();
+  ctx.lineWidth = 4; ctx.strokeStyle = st.stroke; ctx.stroke();
+  ctx.restore();
+  vname(v, p.x, p.y + 1, vf, st.text, alpha);
+}
+function line(a, b, w, color, alpha, dash) {
+  if (alpha <= 0.001) return;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.lineCap = 'round'; ctx.strokeStyle = color; ctx.lineWidth = w; if (dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.restore();
+}
+const pmix = (a, b, k) => ({ x: lerp(a.x, b.x, k), y: lerp(a.y, b.y, k) });
+function pulseRing(p, R, k, color) {
+  if (k <= 0 || k >= 1) return;
+  ctx.save(); ctx.globalAlpha = 1 - k; ctx.beginPath(); ctx.arc(p.x, p.y, R + 8 + 36 * k, 0, Math.PI * 2); ctx.lineWidth = 7 - 4 * k; ctx.strokeStyle = color; ctx.stroke(); ctx.restore();
+}
+// 按一次遍历的状态画整张图。opt: { G, pos(v), R, vf, c(颜色), alpha, colorOf(v), treeSolid, dashNonTree, ring(v), start, onlyV }
+function drawRunGraph(view, opt) {
+  const G = opt.G, P = opt.pos, R = opt.R, A = opt.alpha === undefined ? 1 : opt.alpha;
+  const snap = view ? view.snap : null;
+  const colorOf = opt.colorOf || (() => opt.c);
+  const status = (v) => (!snap ? 'un' : snap.stack.includes(v) ? 'in' : snap.visited[v - 1] ? 'out' : 'un');
+  const parentOf = (v) => (opt.parents ? opt.parents[v] : view ? view.run.parent[v] : undefined);
+  G.edges.forEach(([a, b]) => {
+    const tree = snap && ((parentOf(b) === a && snap.visited[b - 1]) || (parentOf(a) === b && snap.visited[a - 1]));
+    if (!tree) line(P(a), P(b), 7, COL.edge, A, opt.dashNonTree && snap && snap.visited[a - 1] && snap.visited[b - 1] ? [14, 12] : null);
+  });
+  if (snap) G.edges.forEach(([a, b]) => {
+    let ch = parentOf(b) === a ? b : parentOf(a) === b ? a : 0;
+    if (!ch || !snap.visited[ch - 1]) return;
+    const c = colorOf(ch), st = status(ch);
+    line(P(parentOf(ch)), P(ch), 11, st === 'in' || opt.treeSolid ? c : tint(c, 0.5), A);
+  });
+  if (view && view.move) {
+    const m = view.move, c = colorOf(m.to === parentOf(m.from) ? m.from : m.to);
+    if (parentOf(m.to) === m.from) line(P(m.from), pmix(P(m.from), P(m.to), m.k), 11, c, A);
+  }
+  for (let v = 1; v <= G.n; v++) {
+    if (opt.onlyV && !opt.onlyV.includes(v)) continue;
+    let st = vstyle(status(v), colorOf(v));
+    if (opt.start === v && status(v) === 'un') st = vstyle('start');
+    if (view && view.push && view.push.v === v) st = Object.assign({}, st, { fill: mixHex('#FFFFFF', colorOf(v), clamp01(view.push.k * 2.5)) });
+    if (opt.ring) { const r = opt.ring(v); if (r) st = Object.assign({}, st, r); }
+    drawVertexAt(v, P(v), R, opt.vf, st, A);
+  }
+  if (view && opt.pointer !== false) {      // 指针：停着时是圆环，沿边走时缩成小圆点
+    let pt = null, ring = false;
+    if (view.move) pt = pmix(P(view.move.from), P(view.move.to), view.move.k);
+    else if (view.hold) { pt = P(view.hold); ring = true; }
+    else if (snap && snap.stack.length) { pt = P(snap.stack[snap.stack.length - 1]); ring = true; }
+    const pa = view.doneK !== null ? 1 - view.doneK : 1;
+    if (pt && ring) { ctx.save(); ctx.globalAlpha = A * pa; ctx.beginPath(); ctx.arc(pt.x, pt.y, R + 11, 0, Math.PI * 2); ctx.lineWidth = 5; ctx.strokeStyle = COL.ink; ctx.stroke(); ctx.restore(); }
+    else if (pt) { ctx.save(); ctx.globalAlpha = A; ctx.beginPath(); ctx.arc(pt.x, pt.y, 13, 0, Math.PI * 2); ctx.fillStyle = COL.ink; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = '#FFFFFF'; ctx.stroke(); ctx.restore(); }
+  }
+}
+// 路口：从 a 往 b 的走廊口（2D：离圆心 R + 30 像素）
+function mouth2D(P, a, b, R, s, extra) { const p = P(a), q = P(b), d = Math.hypot(q.x - p.x, q.y - p.y) || 1, u = { x: (q.x - p.x) / d, y: (q.y - p.y) / d }, r = R + (30 + (extra || 0)) * s; return { x: p.x + u.x * r, y: p.y + u.y * r, u }; }
+function drawBars2D(bars, P, R, s) {
+  bars.forEach((b) => { const m = mouth2D(P, b.a, b.b, R, s), n = { x: -m.u.y, y: m.u.x }, h = 32 * s * b.k; line({ x: m.x - n.x * h, y: m.y - n.y * h }, { x: m.x + n.x * h, y: m.y + n.y * h }, 13 * s, COL.bad, b.alpha); });
+}
+function drawQs(qs, at) { qs.forEach((q) => { const p = at(q.a, q.b); if (q.k <= 0.01) return; ctx.save(); ctx.translate(p.x, p.y); ctx.scale(q.k, q.k); drawParts([['?', COL.orange]], 0, 0, 60, { weight: 800, halo: 12 }); ctx.restore(); }); }
+
+// ---------------- 面板：visited 数组 / 递归栈 / 访问序列（3D 和 2D 都画在平面层；3D 模式下栈的方块是立体的） ----------------
+const PANEL = {
+  vis: { x: 1090, y: 330, w: 86, h: 80, gap: 8 },          // 格子顶边 y
+  stack: { x: 1700, bottom: 1012, w: 190, h: 66, gap: 6 },
+  seq: { x: 1090, y: 600, rowH: 130, pw: 50, ph: 62, gap: 4 },
+};
+function drawVisited(snap, o) {
+  const P = Object.assign({}, PANEL.vis, o.at || {}), n = snap.visited.length, A = o.alpha === undefined ? 1 : o.alpha;
+  if (A <= 0.001) return;
+  ctx.save(); ctx.globalAlpha = A;
+  if (o.label !== false) drawParts([['visited', COL.ink2]], P.x, P.y - 72, 36, { align: 'left', mono: true, weight: 700 });
+  for (let i = 0; i < n; i++) {
+    const v = i + 1, x = P.x + i * (P.w + P.gap), on = snap.visited[i], c = o.colorOf(v);
+    const bump = o.bumpV === v ? 1 + 0.12 * Math.sin(Math.PI * clamp01(o.bumpK)) : 1;
+    vname(v, x + P.w / 2, P.y - 26, 40, COL.ink2, A);
+    ctx.save(); ctx.translate(x + P.w / 2, P.y + P.h / 2); ctx.scale(bump, bump);
+    roundRect(-P.w / 2, -P.h / 2, P.w, P.h, 12); ctx.fillStyle = on ? tint(c, 0.22) : '#FFFFFF'; ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = on ? c : COL.cardLine; ctx.stroke();
+    const fl = o.flash ? o.flash(v) : 0;
+    if (fl > 0) { roundRect(-P.w / 2 - 5, -P.h / 2 - 5, P.w + 10, P.h + 10, 15); ctx.lineWidth = 5; ctx.strokeStyle = COL.ink2; ctx.globalAlpha = A * fl; ctx.stroke(); ctx.globalAlpha = A; }
+    ctx.restore();
+    drawParts([[on ? 'T' : 'F', on ? deep(c, 0.1) : COL.ink3]], x + P.w / 2, P.y + P.h / 2 + 2, 48, { weight: 800, mono: true, alpha: A });
+  }
+  if (o.ptr !== undefined && o.ptr !== null) {
+    const x = P.x + o.ptr * (P.w + P.gap) + P.w / 2, y = P.y + P.h + 18;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 15, y + 24); ctx.lineTo(x + 15, y + 24); ctx.closePath(); ctx.fillStyle = COL.ink; ctx.fill();
+  }
+  ctx.restore();
+}
+// 递归栈：开口朝上的槽，入栈从上方落下，出栈向上飞出淡掉。先算出每一块在哪（3D 方块和 2D 方块共用）
+function stackItems(view, o) {
+  const P = PANEL.stack, snap = view.snap, cap = 5, top = P.bottom - cap * (P.h + P.gap) - 18;
+  const cellY = (j) => P.bottom - (j + 1) * (P.h + P.gap) + P.gap;
+  const items = [];
+  snap.stack.forEach((v, j) => {
+    let y = cellY(j), a = 1;
+    if (view.push && view.push.v === v && j === snap.stack.length - 1) { const k = easeOut(clamp01(view.push.k * 1.4)); y -= (1 - k) * 190; a = clamp01(k * 1.5); }
+    items.push({ v, x: P.x, y, w: P.w, h: P.h, a, c: o.colorOf(v), isTop: j === snap.stack.length - 1, wall: !!o.wall && j === snap.stack.length - 1, fly: 0 });
+  });
+  if (view.pop && view.pop.k < 1) { const k = view.pop.k; items.push({ v: view.pop.v, x: P.x, y: cellY(view.pop.depth) - easeOut(k) * 170, w: P.w, h: P.h, a: 1 - k, c: o.colorOf(view.pop.v), isTop: false, wall: false, fly: k }); }
+  const topY = snap.stack.length ? cellY(snap.stack.length - 1) + P.h / 2 : null;
+  return { items, top, topY, alpha: o.alpha === undefined ? 1 : o.alpha };
+}
+function drawStackFrame(S) {
+  const P = PANEL.stack, A = S.alpha; if (A <= 0.001) return;
+  ctx.save(); ctx.globalAlpha = A;
+  drawParts([['递归栈', COL.ink2]], P.x, S.top - 22, 36, { align: 'left' });
+  ctx.lineWidth = 4; ctx.strokeStyle = COL.ink2; ctx.lineJoin = 'round';
+  ctx.beginPath(); ctx.moveTo(P.x - 10, S.top + 6); ctx.lineTo(P.x - 10, P.bottom + 8); ctx.lineTo(P.x + P.w + 10, P.bottom + 8); ctx.lineTo(P.x + P.w + 10, S.top + 6); ctx.stroke();
+  if (S.topY !== null) drawParts([['栈顶 →', COL.ink2]], P.x - 22, S.topY, 36, { align: 'right', alpha: A });
+  ctx.restore();
+}
+function drawStackBoxes2D(S) {
+  const A = S.alpha;
+  S.items.forEach((it) => {
+    const c = it.c;
+    ctx.save(); ctx.globalAlpha = A * it.a; roundRect(it.x, it.y, it.w, it.h, 10); ctx.fillStyle = tint(c, 0.16); ctx.fill();
+    ctx.lineWidth = it.wall ? 5 : 3; ctx.strokeStyle = it.wall ? COL.bad : c; ctx.stroke();
+    roundRect(it.x, it.y, 12, it.h, 6); ctx.fillStyle = c; ctx.fill(); ctx.restore();
+  });
+}
+function drawStackLabels(S, d3) {
+  S.items.forEach((it) => vname(it.v, it.x + it.w / 2 + (d3 ? 0 : 6), it.y + it.h / 2 + (d3 ? -2 : 1), 44, d3 ? deep(it.c, 0.25) : deep(it.c, 0.1), S.alpha * it.a));
+}
+// 访问序列：一行彩色药丸；rows = [{ label, seq, c, newK, tag }]，slot 固定行号（没出现的行空着，别的行不挪位置）
+function drawSeqRows(rows, o) {
+  const P = Object.assign({}, PANEL.seq, o && o.at ? o.at : {}), A = o && o.alpha !== undefined ? o.alpha : 1;
+  if (A <= 0.001) return;
+  if (!(o && o.title === false)) drawParts([['访问序列', COL.ink2]], P.x, P.y, 36, { align: 'left', alpha: A });
+  rows.forEach((r, j0) => {
+    const j = r.slot === undefined ? j0 : r.slot, ra = A * (r.alpha === undefined ? 1 : r.alpha);
+    if (ra <= 0.001) return;
+    const y0 = P.y + (o && o.title === false ? 0 : 62) + j * P.rowH;
+    const lw = r.label ? drawParts([[r.label, r.c]], P.x, y0, 36, { align: 'left', alpha: ra }) : 0;
+    if (r.tag) drawParts([[r.tag, r.tagC || COL.ink]], P.x + lw + 14, y0, 36, { align: 'left', weight: 800, alpha: ra * (r.tagA === undefined ? 1 : r.tagA) });
+    r.seq.forEach((v, i) => {
+      const x = P.x + i * (P.pw + P.gap), y = y0 + (r.label ? 34 : -31);
+      let k = 1; if (i === r.seq.length - 1 && r.newK !== undefined && r.newK !== null) k = easeBack(clamp01(r.newK * 1.6));
+      if (k <= 0.01) return;
+      ctx.save(); ctx.globalAlpha = ra; ctx.translate(x + P.pw / 2, y + P.ph / 2); ctx.scale(k, k);
+      roundRect(-P.pw / 2, -P.ph / 2, P.pw, P.ph, 12); ctx.fillStyle = r.c; ctx.fill(); ctx.restore();
+      if (k > 0.5) vname(v, x + P.pw / 2, y + P.ph / 2 + 1, 44, '#FFFFFF', ra);
+    });
+  });
+}
+
+// =====================================================================
+//  每一步的文字（画的和导出给核对脚本的是同一份）。原则：标题一句话，说明最多一行；解释由老师口头讲（README）。
+// =====================================================================
+const C_ = COL, XR = 1090;     // 右栏文字的左边
+const LY = [92, 168];          // 右栏：标题 52px、说明 44px
+function content(o) {
+  const it = [];
+  const P = (p, x, y, size, extra) => it.push(Object.assign({ p, x, y, size }, extra || {}));
+  const R = (lines) => lines.forEach((l, j) => { if (l) P(l[0], XR, LY[j], j === 0 ? 52 : 44, Object.assign({ align: 'left', weight: j === 0 ? 800 : 700 }, l[1] || {})); });
+  const L = (title, line, extra) => { const X = 90; P(title, X, 86, 52, Object.assign({ align: 'left', weight: 800 }, extra || {})); if (line) P(line[0], X, 160, 44, Object.assign({ align: 'left' }, line[1] || {}, extra || {})); };
+  switch (o.kind) {
+    case 'maze': {
+      const H = { halo: 12 };
+      if (o.n === 0) { P('图的深度优先遍历', 960, 78, 72, Object.assign({ weight: 800 }, H)); P([['一条路走到黑，撞了南墙再回头', C_.orange]], 960, 162, 52, Object.assign({ delay: 0.5 }, H)); }
+      if (o.n === 1) P('一条路走到黑', 960, 82, 60, Object.assign({ weight: 800 }, H));
+      if (o.n === 2) P([['到了 ', C_.ink], ['v5', C_.orange], ['，往哪走？', C_.ink]], 960, 82, 60, Object.assign({ weight: 800 }, H));
+      if (o.n === 3) P([['都插过旗 → ', C_.ink], ['撞南墙！', C_.bad]], 960, 82, 60, Object.assign({ weight: 800 }, H));
+      if (o.n === 4) P([['原路退回 ', C_.ink], ['v8', C_.orange]], 960, 82, 60, Object.assign({ weight: 800 }, H));
+      if (o.n === 5) { P('迷宫就是一张图', XR, LY[0], 52, Object.assign({ align: 'left', weight: 800 }, H)); P([['房间 = ', C_.ink], ['顶点', C_.orange], ['，走廊 = ', C_.ink], ['边', C_.orange]], XR, LY[1], 44, Object.assign({ align: 'left', delay: 1.4 }, H)); }
+      break;
+    }
+    case 'tools': {
+      if (o.n === 0) R([[[['工具一：', C_.ink], ['visited 数组', C_.orange]]], [[['= 迷宫里的插旗', C_.ink2]], { delay: 0.4 }]]);
+      if (o.n === 1) R([[[['工具二：', C_.ink], ['递归栈', C_.orange]]], [[['= 来时的路', C_.ink2]], { delay: 0.4 }]]);
+      if (o.n === 2) R([[[['再记下：', C_.ink], ['访问序列', C_.orange]]]]);
+      break;
+    }
+    case 'walk': R(walkLines(RUN_A, o, C_.orange)); break;
+    case 'redo': {
+      const c = C_.blue;
+      if (o.n === 0) R([[[['换个挑法：', C_.ink], ['先挑编号大的', c]]], [[['序列会变吗？', C_.orange]], { delay: 0.5 }]]);
+      if (o.n === 1) R([[[['先挑大的，', C_.ink], ['再走一遍', c]]]]);
+      if (o.n === 2) R([[[['两条都对：', C_.ink], ['序列不唯一', C_.orange]]]]);
+      if (o.n === 3) R([[[['从 v1 出发：共 ', C_.ink], [`${ALLN} 种`, C_.orange]]]]);
+      break;
+    }
+    case 'adj': {
+      if (o.n === 0) L([['给定存储结构：', C_.ink], ['邻接表', C_.orange]]);
+      if (o.n === 1) L('每个顶点挂一条链', [[['链里存下标，从 0 起', C_.ink2]], { delay: 0.6 }]);
+      if (o.n === 2) L([['从 v1 出发，', C_.ink], ['第一步去哪？', C_.orange]]);
+      if (o.n === 3) L([['沿着链找：', C_.ink], ['没来过就去', C_.green]]);
+      if (o.n === 4) L([['和第 ', C_.ink], ['①', C_.orange], [' 遍一样', C_.ink]]);
+      if (o.n === 5) L([['链倒过来呢？', C_.ink]]);
+      if (o.n === 6) L([['变成第 ', C_.ink], ['②', C_.blue], [' 遍', C_.ink]]);
+      if (o.n === 7) L([['表定了 → ', C_.ink], ['序列唯一', C_.orange]]);
+      break;
+    }
+    case 'nc': {
+      const left = NC.slice(1).flatMap((r) => r.seq), H = { halo: 12 };
+      if (o.n === 0) L('图不连通呢？', null, H);
+      if (o.n === 1) L([['从 ', C_.ink], ['v1', C_.orange], [' 出发', C_.ink]], null, H);
+      if (o.n === 2) L([['剩下的 ', C_.ink], [vlist(left), C_.orange], [' 呢？', C_.ink]], null, H);
+      if (o.n === 3) L('外面套一层循环', null, H);
+      if (o.n === 4) L([[`${vn(NC[1].start)} 没访问过 → `, C_.ink], ['再调 DFS', RUNC[1]]], null, H);
+      if (o.n === 5) L([[`${vn(NC[2].start)} 也再调一次`, C_.ink]], null, H);
+      if (o.n === 6) L([[`调用 ${NC.length} 次 = `, C_.ink], [`${NC.length} 个连通分量`, C_.orange]], null, H);
+      break;
+    }
+    case 'algo': {
+      if (o.n <= 3) P('算法 7.4、7.5', 960, 78, 52, { weight: 800 });
+      else {
+        P([['时间花在', C_.ink], ['"找邻接点"', C_.orange], ['上', C_.ink]], 960, 78, 52, { weight: 800 });
+        CX_TEXT.filter((t) => t.card === 0 || o.n === 5).forEach((t) => P(t.p, t.x, t.y, t.size, { delay: t.card === o.n - 4 ? t.delay : undefined, weight: t.weight || 700 }));
+      }
+      break;
+    }
+    case 'prac': {
+      const X = 1000, ps = CUR.ps;
+      P([['课堂小练：从 ', C_.ink], [vn(ps), C_.green], [' 出发', C_.ink]], 960, 72, 56, { weight: 800 });
+      P('① 写出 DFS 序列', X, 300, 44, { align: 'left' });
+      P('② 栈最深时有几个顶点？', X, 560, 44, { align: 'left' });
+      if (o.n >= 2) P([[`→ ${PRD.d} 个`, C_.orange]], X, 640, 44, { align: 'left', delay: 0.2, weight: 800 });
+      break;
+    }
+    case 'end': {
+      if (o.n === 0) R([[[['DFS 生成树', C_.orange]]]]);
+      if (o.n === 1 || o.n === 2) {
+        const H = { halo: 12, align: 'left' };
+        if (o.n === 1) {
+          P([['抓住 ', C_.ink], ['v1', C_.orange], [' 提起来', C_.ink]], 80, 82, 52, Object.assign({ weight: 800 }, H));
+          P([[`最深：${DEEP_A.d} 层`, C_.ink]], 80, 156, 44, Object.assign({ delay: 2.6 }, H));
+        } else P([['栈最深时 = ', C_.ink], ['这一条', C_.orange]], 80, 82, 52, Object.assign({ weight: 800 }, H));
+      }
+      if (o.n >= 3) {
+        P('小结', 960, 96, 64, { weight: 800 });
+        const k = o.n - 2;
+        SUMMARY.slice(0, k).forEach((p, j) => P(p, 330, 240 + j * 124, 48, { align: 'left', delay: j === k - 1 ? 0.15 : undefined }));
+        if (k === SUMMARY_N) P([['下节课：广度优先遍历（BFS）', C_.ink2]], 330, 240 + SUMMARY_N * 124 + 6, 44, { align: 'left', delay: 0.9 });
+      }
+      break;
+    }
+  }
+  return it;
+}
+const SUMMARY = [
+  [['一条路走到黑，', COL.orange], ['撞了南墙再回头', COL.orange]],
+  [['visited 数组', COL.orange], [' + ', COL.ink], ['递归栈', COL.orange]],
+  [['序列不唯一；', COL.ink], ['邻接表定了就唯一', COL.orange]],
+  [['调用 DFS 的次数 = ', COL.ink], ['连通分量个数', COL.orange]],
+  [['邻接矩阵 ', COL.ink], ['O(n²)', COL.orange], ['，邻接表 ', COL.ink], ['O(n + e)', COL.orange]],
+];
+// 第 3 段每一步右边的字（规则写在 README 里，核对脚本按同样的规则独立生成）
+function walkLines(run, w, c) {
+  const ev = run.ev, endT = schedule(ev, w.a, w.b, 1).end;
+  if (w.mode === 'arrive') { const e = ev[w.a]; return [[e.frm === null ? [['从 ', C_.ink], [vn(e.v), c], [' 出发', C_.ink]] : [['走到 ', C_.ink], [vn(e.v), c]]]]; }
+  if (w.mode === 'done') return [[[['栈空了 → ', C_.ink], ['遍历结束', c]]]];
+  const e = ev[stateIdx(w)], cur = e.stack[e.stack.length - 1], U = run.order[cur].filter((x) => !e.visited[x - 1]);
+  if (w.mode === 'look') {
+    const L = [[[[vn(cur), c], [' 往哪走？', C_.ink]]]];
+    if (!U.length) L.push([[['撞南墙！', C_.bad], [' 怎么办？', C_.orange]], { delay: endT }]);
+    else if (w.first) L.push([[['规则：先挑编号小的', C_.ink2]], { delay: endT }]);
+    return L;
+  }
+  const L = [[[['退回 ', C_.ink], [vn(cur), c]]]];
+  if (U.length) L.push([[['还能去 ', C_.ink], [vlist(U), c]], { delay: endT }]);
+  else L.push([[[`${vn(cur)} 也没路了 → ` + (e.stack.length > 1 ? '继续退' : '出栈'), C_.ink]], { delay: endT }]);
+  return L;
+}
+
+// =====================================================================
+//  第 1 段：迷宫（3D 和 2D 共用一份迷宫数据和走路时间表）
+//  世界坐标 = 第 3 段 2D 图的坐标 / 100（x → X，y → Z）
+// =====================================================================
+const MZ = (() => {
+  const cell = 0.2, rw = 0.64, cw = 0.37;
+  const P = {}; for (let v = 1; v <= G4.n; v++) P[v] = { x: G4.pos[v].x / 100, z: G4.pos[v].y / 100 };
+  const xs = Object.values(P).map((p) => p.x), zs = Object.values(P).map((p) => p.z);
+  const x0 = Math.min(...xs) - 1.1, x1 = Math.max(...xs) + 1.1, z0 = Math.min(...zs) - 1.1, z1 = Math.max(...zs) + 1.1;
+  const nx = Math.round((x1 - x0) / cell), nz = Math.round((z1 - z0) / cell);
+  const segD = (px, pz, a, b) => { const dx = b.x - a.x, dz = b.z - a.z, L2 = dx * dx + dz * dz; const t = clamp01(((px - a.x) * dx + (pz - a.z) * dz) / L2); return Math.hypot(px - a.x - dx * t, pz - a.z - dz * t); };
+  const walls = []; let seed = 7;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  for (let i = 0; i < nx; i++) for (let j = 0; j < nz; j++) {
+    const cx = x0 + (i + 0.5) * cell, cz = z0 + (j + 0.5) * cell;
+    let open = false;
+    for (let v = 1; v <= G4.n && !open; v++) if (Math.hypot(cx - P[v].x, cz - P[v].z) < rw) open = true;
+    for (const [a, b] of G4.edges) { if (open) break; if (segD(cx, cz, P[a], P[b]) < cw) open = true; }
+    if (!open) walls.push({ i, j, x: cx, z: cz, h: 0.4 + 0.05 * rnd(), c: rnd() });
+  }
+  const isWall = new Set(walls.map((w) => w.i + ',' + w.j));
+  return { cell, P, x0, z0, nx, nz, walls, isWall };
+})();
+const MAZE_PATH = [1, 2, 4, 8, 5], MAZE_SEG = 1.15, MAZE_FLAG = 0.45;
+const MAZE_T1 = MAZE_FLAG + (MAZE_PATH.length - 1) * (MAZE_SEG + MAZE_FLAG) + 0.3;
+const MAZE_BACK = [0.3, 1.6];       // 第 5 步：沿来的路退回 v8 的时间段
+// 某一步某一刻：小人在哪、哪些房间插了旗（0..1）、栏杆、问号、压平进度
+function mazeState(n, dt) {
+  const P = MZ.P, flags = {}, out = { flags, bar: 0, q: 0, flat: 0, fade: 1, pos: P[1], dir: { x: 0, z: 1 } };
+  const along = (a, b, k) => ({ x: lerp(P[a].x, P[b].x, k), z: lerp(P[a].z, P[b].z, k) });
+  if (n === 0) return out;
+  if (n === 1) {
+    flags[1] = prog(dt, 0, MAZE_FLAG, easeBack);
+    for (let j = 1; j < MAZE_PATH.length; j++) {
+      const t = MAZE_FLAG + (j - 1) * (MAZE_SEG + MAZE_FLAG), a = MAZE_PATH[j - 1], b = MAZE_PATH[j];
+      if (dt >= t) { const k = prog(dt, t, MAZE_SEG, easeIO); out.pos = along(a, b, k); out.dir = { x: P[b].x - P[a].x, z: P[b].z - P[a].z }; }
+      flags[b] = prog(dt, t + MAZE_SEG, MAZE_FLAG, easeBack);
+    }
+    return out;
+  }
+  MAZE_PATH.forEach((v) => { flags[v] = 1; });
+  out.pos = P[5]; out.dir = { x: P[5].x - P[8].x, z: P[5].z - P[8].z };
+  if (n === 2) { out.q = prog(dt, 0.2, 0.5, easeOut); return out; }
+  out.bar = n === 3 ? prog(dt, 0.1, 0.5, easeBack) : 1;
+  if (n === 3) return out;
+  const k = n === 4 ? prog(dt, MAZE_BACK[0], MAZE_BACK[1] - MAZE_BACK[0], easeIO) : 1;
+  out.pos = along(5, 8, k); if (k > 0) out.dir = { x: P[8].x - P[5].x, z: P[8].z - P[5].z };
+  if (n === 5) { out.flat = prog(dt, 0.1, 1.3, easeIO); out.fade = 1 - prog(dt, 0, 0.7); }
+  return out;
+}
+const MAZE_BARS = [2, 8].map((w) => { const a = MZ.P[5], b = MZ.P[w], d = Math.hypot(b.x - a.x, b.z - a.z), u = { x: (b.x - a.x) / d, z: (b.z - a.z) / d }; return { to: w, x: a.x + u.x * 0.78, z: a.z + u.z * 0.78, u }; });
+// 2D 画法：俯视的迷宫（墙块画顶面 + 一条暗边假装有高度）
+function drawMaze2D(o, dt) {
+  const ms = mazeState(o.n, dt), sc = LCUR.s * 100, W = (x, z) => ({ x: (x * 100 - 560) * LCUR.s + LCUR.cx, y: (z * 100 - 530) * LCUR.s + LCUR.cy });
+  const wa = 1 - ms.flat, cs = MZ.cell * sc;
+  G4.edges.forEach(([a, b]) => line(W(MZ.P[a].x, MZ.P[a].z), W(MZ.P[b].x, MZ.P[b].z), 7, COL.edge, 1));
+  if (wa > 0.01) {
+    ctx.save(); ctx.globalAlpha = wa; ctx.fillStyle = COL.wallSide;
+    for (const w of MZ.walls) { if (MZ.isWall.has(w.i + ',' + (w.j + 1))) continue; const p = W(w.x, w.z); ctx.fillRect(p.x - cs / 2, p.y - cs / 2, cs + 0.5, cs + 8 * LCUR.s); }
+    ctx.fillStyle = COL.wallTop;
+    for (const w of MZ.walls) { const p = W(w.x, w.z); ctx.fillRect(p.x - cs / 2 - 0.3, p.y - cs / 2 - 0.3, cs + 0.8, cs + 0.8); }
+    ctx.restore();
+  }
+  for (let v = 1; v <= G4.n; v++) { const p = W(MZ.P[v].x, MZ.P[v].z); ctx.save(); ctx.beginPath(); ctx.arc(p.x, p.y, LCUR.R, 0, Math.PI * 2); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = COL.vStroke; ctx.stroke(); ctx.restore(); }
+  if (ms.bar > 0) MAZE_BARS.forEach((b) => { const p = W(b.x, b.z), n = { x: -b.u.z, y: b.u.x }, h = 34 * LCUR.s * ms.bar; line({ x: p.x - n.x * h, y: p.y - n.y * h }, { x: p.x + n.x * h, y: p.y + n.y * h }, 14 * LCUR.s, COL.bad, ms.fade); });
+  for (const v in ms.flags) {
+    const k = ms.flags[v] * ms.fade; if (k <= 0.01) continue;
+    const p = W(MZ.P[v].x + 0.26, MZ.P[v].z - 0.22), h = 62 * LCUR.s * k;
+    line(p, { x: p.x, y: p.y - h }, 4, COL.ink, Math.min(1, k * 1.5)); ctx.save(); ctx.globalAlpha = Math.min(1, k * 1.5);
+    ctx.beginPath(); ctx.moveTo(p.x, p.y - h); ctx.lineTo(p.x + 30 * LCUR.s * k, p.y - h + 12 * LCUR.s); ctx.lineTo(p.x, p.y - h + 24 * LCUR.s); ctx.closePath(); ctx.fillStyle = COL.orange; ctx.fill(); ctx.restore();
+  }
+  if (ms.fade > 0.01) {
+    const p = W(ms.pos.x, ms.pos.z);
+    ctx.save(); ctx.globalAlpha = ms.fade; ctx.beginPath(); ctx.arc(p.x, p.y, 19 * LCUR.s, 0, Math.PI * 2); ctx.fillStyle = COL.orange; ctx.fill(); ctx.lineWidth = 5; ctx.strokeStyle = '#FFFFFF'; ctx.stroke(); ctx.restore();
+  }
+  mazeHud(ms, (x, y, z) => W(x, z), dt, o);
+}
+// 迷宫的平面层（3D / 2D 共用）：房间名、入口、问号
+function mazeHud(ms, proj, dt, o) {
+  const off = 1 - ms.flat;
+  for (let v = 1; v <= G4.n; v++) {
+    const p = proj(MZ.P[v].x, 0, MZ.P[v].z + 0.72 * off);
+    if (off > 0.02) { ctx.save(); ctx.globalAlpha = 0.9 * off; roundRect(p.x - 34, p.y - 27, 68, 54, 14); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = COL.cardLine; ctx.stroke(); ctx.restore(); }
+    vname(v, p.x, p.y + 1, LCUR.vf || 40, COL.ink, 1);
+  }
+  if (o.n === 0) { const p = proj(MZ.P[1].x - 0.95, 0, MZ.P[1].z); drawParts([['入口', COL.green]], p.x, p.y, 40, { weight: 800, halo: 10, align: 'right' }); }
+  if (ms.q > 0) MAZE_BARS.forEach((b) => { const p = proj(b.x, 0.3, b.z); ctx.save(); ctx.translate(p.x, p.y); ctx.scale(ms.q, ms.q); drawParts([['?', COL.orange]], 0, 0, 64, { weight: 800, halo: 12 }); ctx.restore(); });
+}
+
+// =====================================================================
+//  3D 模块（three.js 内联）。第 1、2、3、4、6 段和第 9 段第 2–3 步用；失败就退回 2D。
+// =====================================================================
+const W3 = { ok: false, on: false, reason: '', fpsChecked: false, frames: [] };
+const BY = 0.14, PHT = 0.3;        // 棋盘面的高度；顶点台子高 PHT（台面在 BY + PHT）
+function init3D() {
+  if (QS.get('mode') === '2d') { W3.reason = '网址里带了 ?mode=2d，强制 2D'; return; }
+  if (typeof THREE === 'undefined') { W3.reason = '没有 three.js'; return; }
+  try {
+    const r = new THREE.WebGLRenderer({ canvas: glc, antialias: true, preserveDrawingBuffer: REC, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: QS.get('mode') !== '3d' });
+    r.setClearColor(COL.bg, 1);
+    W3.r = r; W3.scene = new THREE.Scene();
+    W3.cam = new THREE.PerspectiveCamera(40, 16 / 9, 0.1, 200);
+    const hemi = new THREE.HemisphereLight(0xffffff, 0xd9cfbf, 2.3); W3.scene.add(hemi);
+    const sun = new THREE.DirectionalLight(0xfff6ea, 1.25); sun.position.set(-4, 10, 7); W3.scene.add(sun);
+    build3DMaze(); W3.b4 = build3DBoard(G4, [Array.from({ length: G4.n }, (_, i) => i + 1)]); W3.b6 = build3DBoard(G6, NC_COMP); build3DTree(); build3DStack();
+    W3.ok = true; W3.on = true; W3.reason = '';
+    glc.addEventListener('webglcontextlost', (e) => { e.preventDefault(); W3.ok = false; W3.on = false; W3.reason = 'WebGL 上下文丢失'; showToast('3D 出错，已换成 2D 画面'); });
+  } catch (e) { W3.ok = false; W3.on = false; W3.reason = 'WebGL 不可用（' + (e && e.message ? e.message.slice(0, 60) : e) + '）'; }
+}
+const basicM = (c, extra) => new THREE.MeshBasicMaterial(Object.assign({ color: c }, extra || {}));
+const lambM = (c, extra) => new THREE.MeshLambertMaterial(Object.assign({ color: c }, extra || {}));
+function placeBetween(mesh, a, b, thick) {      // 把一根 Y 轴方向的圆柱摆到 a、b 两点之间
+  const d = new THREE.Vector3(b.x - a.x, b.y - a.y, b.z - a.z), L = d.length() || 1e-6;
+  mesh.position.set((a.x + b.x) / 2, (a.y + b.y) / 2, (a.z + b.z) / 2);
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize());
+  mesh.scale.set(thick || 1, L, thick || 1);
+}
+function placeStrip(mesh, A, B, k, y, w, h) {   // 地上的一条带子：从 A 往 B 铺到 k（0..1）
+  const L = Math.hypot(B.x - A.x, B.z - A.z) * Math.max(k, 0.001);
+  mesh.position.set(A.x + (B.x - A.x) * k / 2, y, A.z + (B.z - A.z) * k / 2);
+  mesh.scale.set(L, h, w); mesh.rotation.y = -Math.atan2(B.z - A.z, B.x - A.x);
+}
+const FLAG_GEO = () => {
+  const cloth = new THREE.BufferGeometry(); cloth.setAttribute('position', new THREE.Float32BufferAttribute([0, 0.74, 0, 0, 0.46, 0, 0.34, 0.6, 0], 3));
+  const pole = new THREE.CylinderGeometry(0.02, 0.02, 0.78, 6); pole.translate(0, 0.39, 0);
+  return { cloth, pole };
+};
+function makeFlag(geo, color) {
+  const f = new THREE.Group(); f.add(new THREE.Mesh(geo.pole, lambM(COL.vStroke)));
+  const m = basicM(color, { side: THREE.DoubleSide }); f.add(new THREE.Mesh(geo.cloth, m)); f.userData.cloth = m; f.rotation.y = 0.5; return f;
+}
+function makeWalker() {      // 小人（身体 + 头 + 鼻子 + 影子）
+  const man = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.17, 0.44, 14), lambM(COL.orange)); body.position.y = 0.22; man.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 10), lambM('#F5A26B')); head.position.y = 0.57; man.add(head);
+  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.12, 8), lambM(COL.vStroke)); nose.rotation.x = Math.PI / 2; nose.position.set(0, 0.57, 0.15); man.add(nose);
+  const sh = new THREE.Mesh(new THREE.CircleGeometry(0.24, 24), basicM('#000000', { transparent: true, opacity: 0.12 })); sh.rotation.x = -Math.PI / 2; sh.position.y = 0.006; man.add(sh);
+  man.userData.body = body.material;
+  return man;
+}
+function makeBar() { const g = new THREE.BoxGeometry(0.72, 0.46, 0.09); g.translate(0, 0.23, 0); return new THREE.Mesh(g, lambM(COL.bad, { transparent: true })); }
+function build3DMaze() {
+  const g = new THREE.Group(); W3.maze = g; W3.scene.add(g);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), basicM(COL.bg)); floor.rotation.x = -Math.PI / 2; floor.position.y = -0.002; W3.scene.add(floor);
+  const box = new THREE.BoxGeometry(MZ.cell, 1, MZ.cell); box.translate(0, 0.5, 0);
+  const walls = new THREE.InstancedMesh(box, lambM('#FFFFFF'), MZ.walls.length);
+  const m = new THREE.Matrix4(), col = new THREE.Color();
+  MZ.walls.forEach((w, k) => { m.makeScale(1, w.h, 1); m.setPosition(w.x, 0, w.z); walls.setMatrixAt(k, m); col.set(mixHex(COL.wallTop, '#DCCFB8', w.c * 0.35)); walls.setColorAt(k, col); });
+  g.add(walls); W3.walls = walls;
+  const strip = new THREE.BoxGeometry(1, 0.01, 1);
+  G4.edges.forEach(([a, b]) => { const s = new THREE.Mesh(strip, basicM(COL.edge)); placeStrip(s, MZ.P[a], MZ.P[b], 1, 0.004, 0.07, 1); g.add(s); });
+  for (let v = 1; v <= G4.n; v++) {
+    const d = new THREE.Mesh(new THREE.CircleGeometry(0.46, 48), basicM('#FFFFFF')); d.rotation.x = -Math.PI / 2; d.position.set(MZ.P[v].x, 0.012, MZ.P[v].z);
+    const r = new THREE.Mesh(new THREE.RingGeometry(0.44, 0.48, 48), basicM(COL.vStroke)); r.rotation.x = -Math.PI / 2; r.position.set(MZ.P[v].x, 0.014, MZ.P[v].z);
+    g.add(d); g.add(r);
+  }
+  const fg = FLAG_GEO(); W3.flags = {};
+  for (let v = 1; v <= G4.n; v++) { const f = makeFlag(fg, COL.orange); f.position.set(MZ.P[v].x + 0.26, 0, MZ.P[v].z - 0.22); g.add(f); W3.flags[v] = f; }
+  W3.man = makeWalker(); g.add(W3.man);
+  W3.bars = MAZE_BARS.map((b) => { const m2 = makeBar(); m2.position.set(b.x, 0, b.z); m2.rotation.y = -Math.atan2(b.u.z, b.u.x) + Math.PI / 2; g.add(m2); return m2; });
+}
+// ---------------- 立体棋盘（第 2、3、4 段的 G4、第 6 段的 G6）：圆角台面（不连通的图 = 几座小岛）、走廊、顶点台子、旗子、小人、红栅栏 ----------------
+function roundedShape(x0, z0, x1, z1, r) {
+  const s = new THREE.Shape();
+  s.moveTo(x0 + r, z0); s.lineTo(x1 - r, z0); s.quadraticCurveTo(x1, z0, x1, z0 + r); s.lineTo(x1, z1 - r); s.quadraticCurveTo(x1, z1, x1 - r, z1);
+  s.lineTo(x0 + r, z1); s.quadraticCurveTo(x0, z1, x0, z1 - r); s.lineTo(x0, z0 + r); s.quadraticCurveTo(x0, z0, x0 + r, z0);
+  return s;
+}
+const bpos = (G) => (v) => ({ x: G.pos[v].x / 100, z: G.pos[v].y / 100 });
+function mouth3D(P, a, b, r) { const A = P(a), B = P(b), d = Math.hypot(B.x - A.x, B.z - A.z) || 1, u = { x: (B.x - A.x) / d, z: (B.z - A.z) / d }; return { x: A.x + u.x * r, z: A.z + u.z * r, u }; }
+function build3DBoard(G, comps) {
+  const P = bpos(G), g = new THREE.Group(); W3.scene.add(g); g.visible = false;
+  const B = { G, P, g, slabs: [], cap: {}, ped: {}, tree: {}, flags: {}, bars: {}, man: makeWalker(), lastDir: { x: 0, z: 1 } };
+  comps.forEach((vs) => {
+    const xs = vs.map((v) => P(v).x), zs = vs.map((v) => P(v).z), pad = 0.72;
+    const geo = new THREE.ExtrudeGeometry(roundedShape(Math.min(...xs) - pad, Math.min(...zs) - pad, Math.max(...xs) + pad, Math.max(...zs) + pad, 0.45), { depth: BY, bevelEnabled: false, curveSegments: 10 });
+    geo.rotateX(Math.PI / 2); geo.translate(0, BY, 0);
+    const m = new THREE.Mesh(geo, lambM(COL.slab)); g.add(m); B.slabs.push(m);
+  });
+  const box = new THREE.BoxGeometry(1, 1, 1);
+  G.edges.forEach(([a, b]) => {
+    const s = new THREE.Mesh(box, basicM(COL.edge)); placeStrip(s, P(a), P(b), 1, BY + 0.006, 0.18, 0.012); g.add(s);
+    const t = new THREE.Mesh(box, basicM(COL.orange)); t.visible = false; g.add(t); B.tree[a + '-' + b] = t; B.tree[b + '-' + a] = t;
+  });
+  const ped = new THREE.CylinderGeometry(0.46, 0.46, PHT, 40); ped.translate(0, PHT / 2, 0);
+  const capG = new THREE.CircleGeometry(0.455, 40), ringG = new THREE.RingGeometry(0.42, 0.48, 48), fg = FLAG_GEO();
+  for (let v = 1; v <= G.n; v++) {
+    const p = P(v);
+    const m = new THREE.Mesh(ped, lambM('#F4F1EA')); m.position.set(p.x, BY, p.z); g.add(m); B.ped[v] = m;
+    const c = new THREE.Mesh(capG, basicM('#FFFFFF')); c.rotation.x = -Math.PI / 2; c.position.set(p.x, BY + PHT + 0.001, p.z); g.add(c); B.cap[v] = c;
+    const r = new THREE.Mesh(ringG, basicM(COL.vStroke)); r.rotation.x = -Math.PI / 2; r.position.set(p.x, BY + PHT + 0.003, p.z); g.add(r);
+    const f = makeFlag(fg, COL.orange); f.position.set(p.x + 0.32, BY + PHT, p.z - 0.28); g.add(f); B.flags[v] = f;
+  }
+  G.edges.forEach(([a, b]) => [[a, b], [b, a]].forEach(([x, y]) => { const m = makeBar(), q = mouth3D(P, x, y, 0.86); m.position.set(q.x, BY, q.z); m.rotation.y = -Math.atan2(q.u.z, q.u.x) + Math.PI / 2; m.visible = false; g.add(m); B.bars[x + '-' + y] = m; }));
+  g.add(B.man);
+  B.wall = new THREE.Mesh(new THREE.RingGeometry(0.56, 0.68, 48), basicM(COL.bad, { transparent: true })); B.wall.rotation.x = -Math.PI / 2; B.wall.visible = false; g.add(B.wall);
+  return B;
+}
+// 一次遍历的画面状态（3D 棋盘和平面层的顶点名字共用）；多次调用（非连通图）就把几次的叠起来
+function boardVis(list) {
+  const out = { col: {}, st: {}, trees: [], flags: {}, bars: [], man: null };
+  list.forEach(({ view, colorOf }) => {
+    const snap = view.snap, run = view.run, par = run.parent;
+    for (let v = 1; v <= run.G.n; v++) {
+      if (!(v in par) || !snap.visited[v - 1]) continue;
+      const c = colorOf(v), inS = snap.stack.includes(v);
+      out.st[v] = inS ? 'in' : 'out';
+      out.col[v] = view.push && view.push.v === v ? mixHex('#FFFFFF', c, clamp01(view.push.k * 2.5)) : inS ? c : tint(c, 0.22);
+      out.flags[v] = { k: view.push && view.push.v === v ? clamp01(easeBack(clamp01(view.push.k * 1.3))) : 1, c };
+      if (par[v]) out.trees.push({ a: par[v], b: v, k: 1, c: inS ? c : tint(c, 0.45) });
+    }
+    if (view.move && par[view.move.to] === view.move.from && !snap.visited[view.move.to - 1]) out.trees.push({ a: view.move.from, b: view.move.to, k: view.move.k, c: colorOf(view.move.to) });
+    view.bars.forEach((b) => out.bars.push(b));
+    let pos = null, dir = null, drop = 0;
+    if (view.move) pos = { from: view.move.from, to: view.move.to, k: view.move.k };
+    else if (view.hold) pos = { at: view.hold };
+    else if (snap.stack.length) pos = { at: snap.stack[snap.stack.length - 1] };
+    if (view.push && view.push.v === run.start && snap.stack.length === 1) drop = 1 - easeOut(clamp01(view.push.k * 1.2));
+    if (pos) out.man = { pos, alpha: view.doneK !== null ? 1 - view.doneK : 1, drop, c: colorOf(run.start) };
+  });
+  return out;
+}
+function updateBoard(B, V, extra) {
+  const P = B.P, G = B.G;
+  for (let v = 1; v <= G.n; v++) {
+    B.cap[v].material.color.set(V.col[v] || '#FFFFFF'); B.ped[v].material.color.set(V.col[v] ? mixHex(V.col[v], '#FFFFFF', 0.15) : '#F4F1EA');
+    const f = V.flags[v]; B.flags[v].visible = !!f && f.k > 0.01;
+    if (f) { B.flags[v].scale.set(1.35, Math.max(0.01, f.k) * 1.35, 1.35); B.flags[v].userData.cloth.color.set(f.c); }
+  }
+  const used = new Set();
+  V.trees.forEach((t) => { const m = B.tree[t.a + '-' + t.b]; used.add(m); m.visible = true; m.material.color.set(t.c); placeStrip(m, P(t.a), P(t.b), t.k, BY + 0.025, 0.24, 0.04); });
+  Object.values(B.tree).forEach((m) => { if (!used.has(m)) m.visible = false; });
+  Object.values(B.bars).forEach((m) => { m.visible = false; });
+  V.bars.forEach((b) => { const m = B.bars[b.a + '-' + b.b]; if (!m) return; m.visible = b.k > 0.01 && b.alpha > 0.01; m.scale.set(1.25, Math.max(0.01, b.k) * 1.35, 1.25); m.material.opacity = b.alpha; });
+  const man = B.man;
+  if (V.man && V.man.alpha > 0.01) {
+    let p, dir = null;
+    if (V.man.pos.at) p = P(V.man.pos.at);
+    else { const A = P(V.man.pos.from), C = P(V.man.pos.to); p = { x: lerp(A.x, C.x, V.man.pos.k), z: lerp(A.z, C.z, V.man.pos.k) }; dir = { x: C.x - A.x, z: C.z - A.z }; }
+    if (dir) B.lastDir = dir;
+    man.visible = true; man.position.set(p.x, BY + PHT + V.man.drop * 2.4, p.z); man.scale.setScalar(Math.max(0.01, V.man.alpha) * 1.55);
+    man.rotation.y = Math.atan2(B.lastDir.x, B.lastDir.z); man.userData.body.color.set(V.man.c);
+  } else man.visible = false;
+  const w = extra && extra.wall;
+  B.wall.visible = !!w;
+  if (w) { const p = P(w.v), k = w.k; B.wall.position.set(p.x, BY + PHT + 0.005, p.z); B.wall.scale.setScalar(1 + 0.5 * k); B.wall.material.opacity = 1 - k; }
+  B.slabs.forEach((m, k) => m.material.color.set(extra && extra.slab ? extra.slab[k] : COL.slab));
+}
+function build3DTree() {
+  const g = new THREE.Group(); W3.tree = g; W3.scene.add(g);
+  W3.tNodes = {};
+  const deepSet = new Set(DEEP_A.chain);
+  for (let v = 1; v <= G4.n; v++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.46, 24, 16), lambM(deepSet.has(v) ? COL.orange : tint(COL.orange, 0.32))); g.add(m); W3.tNodes[v] = m; }
+  const cyl = new THREE.CylinderGeometry(1, 1, 1, 12);
+  W3.tEdges = TREE_A.map(([a, b]) => { const m = new THREE.Mesh(cyl, lambM(deepSet.has(a) && deepSet.has(b) ? COL.orange : tint(COL.orange, 0.55))); g.add(m); return { a, b, m }; });
+  const strip = new THREE.BoxGeometry(1, 0.01, 1);
+  G4.edges.forEach(([a, b]) => { const s = new THREE.Mesh(strip, basicM('#E6E0D4')); placeStrip(s, MZ.P[a], MZ.P[b], 1, 0.003, 0.06, 1); g.add(s); });
+  for (let v = 1; v <= G4.n; v++) { const r = new THREE.Mesh(new THREE.RingGeometry(0.40, 0.46, 40), basicM('#DDD6C8')); r.rotation.x = -Math.PI / 2; r.position.set(MZ.P[v].x, 0.006, MZ.P[v].z); g.add(r); }
+}
+// 3D 的递归栈：另一套正交镜头，方块画在和 2D 栈一样的屏幕位置上（稍微转一点角度，看得到顶面和侧面）
+function build3DStack() {
+  const s = new THREE.Scene(); W3.s2 = s;
+  s.add(new THREE.HemisphereLight(0xffffff, 0xcfc4b0, 2.2)); const d = new THREE.DirectionalLight(0xffffff, 1.3); d.position.set(-300, 500, 800); s.add(d);
+  W3.ocam = new THREE.OrthographicCamera(0, 1920, 0, -1080, -2000, 2000); W3.ocam.position.set(0, 0, 1000);
+  const geo = new THREE.BoxGeometry(1, 1, 1);
+  W3.blocks = Array.from({ length: 10 }, () => { const m = new THREE.Mesh(geo, lambM('#FFFFFF', { transparent: true })); m.visible = false; s.add(m); return m; });
+}
+function updateStack3D(S) {
+  W3.blocks.forEach((m) => { m.visible = false; });
+  if (!S || S.alpha <= 0.001) return;
+  S.items.forEach((it, k) => {
+    const m = W3.blocks[k]; if (!m) return;
+    m.visible = it.a * S.alpha > 0.01; m.material.opacity = it.a * S.alpha;
+    m.position.set(it.x + it.w / 2, -(it.y + it.h / 2), 0);
+    m.scale.set(it.w - 18, 42, 44); m.rotation.set(0.45, -0.32, it.fly * 0.5);
+    m.material.color.set(it.wall ? tint(COL.bad, 0.45) : tint(it.c, 0.42));
+  });
+}
+
+// ---------------- 镜头（每一步一个目标机位，换步时 1 秒平滑过去；off = 画面中心往哪偏，让棋盘靠左、右边留给面板） ----------------
+const TOP = { p: [9.6, 5.4 / Math.tan(20 * Math.PI / 180), 5.4], t: [9.6, 0, 5.4], up: [0, 0, -1], off: [0, 0] };   // 正俯视：地面上 1 单位 = 屏幕 100 像素
+const camAt = (t, dist, elev, off) => ({ p: [t[0], t[1] + dist * Math.sin(elev), t[2] + dist * Math.cos(elev)], t, up: [0, 1, 0], off });
+const WALKCAM = camAt([5.6, 0, 5.4], 15.4, 44 * Math.PI / 180, [440, -40]);
+const NCCAM = camAt([5.45, 0, 5.6], 17.0, 46 * Math.PI / 180, [430, -40]);
+const CAMB = { from: null, t0: 0, cur: null };
+function camPose(o, dt) {
+  const t = now();
+  if (o.kind === 'maze') {
+    if (o.n === 0) { const a = 0.2 * Math.sin(t * 0.25), C = [5.6, 0, 4.6]; return { p: [C[0] + Math.sin(a) * 6.4, 12.4, C[2] + Math.cos(a) * 6.4], t: C, up: [0, 1, 0], off: [0, 0] }; }
+    if (o.n === 5) { const k = prog(dt, 0, 1.5, easeIO); return mixPose(N3POSE, TOP, k); }
+    if (o.n >= 2) return N3POSE;
+    let sx = 0, sz = 0; for (let k = 0; k < 5; k++) { const m = mazeState(o.n, dt - 0.1 * k); sx += m.pos.x / 5; sz += m.pos.z / 5; }
+    return chasePose({ x: sx, z: sz }, 8.6, 5.4);
+  }
+  if (o.kind === 'tools' || o.kind === 'walk' || o.kind === 'redo') return WALKCAM;
+  if (o.kind === 'nc') return NCCAM;
+  const F = { p: [5.6 + 2.6, 5.8, 5.3 + 13.2], t: [5.6, 4.0, 5.3], up: [0, 1, 0], off: [0, 0] };
+  if (o.n === 2) return F;
+  return mixPose(TOP, F, prog(dt, 0.1, 2.2, easeIO));
+}
+function chasePose(pos, h, back) { return { p: [pos.x, h, pos.z + back], t: [pos.x, 0, pos.z - 0.5], up: [0, 1, 0], off: [0, 0] }; }
+const N3POSE = (() => { const c = [2, 5, 8].reduce((a, v) => ({ x: a.x + MZ.P[v].x / 3, z: a.z + MZ.P[v].z / 3 }), { x: 0, z: 0 }); return { p: [c.x + 0.6, 9.4, c.z + 5.0], t: [c.x + 0.6, 0, c.z + 0.1], up: [0, 1, 0], off: [0, 0] }; })();
+function mixPose(A, B, k) { const m = (a, b) => a.map((x, i) => lerp(x, b[i], k)); return { p: m(A.p, B.p), t: m(A.t, B.t), up: m(A.up, B.up), off: m(A.off || [0, 0], B.off || [0, 0]) }; }
+function camStepChange(instant) { CAMB.from = instant || !CAMB.cur ? null : CAMB.cur; CAMB.t0 = now(); }
+function camFinish() { CAMB.from = null; }
+function applyCam(pose) {
+  const c = W3.cam; c.position.set(...pose.p); const u = new THREE.Vector3(...pose.up).normalize(); c.up.copy(u); c.lookAt(...pose.t);
+  const off = pose.off || [0, 0];
+  if (Math.abs(off[0]) + Math.abs(off[1]) > 0.01) c.setViewOffset(1920, 1080, off[0], off[1], 1920, 1080); else c.clearViewOffset();
+  c.updateMatrixWorld();
+}
+function proj3(x, y, z) { const v = new THREE.Vector3(x, y, z).project(W3.cam); return { x: (v.x + 1) / 2 * 1920, y: (1 - v.y) / 2 * 1080 }; }
+const use3D = (o) => W3.on && !!o.d3;
+function render3D(o, dt, F) {
+  let pose = camPose(o, dt);
+  if (CAMB.from) { const k = prog(now() - CAMB.t0, 0, 1.0, easeIO); if (k >= 1) CAMB.from = null; else pose = mixPose(CAMB.from, pose, k); }
+  CAMB.cur = pose; applyCam(pose);
+  const maze = o.kind === 'maze', board4 = ['tools', 'walk', 'redo'].includes(o.kind), nc = o.kind === 'nc';
+  W3.maze.visible = maze; W3.tree.visible = o.kind === 'end'; W3.b6.g.visible = nc;
+  const rise = maze ? (o.n === 5 ? prog(dt, 1.3, 0.9, easeOut) : 0) : 1;
+  W3.b4.g.visible = board4 || (maze && rise > 0.001);
+  W3.b4.g.scale.y = Math.max(0.001, rise);
+  if (maze) {
+    const ms = mazeState(o.n, dt);
+    W3.walls.scale.y = Math.max(0.001, 1 - ms.flat);
+    W3.maze.children.forEach((ch) => { if (ch !== W3.walls) ch.visible = rise < 0.5 || ch === W3.man; });
+    for (let v = 1; v <= G4.n; v++) { const k = (ms.flags[v] || 0) * ms.fade; W3.flags[v].visible = k > 0.01; W3.flags[v].scale.set(1, Math.max(0.01, k), 1); }
+    W3.man.visible = ms.fade > 0.01; W3.man.position.set(ms.pos.x, 0, ms.pos.z); W3.man.scale.setScalar(Math.max(0.01, ms.fade));
+    W3.man.rotation.y = Math.atan2(ms.dir.x, ms.dir.z);
+    W3.bars.forEach((b) => { b.visible = ms.bar > 0.01 && ms.fade > 0.01; b.scale.set(1, Math.max(0.01, ms.bar * ms.fade), 1); });
+    if (rise > 0.001) updateBoard(W3.b4, { col: {}, st: {}, trees: [], flags: {}, bars: [], man: null });
+  } else if (board4) updateBoard(W3.b4, F.vis, { wall: F.wall3 });
+  else if (nc) updateBoard(W3.b6, F.vis, { slab: F.slab });
+  else if (o.kind === 'end') {
+    const dl = o.n === 2 ? 100 : dt;
+    const P = {}; for (let v = 1; v <= G4.n; v++) { P[v] = liftPos(v, dl); W3.tNodes[v].position.set(P[v].x, P[v].y, P[v].z); }
+    W3.tEdges.forEach((e) => placeBetween(e.m, P[e.a], P[e.b], 0.075));
+  }
+  W3.r.autoClear = true;
+  W3.r.render(W3.scene, W3.cam);
+  updateStack3D(board4 ? F.stack : null);
+  if (board4) { W3.r.autoClear = false; W3.r.clearDepth(); W3.r.render(W3.s2, W3.ocam); W3.r.autoClear = true; }
+  if (!REC) fpsWatch();
+}
+// 显卡太慢（3D 画面低于约 20 帧）就自动换成 2D，只检查一次
+function fpsWatch() {
+  if (W3.fpsChecked || document.visibilityState !== 'visible') return;
+  const t = performance.now();
+  if (W3.frames.length && t - W3.frames[W3.frames.length - 1] > 500) W3.frames = [];
+  W3.frames.push(t);
+  if (W3.frames.length >= 45) {
+    const d = []; for (let i = 1; i < W3.frames.length; i++) d.push(W3.frames[i] - W3.frames[i - 1]);
+    d.sort((a, b) => a - b); const med = d[d.length >> 1];
+    W3.fpsChecked = true;
+    if (med > 50) { W3.on = false; W3.reason = `3D 太卡（约 ${Math.round(1000 / med)} 帧/秒）`; showToast('画面有点卡，已换成 2D（按 D 可以切回 3D）'); }
+  }
+}
+// 生成树"提起来"：每个顶点从地上（原图位置）升到按深度排好的位置；深的晚一点离地
+const TREE_HANG = (() => {
+  const kids = {}; TREE_A.forEach(([a, b]) => { (kids[a] = kids[a] || []).push(b); });
+  let leaf = 0; const xi = {};
+  (function lay(v) { const k = kids[v] || []; if (!k.length) { xi[v] = leaf++; return; } k.forEach(lay); xi[v] = k.reduce((s, c) => s + xi[c], 0) / k.length; })(1);
+  const H = {}, top = 6.2, dy = 1.3, gap = 2.3, mid = (leaf - 1) / 2;
+  for (let v = 1; v <= G4.n; v++) H[v] = { x: 5.6 + (xi[v] - mid) * gap, y: top - (DEPTH_A[v] - 1) * dy, z: 5.3 };
+  return { H, top, dy, maxD: Math.max(...Object.values(DEPTH_A)) };
+})();
+function liftK(v, dt) { return prog(dt, 0.3 + 0.28 * (DEPTH_A[v] - 1), 1.3, easeIO); }
+function liftPos(v, dt) {
+  const k = liftK(v, dt), F = MZ.P[v], H = TREE_HANG.H[v];
+  const sway = 0.06 * Math.sin(2.2 * (dt - 2)) * Math.exp(-Math.max(0, dt - 2) * 0.5) * (DEPTH_A[v] - 1) * (dt > 2 ? 1 : 0);
+  return { x: lerp(F.x, H.x + sway, k), y: lerp(0.46, H.y, k) + 0.5 * Math.sin(Math.PI * k) * (DEPTH_A[v] === 1 ? 1 : 0.3), z: lerp(F.z, H.z, k) };
+}
+
+// =====================================================================
+//  各段的画面。prepare() 先算出这一帧的状态（3D 和平面层共用），再分别画
+// =====================================================================
+function walkView(o, dt) {
+  if (o.kind === 'tools') return { run: RUN_A, view: emptyView(RUN_A), c: COL.orange };
+  if (o.kind === 'walk') return { run: RUN_A, view: runView(RUN_A, o.a, o.b, dt, 1, undefined, true), c: COL.orange };
+  if (o.kind === 'redo') return { run: RUN_D, view: o.n === 0 ? emptyView(RUN_D) : o.n === 1 ? runView(RUN_D, 0, RUN_D.ev.length - 1, dt, SP_REDO) : finalView(RUN_D), c: COL.blue };
+  return null;
+}
+// 第 3 段"往哪走 / 退回"这一步结束时：撞南墙（没有没来过的邻接点）或者还没来过的路（打问号）
+function walkEndInfo(o) {
+  if (o.kind !== 'walk' || (o.mode !== 'look' && o.mode !== 'back')) return null;
+  const e = RUN_A.ev[stateIdx(o)], cur = e.stack[e.stack.length - 1];
+  return { cur, U: RUN_A.order[cur].filter((x) => !e.visited[x - 1]), t: walkEnd(o) };
+}
+function prepare(o, dt) {
+  const F = {};
+  if (['tools', 'walk', 'redo'].includes(o.kind)) {
+    const W = walkView(o, dt); F.W = W;
+    const info = walkEndInfo(o);
+    F.wall = !!(info && o.mode === 'look' && !info.U.length && dt > info.t);
+    F.wallV = F.wall ? info.cur : null;
+    F.qs = info && info.U.length ? info.U.map((b) => ({ a: info.cur, b, k: easeBack(prog(dt, info.t + 0.05, 0.45)) })) : [];
+    const stA = o.kind === 'tools' ? (o.n === 0 ? 0 : o.n === 1 ? prog(dt, 0.1, 0.5) : 1) : 1;
+    F.stA = stA; F.visA = o.kind === 'tools' && o.n === 0 ? prog(dt, 0.1, 0.5) : 1; F.seqA = o.kind === 'tools' ? (o.n < 2 ? 0 : prog(dt, 0.1, 0.5)) : 1;
+    F.stack = stackItems(W.view, { colorOf: () => W.c, alpha: stA, wall: F.wall });
+    F.vis = boardVis([{ view: W.view, colorOf: () => W.c }]);
+    F.wall3 = F.wall ? { v: F.wallV, k: ((now() - PH.t0) % 1.4) / 1.4 } : null;
+  }
+  if (o.kind === 'nc') {
+    F.N = ncViews(o, dt);
+    F.vis = boardVis(F.N.views.map((v, k) => (v ? { view: v, colorOf: () => RUNC[k] } : null)).filter(Boolean));
+    F.slab = o.n === 6 ? NC.map((r, k) => mixHex(COL.slab, tint(RUNC[k], 0.35), prog(dt, 0.2 + 0.25 * k, 0.5))) : null;
+  }
+  return F;
+}
+// 第 2、3、4 段：棋盘 + 右边三块面板
+function drawWalkScene(o, dt, F, d3) {
+  const W = F.W, v = W.view, c = W.c;
+  if (!d3) {
+    drawRunGraph(v, { G: G4, pos: vpos, R: LCUR.R, vf: LCUR.vf, c, alpha: 1, pointer: true });
+    drawBars2D(v.bars, vpos, LCUR.R, LCUR.s);
+    if (F.wall) pulseRing(vpos(F.wallV), LCUR.R, ((now() - PH.t0) % 1.4) / 1.4, COL.bad);
+    drawQs(F.qs, (a, b) => mouth2D(vpos, a, b, LCUR.R, LCUR.s, 26));
+  } else {
+    const P = W3.b4.P;
+    for (let u = 1; u <= G4.n; u++) { const p = P(u), q = proj3(p.x, BY + PHT, p.z), st = F.vis.st[u]; vname(u, q.x, q.y + 1, 44, st === 'in' ? '#FFFFFF' : st === 'out' ? deep(c, 0.12) : COL.ink, 1); }
+    drawQs(F.qs, (a, b) => { const m = mouth3D(P, a, b, 1.4); return proj3(m.x, BY + PHT + 0.45, m.z); });
+  }
+  const flash = (u) => (v.probe && v.probe.to === u ? v.probe.k : 0);
+  drawVisited(v.snap, { colorOf: () => c, alpha: F.visA, flash, bumpV: v.push ? v.push.v : null, bumpK: v.push ? v.push.k : 0 });
+  drawStackFrame(F.stack);
+  if (!d3) drawStackBoxes2D(F.stack);
+  drawStackLabels(F.stack, d3);
+  const rows = [];
+  if (o.kind === 'redo') {
+    rows.push({ label: '① 先挑编号小的', c: COL.orange, seq: RUN_A.seq, tag: o.n >= 2 ? '✓' : null, tagC: COL.green, tagA: o.n === 2 ? prog(dt, 0.3, 0.4) : 1 });
+    rows.push({ label: '② 先挑编号大的', c: COL.blue, seq: v.snap.seq, newK: v.push ? v.push.k : null, tag: o.n >= 2 ? '✓' : null, tagC: COL.green, tagA: o.n === 2 ? prog(dt, 0.6, 0.4) : 1 });
+  } else rows.push({ label: '① 先挑编号小的', c: COL.orange, seq: v.snap.seq, newK: v.push ? v.push.k : null });
+  drawSeqRows(rows, { alpha: F.seqA });
+}
+// ---------------- 第 5 段：邻接表 ----------------
+const AL = { x: 560, y: 326, rowH: 82, idxW: 44, dataW: 110, ptrW: 46, arrow: 46, nodeA: 64, nodeB: 44 };
+function adjNodeX(j) { return AL.x + AL.idxW + AL.dataW + AL.ptrW + AL.arrow + j * (AL.nodeA + AL.nodeB + AL.arrow); }
+// rowK(r)：顶点表第 r 行出现进度；chainK(r)：这一行的链挂上去的进度
+function drawAdjList(rowK, chainK, marks, scanBox, rev, hlRow) {
+  const hk = chainK(0);
+  drawParts([['顶点表', COL.ink2]], AL.x + AL.idxW + (AL.dataW + AL.ptrW) / 2, AL.y - 52, 36, { alpha: rowK(0) });
+  drawParts([['边链表（adjvex | nextarc）', COL.ink2]], adjNodeX(0) - 4, AL.y - 52, 36, { align: 'left', alpha: hk });
+  for (let r = 0; r < G4.n; r++) {
+    const k = rowK(r); if (k <= 0.01) continue;
+    const v = r + 1, y = AL.y + r * AL.rowH, ch = AL.rowH - 22, yc = y + ch / 2;
+    ctx.save(); ctx.globalAlpha = k;
+    drawParts([[String(r), COL.ink3]], AL.x + AL.idxW / 2 - 6, yc + 1, 40, { mono: true, alpha: k });
+    const dx = AL.x + AL.idxW;
+    ctx.lineWidth = 3; ctx.strokeStyle = COL.ink;
+    ctx.fillStyle = (marks && marks.row === v) || hlRow === v ? tint(COL.green, 0.2) : '#FFFFFF';
+    ctx.fillRect(dx, y, AL.dataW + AL.ptrW, ch); ctx.strokeRect(dx, y, AL.dataW, ch); ctx.strokeRect(dx + AL.dataW, y, AL.ptrW, ch);
+    ctx.restore();
+    vname(v, dx + AL.dataW / 2, yc + 1, 44, COL.ink, k);
+    if (hlRow === v) { ctx.save(); roundRect(dx - 8, y - 8, AL.dataW + AL.ptrW + 16, ch + 16, 10); ctx.lineWidth = 5; ctx.strokeStyle = COL.green; ctx.globalAlpha = k; ctx.stroke(); ctx.restore(); }
+    const ck = chainK(r);
+    const list = G4.asc[v].map((w) => w - 1), m = list.length;
+    let px = dx + AL.dataW + AL.ptrW / 2;
+    if (ck <= 0.01) { drawParts([['∧', COL.ink]], px, yc + 2, 40, { alpha: k }); continue; }
+    ctx.save(); ctx.globalAlpha = k * ck; ctx.beginPath(); ctx.arc(px, yc, 6, 0, Math.PI * 2); ctx.fillStyle = COL.ink; ctx.fill(); ctx.restore();
+    const slot = (j) => lerp(j, m - 1 - j, rev);          // 链倒过来：第 j 个结点挪到第 m−1−j 个位置
+    const ka = k * ck, sh = (1 - ck) * 40;
+    list.forEach((a, j) => {
+      const nx = adjNodeX(slot(j)) + sh, mk = marks ? marks.get(v + ':' + j) : null;
+      ctx.save(); ctx.globalAlpha = ka;
+      ctx.fillStyle = mk === 'go' ? tint(COL.green, 0.3) : mk === 'skip' ? '#EEEAE2' : '#FFFFFF';
+      ctx.fillRect(nx, y, AL.nodeA + AL.nodeB, ch);
+      ctx.lineWidth = 3; ctx.strokeStyle = mk === 'go' ? COL.green : COL.ink; ctx.strokeRect(nx, y, AL.nodeA, ch); ctx.strokeRect(nx + AL.nodeA, y, AL.nodeB, ch);
+      ctx.restore();
+      drawParts([[String(a), mk === 'skip' ? COL.ink3 : mk === 'go' ? deep(COL.green, 0.1) : COL.ink]], nx + AL.nodeA / 2, yc + 2, 44, { mono: true, weight: 800, alpha: ka });
+      if (mk === 'skip') line({ x: nx + 12, y: y + ch - 10 }, { x: nx + AL.nodeA - 12, y: y + 10 }, 4, COL.ink3, ka);
+      if (Math.round(slot(j)) === m - 1) drawParts([['∧', COL.ink]], nx + AL.nodeA + AL.nodeB / 2, yc + 2, 40, { alpha: ka });
+      else { ctx.save(); ctx.globalAlpha = ka; ctx.beginPath(); ctx.arc(nx + AL.nodeA + AL.nodeB / 2, yc, 6, 0, Math.PI * 2); ctx.fillStyle = COL.ink; ctx.fill(); ctx.restore(); }
+    });
+    for (let s = 0; s < m; s++) {
+      const fromX = s === 0 ? dx + AL.dataW + AL.ptrW / 2 + 8 : adjNodeX(s - 1) + AL.nodeA + AL.nodeB / 2 + 8 + sh, toX = adjNodeX(s) - 4 + sh;
+      ctx.save(); ctx.globalAlpha = ka; line({ x: fromX, y: yc }, { x: toX - 10, y: yc }, 3, COL.ink, ka);
+      ctx.beginPath(); ctx.moveTo(toX, yc); ctx.lineTo(toX - 14, yc - 8); ctx.lineTo(toX - 14, yc + 8); ctx.closePath(); ctx.fillStyle = COL.ink; ctx.fill(); ctx.restore();
+    }
+  }
+  if (scanBox) { const nx = adjNodeX(scanBox.j), y = AL.y + (scanBox.v - 1) * AL.rowH; ctx.save(); roundRect(nx - 7, y - 7, AL.nodeA + AL.nodeB + 14, AL.rowH - 22 + 14, 10); ctx.lineWidth = 5; ctx.strokeStyle = scanBox.go ? COL.green : COL.ink2; ctx.globalAlpha = scanBox.a; ctx.stroke(); ctx.restore(); }
+}
+function adjListExport(rev) { const out = []; for (let v = 1; v <= G4.n; v++) { const l = G4.asc[v].map((w) => w - 1); if (rev) l.reverse(); out.push(`${v - 1} v${v} → ` + l.join(' → ') + ' ∧'); } return out; }
+function scanMarks(dt) {          // 第 4 步：沿链扫描，已经看过的格子（go = 去了，skip = 来过了）
+  const marks = new Map(); let box = null;
+  const S = schedule(RUN_A.ev, 0, RUN_A.ev.length - 1, SP_ADJ);
+  for (const s of S.list) {
+    const e = RUN_A.ev[s.i]; if (dt < s.t) break;
+    if (e.t === 'visit' && e.frm !== null) { marks.set(e.frm + ':' + e.arc, 'go'); box = { v: e.frm, j: e.arc, go: true, a: 1 - prog(dt, s.t + s.d, 0.3) }; }
+    if (e.t === 'check') { marks.set(e.frm + ':' + e.arc, 'skip'); box = { v: e.frm, j: e.arc, go: false, a: 1 - prog(dt, s.t + s.d, 0.3) }; }
+  }
+  if (box && box.a <= 0.01) box = null;
+  return { marks, box };
+}
+const ADJ_ROWS = (n) => {     // 访问序列这块在第几步出现哪几行（slot 固定：① 0、② 1、③ 2）
+  const r = [];
+  if (n >= 4) r.push('A');
+  if (n >= 6) r.push('D');
+  if (n >= 3) r.push('S');
+  return r;
+};
+function drawAdjScene(o, dt) {
+  const c = COL.green, n = o.n;
+  const v = n < 3 ? emptyView(RUN_A) : n === 3 ? runView(RUN_A, 0, RUN_A.ev.length - 1, dt, SP_ADJ) : finalView(RUN_A);
+  drawRunGraph(v, { G: G4, pos: vpos, R: LCUR.R, vf: LCUR.vf, c, colorOf: () => c, pointer: n === 3, start: n === 2 ? 1 : undefined, ring: (u) => (n === 2 && u === 1 ? { ring: COL.green } : null) });
+  let marks = null, box = null;
+  if (n === 3 || n === 4) { const m = scanMarks(n === 3 ? dt : 1e6); marks = m.marks; box = n === 3 ? m.box : null; if (n === 3) marks.row = v.snap.stack.length ? v.snap.stack[v.snap.stack.length - 1] : null; }
+  const rowK = (r) => (n === 0 ? prog(dt, 0.15 + 0.1 * r, 0.35, easeOut) : 1);
+  const chainK = (r) => (n === 0 ? 0 : n === 1 ? prog(dt, 0.3 + 0.32 * r, 0.45, easeOut) : 1);
+  const rev = n === 5 ? prog(dt, 0.2, 1.0, easeIO) : n > 5 ? 1 : 0;
+  drawAdjList(rowK, chainK, marks, box, rev, n === 2 ? 1 : null);
+  const seqAt = { x: 1330, y: 296 }, R = ADJ_ROWS(n), rows = [];
+  if (R.includes('A')) rows.push({ slot: 0, label: '① 先挑编号小的', c: COL.orange, seq: RUN_A.seq, alpha: n === 4 ? prog(dt, 0.1, 0.4) : 1 });
+  if (R.includes('D')) rows.push({ slot: 1, label: '② 先挑编号大的', c: COL.blue, seq: RUN_D.seq, tag: '= 链倒过来', tagC: COL.blue, alpha: n === 6 ? prog(dt, 0.1, 0.4) : 1, tagA: n === 6 ? prog(dt, 0.5, 0.4) : 1 });
+  if (R.includes('S')) rows.push({ slot: 2, label: '③ 按邻接表走', c: COL.green, seq: v.snap.seq, newK: v.push ? v.push.k : null, tag: n >= 4 ? '= ①' : null, tagC: COL.orange, tagA: n === 4 ? prog(dt, 0.5, 0.4) : 1, alpha: n === 3 ? prog(dt, 0, 0.4) : 1 });
+  if (rows.length) drawSeqRows(rows, { at: seqAt });
+}
+// ---------------- 第 6 段：非连通图（3D：几座互不相连的小岛） ----------------
+const G6L = { R: 46, vf: 44 };
+const g6pos = (v) => G6.pos[v];
+const NC_OWNER = (() => { const o = {}; NC.forEach((r, k) => r.seq.forEach((v) => { o[v] = k; })); return o; })();
+function ncPlan(k) {      // 第 k 次"再调"：循环指针从上一次的起点后面一格一格走，碰到没访问过的就调一次 DFS
+  const items = []; let t = 0.3;
+  for (let v = NC[k - 1].start + 1; v <= NC[k].start; v++) {
+    const call = v === NC[k].start ? k : -1;
+    items.push({ v, t, call }); t += 0.7;
+    if (call > 0) { const S = schedule(NC[k].ev, 0, NC[k].ev.length - 1, SP_NC, t); items[items.length - 1].t1 = t; t = S.end + 0.3; }
+  }
+  return { items, end: t };
+}
+function ncViews(o, dt) {
+  const n = o.n;
+  const views = NC.map((r, k) => {
+    if (k === 0) return n === 0 ? null : n === 1 ? runView(r, 0, r.ev.length - 1, dt, SP_NC) : finalView(r);
+    const at = k + 3;               // 第 2 次调用在第 5 步（n = 4），第 3 次在第 6 步
+    if (n < at) return null;
+    if (n > at) return finalView(r);
+    const it = ncPlan(k).items.find((x) => x.call === k);
+    return dt < it.t1 ? null : runView(r, 0, r.ev.length - 1, dt - it.t1 + 0.15, SP_NC);
+  });
+  let ptr = null, calls = views.filter(Boolean).length;
+  if (n === 4 || n === 5) { const P = ncPlan(n - 3); for (const it of P.items) if (dt >= it.t) ptr = it.v - 1; if (dt > P.end) ptr = null; }
+  return { views, ptr, calls };
+}
+function drawNCScene(o, dt, F, d3) {
+  const N = F.N, views = N.views, A = 1, n = o.n;
+  if (!d3) {
+    if (n === 6) NC.forEach((r, k) => {
+      const xs = r.seq.map((v) => G6.pos[v].x), ys = r.seq.map((v) => G6.pos[v].y), pad = 70;
+      const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
+      const a = prog(dt, 0.2 + 0.25 * k, 0.5);
+      ctx.save(); ctx.globalAlpha = a; roundRect(x0, y0, x1 - x0, y1 - y0, 40); ctx.fillStyle = tint(RUNC[k], 0.08); ctx.fill(); ctx.setLineDash([14, 10]); ctx.lineWidth = 4; ctx.strokeStyle = RUNC[k]; ctx.stroke(); ctx.restore();
+    });
+    G6.edges.forEach(([a, b]) => line(g6pos(a), g6pos(b), 7, COL.edge, A));
+    views.forEach((v, k) => { if (v) drawRunGraph(v, { G: { n: G6.n, edges: G6.edges.filter(([a]) => NC_OWNER[a] === k) }, pos: g6pos, R: G6L.R, vf: G6L.vf, c: RUNC[k], alpha: A, pointer: n !== 6, onlyV: NC[k].seq }); });
+    for (let u = 1; u <= G6.n; u++) { const k = NC_OWNER[u]; if (!views[k]) drawVertexAt(u, g6pos(u), G6L.R, G6L.vf, vstyle('un'), A); }
+  } else {
+    const P = W3.b6.P;
+    for (let u = 1; u <= G6.n; u++) { const p = P(u), q = proj3(p.x, BY + PHT, p.z), st = F.vis.st[u]; vname(u, q.x, q.y + 1, 44, st === 'in' ? '#FFFFFF' : st === 'out' ? deep(RUNC[NC_OWNER[u]], 0.12) : COL.ink, 1); }
+  }
+  const at = (u) => { if (!d3) return g6pos(u); const p = W3.b6.P(u); return proj3(p.x, BY + PHT, p.z); };
+  if (n === 2) { const k = ((now() - PH.t0) % 1.4) / 1.4; NC.slice(1).forEach((r) => r.seq.forEach((u) => pulseRing(at(u), G6L.R, k, COL.orange))); }
+  if (n === 6) NC.forEach((r, k) => {      // 岛 / 框下面的名字
+    const ps = r.seq.map(at), x = ps.reduce((s, p) => s + p.x, 0) / ps.length, y = Math.max(...ps.map((p) => p.y)) + (d3 ? 118 : 108);
+    drawParts([[`连通分量 ${k + 1}`, deep(RUNC[k], 0.1)]], x, y, 36, { alpha: prog(dt, 0.2 + 0.25 * k, 0.5), weight: 800, halo: 10 });
+  });
+  // 右边：visited（第 2 步起）、代码卡和调用次数（第 4 步起）
+  const vis = Array(G6.n).fill(false); views.forEach((v) => { if (v) v.snap.visited.forEach((b, i) => { if (b) vis[i] = true; }); });
+  if (n >= 1) drawVisited({ visited: vis }, { colorOf: (u) => RUNC[NC_OWNER[u]], at: { x: 1090, y: 520 }, alpha: n === 1 ? prog(dt, 0, 0.4) : 1, ptr: N.ptr });
+  if (n >= 3) {
+    const cA = n === 3 ? prog(dt, 0.1, 0.5) : 1, cx = 1060, cy = 160;
+    card(cx, cy, 800, 200, 20, cA);
+    drawParts([['DFSTraverse(G)', COL.ink3]], cx + 30, cy + 40, 36, { align: 'left', mono: true, alpha: cA });
+    ctx.save(); ctx.globalAlpha = cA * 0.9; roundRect(cx + 20, cy + 118, 740, 60, 10); ctx.fillStyle = tint(COL.orange, 0.16); ctx.fill(); ctx.restore();
+    drawParts([['for (v = 0; v < G.vexnum; ++v)', COL.ink]], cx + 30, cy + 96, 40, { align: 'left', mono: true, alpha: cA });
+    drawParts([['    if (!visited[v]) DFS(G, v);', COL.ink]], cx + 30, cy + 148, 40, { align: 'left', mono: true, alpha: cA });
+    const calls = N.calls;
+    drawParts([['调用 DFS：', COL.ink], [`${calls} 次`, COL.orange]], 1090, 760, 52, { align: 'left', weight: 800, alpha: cA });
+    if (n === 6) { const w = measureParts([['调用 DFS：', COL.ink], [`${calls} 次`, COL.orange]], 52, 800); const a = prog(dt, 0.9, 0.4); ctx.save(); ctx.globalAlpha = a; const t = `= ${NC.length} 个连通分量`, tw = measureParts([[t, '#fff']], 44, 800); roundRect(1090 + w + 24, 760 - 36, tw + 40, 72, 36); ctx.fillStyle = COL.green; ctx.fill(); ctx.restore(); drawParts([[t, '#FFFFFF']], 1090 + w + 44, 762, 44, { align: 'left', weight: 800, alpha: a }); }
+  }
+}
+// ---------------- 第 7 段：算法与复杂度 ----------------
+const CODE = [
+  ['void DFSTraverse(Graph G) {', 0],
+  ['    for (v = 0; v < G.vexnum; ++v) visited[v] = FALSE;', 0],
+  ['    for (v = 0; v < G.vexnum; ++v)', 0],
+  ['        if (!visited[v]) DFS(G, v);', 3, '← 非连通：再调一次'],
+  ['}', 0],
+  ['void DFS(Graph G, int v) {', 0],
+  ['    visited[v] = TRUE; Visit(v);', 1, '← 插旗'],
+  ['    for (w = FirstAdjVex(G, v); w >= 0; w = NextAdjVex(G, v, w))', 0],
+  ['        if (!visited[w]) DFS(G, w);', 2, '← 递归 = 压栈'],
+  ['}', 0],
+];
+const CX_TEXT = [
+  { card: 0, p: [['邻接矩阵', COL.orange]], x: 520, y: 200, size: 48, weight: 800, delay: 0.1 },
+  { card: 0, p: [['O(n²)', COL.orange]], x: 520, y: 720, size: 64, weight: 800, delay: 2.2 },
+  { card: 0, p: '每个顶点扫一整行', x: 520, y: 820, size: 40, delay: 0.5 },
+  { card: 1, p: [['邻接表', COL.green]], x: 1400, y: 200, size: 48, weight: 800, delay: 0.1 },
+  { card: 1, p: [['O(n + e)', COL.green]], x: 1400, y: 720, size: 64, weight: 800, delay: 2.2 },
+  { card: 1, p: '每个顶点扫它那条链', x: 1400, y: 820, size: 40, delay: 0.5 },
+];
+function drawAlgo(o, dt) {
+  if (o.n <= 3) {
+    const x0 = 170, y0 = 196, lh = 72;
+    card(x0 - 40, y0 - 52, 1660, CODE.length * lh + 40, 24, o.n === 0 ? prog(dt, 0, 0.3) : 1);
+    CODE.forEach(([s, k, note], j) => {
+      const y = y0 + j * lh, a = o.n === 0 ? prog(dt, 0.08 * j, 0.35) : 1;
+      const shown = k > 0 && k <= o.n, na = k === o.n ? prog(dt, 0.1, 0.4) : 1;
+      if (shown) { ctx.save(); ctx.globalAlpha = na * 0.9; roundRect(x0 - 20, y - lh / 2 + 8, 820, lh - 16, 10); ctx.fillStyle = tint(COL.orange, 0.14); ctx.fill(); ctx.restore(); }
+      drawParts([[s, COL.ink]], x0, y + 2, 40, { align: 'left', mono: true, alpha: a });
+      if (shown) drawParts([[note, COL.orange]], 1020, y + 2, 44, { align: 'left', weight: 800, alpha: na });
+    });
+    return;
+  }
+  const n = G4.n;
+  const kM = o.n === 4 ? dt : 1e6, kL = o.n === 5 ? dt : -1;
+  card(110, 140, 820, 760, 24, o.n === 4 ? prog(dt, 0, 0.3) : 1);
+  const cs = 46, mx = 520 - n * cs / 2, my = 250;
+  const row = Math.floor(clamp01((kM - 0.3) / 1.8) * n - 1e-9);
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+    const on = hasEdge(G4, i + 1, j + 1), x = mx + j * cs, y = my + i * cs;
+    ctx.fillStyle = i === row && kM < 2.2 ? tint(COL.orange, 0.3) : '#FFFFFF'; ctx.fillRect(x, y, cs, cs);
+    if (on) { ctx.fillStyle = COL.orange; roundRect(x + 9, y + 9, cs - 18, cs - 18, 5); ctx.fill(); }
+    ctx.lineWidth = 1.5; ctx.strokeStyle = COL.cardLine; ctx.strokeRect(x, y, cs, cs);
+  }
+  if (o.n < 5) return;
+  card(990, 140, 820, 760, 24, prog(dt, 0, 0.3));
+  const lx = 1180, ly = 250, rh = 46;
+  let cnt = 0; const total = n + 2 * G4.edges.length, kk = clamp01((kL - 0.3) / 1.8) * total;
+  for (let v = 1; v <= n; v++) {
+    const y = ly + (v - 1) * rh; const a = cnt < kk ? 1 : 0; cnt++;
+    ctx.fillStyle = a ? tint(COL.green, 0.35) : '#FFFFFF'; ctx.fillRect(lx, y + 6, 70, rh - 12); ctx.lineWidth = 2; ctx.strokeStyle = COL.ink2; ctx.strokeRect(lx, y + 6, 70, rh - 12);
+    G4.asc[v].forEach((w, j) => { const x = lx + 110 + j * 100, b = cnt < kk ? 1 : 0; cnt++; line({ x: x - 34, y: y + rh / 2 }, { x: x - 6, y: y + rh / 2 }, 2, COL.ink3, 1); ctx.fillStyle = b ? COL.green : '#FFFFFF'; ctx.fillRect(x, y + 8, 64, rh - 16); ctx.strokeStyle = COL.ink2; ctx.strokeRect(x, y + 8, 64, rh - 16); });
+  }
+}
+// ---------------- 第 8 段：课堂小练 ----------------
+function drawPractice(o, dt) {
+  const ps = CUR.ps, c = COL.orange;
+  const v = o.n === 0 ? emptyView(PR) : o.n === 1 ? runView(PR, 0, PR.ev.length - 1, dt, SP_PRAC) : finalView(PR);
+  drawRunGraph(v, {
+    G: G4, pos: vpos, R: LCUR.R, vf: LCUR.vf, c, start: ps, pointer: o.n === 1,
+    ring: (u) => (u === ps && o.n === 0 ? { ring: COL.green } : null),
+  });
+  if (o.n === 2) for (let i = 1; i < PRD.chain.length; i++) line(vpos(PRD.chain[i - 1]), vpos(PRD.chain[i]), 11, c, 1);
+  if (o.n === 2) for (const u of PRD.chain) drawVertexAt(u, vpos(u), LCUR.R, LCUR.vf, vstyle('in', c), 1);
+  { const p = vpos(ps); drawParts([['起点', COL.green]], p.x, p.y + LCUR.R + 34, 36, { weight: 800, halo: 8 }); }
+  if (o.n >= 1) drawSeqRows([{ label: '', c, seq: v.snap.seq, newK: v.push ? v.push.k : null }], { at: { x: 1000, y: 410 }, title: false });
+  if (o.n >= 2) {   // 栈最深那一刻（横着画：左边栈底、右边栈顶）
+    const x0 = 1000, y0 = 700, w = 76, h = 66, a = prog(dt, 0.4, 0.4);
+    PRD.chain.forEach((u, j) => { ctx.save(); ctx.globalAlpha = a; roundRect(x0 + j * (w + 6), y0, w, h, 10); ctx.fillStyle = tint(c, 0.16); ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = c; ctx.stroke(); ctx.restore(); vname(u, x0 + j * (w + 6) + w / 2, y0 + h / 2 + 1, 44, deep(c, 0.1), a); });
+    drawParts([['栈底', COL.ink2]], x0 + w / 2, y0 + h + 32, 36, { alpha: a });
+    drawParts([['栈顶', COL.ink2]], x0 + (PRD.chain.length - 1) * (w + 6) + w / 2, y0 + h + 32, 36, { alpha: a });
+  }
+  if (o.n === 0) {                 // 倒计时
+    const left = Math.max(0, PRACTICE_SECONDS - (now() - PH.timerT0));
+    const sec = Math.ceil(left), str = left <= 0 ? '时间到' : `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+    drawParts([[str, left <= 10 ? COL.bad : COL.ink2]], 1860, 72, 56, { align: 'right', mono: left > 0, weight: 800 });
+  }
+}
+// ---------------- 第 9 段：生成树 / 提起来 / 小结 ----------------
+function drawTree2D(alpha) {
+  const v = finalView(RUN_A);
+  drawRunGraph(v, { G: G4, pos: vpos, R: LCUR.R, vf: LCUR.vf, c: COL.orange, treeSolid: true, dashNonTree: true, pointer: false, alpha });
+}
+function liftHud(P, dt, showStack, stackK) {
+  for (let d = 1; d <= TREE_HANG.maxD; d++) {        // 每层一行字："第 k 层"（左边）
+    const y = TREE_HANG.top - (d - 1) * TREE_HANG.dy, a = prog(dt, 2.0 + 0.12 * d, 0.4);
+    const p = P(TREE_HANG.H[1].x - 3.5, y, TREE_HANG.H[1].z);
+    drawParts([[`第 ${d} 层`, COL.ink2]], p.x, p.y, 36, { align: 'right', weight: 700, alpha: a, halo: 10 });
+  }
+  const deepSet = new Set(DEEP_A.chain);
+  for (let v = 1; v <= G4.n; v++) { const q = liftPos(v, dt), p = P(q.x, q.y, q.z); vname(v, p.x, p.y + 1, 40, deepSet.has(v) ? '#FFFFFF' : deep(COL.orange, 0.12), 1); }
+  if (!showStack) return;
+  const a = stackK, x = 1600, w = 220, h = 62, bottom = 1010;          // 右下：栈最深时的样子
+  if (a > 0.01) {
+    drawParts([['栈最深时', COL.ink2]], x + w / 2, bottom - DEEP_A.d * (h + 6) - 34, 36, { alpha: a, halo: 10 });
+    DEEP_A.chain.forEach((u, j) => { const y = bottom - (j + 1) * (h + 6) - (1 - a) * 40 * (j + 1) / DEEP_A.d; ctx.save(); ctx.globalAlpha = a; roundRect(x, y, w, h, 10); ctx.fillStyle = tint(COL.orange, 0.16); ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = COL.orange; ctx.stroke(); ctx.restore(); vname(u, x + w / 2, y + h / 2 + 1, 44, deep(COL.orange, 0.1), a); });
+  }
+}
+function liftProj2D(dt) {           // 2D 画法：把 3D 的位置用一个固定的侧视投影摊到平面上
+  const k0 = prog(dt, 0.1, 2.2, easeIO);
+  return { k0, P: (x, y, z) => { const flat = { x: x * 100, y: z * 100 }, side = { x: 960 + (x - 5.6) * 168, y: 312 + (TREE_HANG.top - y) * 124 + (z - 5.3) * 24 }; return { x: lerp(flat.x, side.x, k0), y: lerp(flat.y, side.y, k0) }; } };
+}
+function drawLift2D(dt, showStack, stackK) {
+  const L = liftProj2D(dt), P = L.P, k0 = L.k0;
+  const Q = {}; for (let v = 1; v <= G4.n; v++) { const q = liftPos(v, dt); Q[v] = P(q.x, q.y, q.z); }
+  G4.edges.forEach(([a, b]) => line({ x: MZ.P[a].x * 100, y: MZ.P[a].z * 100 }, { x: MZ.P[b].x * 100, y: MZ.P[b].z * 100 }, 6, '#E6E0D4', 1 - k0));
+  const deepSet = new Set(DEEP_A.chain);
+  TREE_A.forEach(([a, b]) => line(Q[a], Q[b], 12, deepSet.has(a) && deepSet.has(b) ? COL.orange : tint(COL.orange, 0.55), 1));
+  for (let v = 1; v <= G4.n; v++) { ctx.save(); ctx.beginPath(); ctx.arc(Q[v].x, Q[v].y, 46, 0, Math.PI * 2); ctx.fillStyle = deepSet.has(v) ? COL.orange : tint(COL.orange, 0.32); ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = deep(COL.orange, 0.15); ctx.stroke(); ctx.restore(); }
+  liftHud(P, dt, showStack, stackK);
+}
+
+// ---------------- 小提示（换起点等） ----------------
+function drawToast(t) {
+  if (!toast) return; const a = 1 - prog(t, toast.t0 + 1.8, 0.4); if (a <= 0) { toast = null; return; }
+  ctx.save(); ctx.globalAlpha = a; ctx.font = fontOf(36, 600); const w = ctx.measureText(toast.text).width + 64;
+  roundRect(960 - w / 2, 958, w, 68, 34); ctx.fillStyle = 'rgba(31,36,48,0.86)'; ctx.fill(); ctx.restore();
+  drawParts([[toast.text, '#FFFFFF']], 960, 993, 36, { alpha: a, weight: 600 });
+}
+function drawIndicator() {         // 很小、很淡的"第几段 · 第几步"（右下角）
+  const o = stepNow(), k = PH.i - SEC_FIRST[o.sec] + 1, n = lastOfSec(o.sec) - SEC_FIRST[o.sec] + 1;
+  drawParts([[`${o.sec} · ${k}/${n}`, 'rgba(149,154,166,0.55)']], 1900, 1062, 20, { align: 'right', weight: 600 });
+}
+
+// =====================================================================
+//  每帧
+// =====================================================================
+function render() {
+  const t = now(), o = stepNow(), dt = t - PH.t0;
+  LCUR = curLay();
+  const d3 = use3D(o);
+  glc.style.visibility = d3 ? 'visible' : 'hidden';
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = COL.letterbox; ctx.fillRect(0, 0, cv.width, cv.height);
+  baseTransform();
+  const F = prepare(o, dt);
+  if (d3) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(Math.round(VIEW.ox * VIEW.dpr), Math.round(VIEW.oy * VIEW.dpr), Math.round(1920 * VIEW.s * VIEW.dpr), Math.round(1080 * VIEW.s * VIEW.dpr)); ctx.restore(); render3D(o, dt, F); }
+  else ctx.drawImage(BGIMG, 0, 0, 1920, 1080);
+  switch (o.kind) {
+    case 'maze':
+      if (d3) {
+        const ms = mazeState(o.n, dt);
+        if (o.n < 5 || prog(dt, 1.3, 0.9) < 0.5) mazeHud(ms, proj3, dt, o);
+        else for (let v = 1; v <= G4.n; v++) { const p = W3.b4.P(v), q = proj3(p.x, BY + PHT, p.z); vname(v, q.x, q.y + 1, 44, COL.ink, 1); }
+        if (o.n < 5) { const g = ctx.createLinearGradient(0, 0, 0, 250); g.addColorStop(0, 'rgba(250,247,240,0.94)'); g.addColorStop(0.72, 'rgba(250,247,240,0.80)'); g.addColorStop(1, 'rgba(250,247,240,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, 1920, 250); }
+      } else drawMaze2D(o, dt);
+      break;
+    case 'tools': case 'walk': case 'redo': drawWalkScene(o, dt, F, d3); break;
+    case 'adj': drawAdjScene(o, dt); break;
+    case 'nc': drawNCScene(o, dt, F, d3); break;
+    case 'algo': drawAlgo(o, dt); break;
+    case 'prac': drawPractice(o, dt); break;
+    case 'end':
+      if (o.n === 0) drawTree2D(1);
+      else if (o.n === 1 || o.n === 2) {
+        const dl = o.n === 2 ? 100 : dt, sk = o.n === 2 ? prog(dt, 0.1, 0.5) : 0;
+        if (d3) { if (o.n === 1) { const a = 1 - prog(dt, 0, 0.35); if (a > 0) { ctx.save(); ctx.globalAlpha = a; ctx.drawImage(BGIMG, 0, 0, 1920, 1080); ctx.restore(); drawTree2D(a); } } liftHud(proj3, dl, o.n === 2, sk); }
+        else drawLift2D(dl, o.n === 2, sk);
+      }
+      break;
+  }
+  drawItems(content(o), dt);
+  drawToast(t); drawIndicator();
+}
+function loop() { if (!REC) render(); requestAnimationFrame(loop); }
+
+// ---------------- 输入 ----------------
+function vertexAt(p) {
+  if (!p) return -1;
+  for (let v = 1; v <= G4.n; v++) { const q = vpos(v); if (Math.hypot(p.x - q.x, p.y - q.y) <= LCUR.R + 16) return v; }
+  return -1;
+}
+const canPickVertex = () => stepNow().kind === 'prac';
+function toggle3D() {
+  if (!W3.ok) { showToast('这台电脑用不了 3D，一直是 2D 画面'); return; }
+  W3.on = !W3.on; W3.fpsChecked = true; showToast(W3.on ? '已切换为 3D 画面' : '已切换为 2D 画面');
+  PH.layFrom = null; CAMB.from = null;
+}
+window.addEventListener('keydown', (e) => {
+  const k = e.key;
+  if (k === ' ' || k === 'ArrowRight' || k === 'PageDown' || k === 'ArrowDown') { e.preventDefault(); next(); }
+  else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'ArrowUp') { e.preventDefault(); prev(); }
+  else if (k === 'Enter') { e.preventDefault(); enter(); }
+  else if (k === 'r' || k === 'R') restart();
+  else if (k === 'd' || k === 'D') toggle3D();
+  else if (k === 'f' || k === 'F') { if (!document.fullscreenElement) { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {}); } else document.exitFullscreen(); }
+  else if (/^[1-9]$/.test(k)) jumpSec(Number(k));
+});
+let MOUSE = null;
+cv.addEventListener('mousemove', (e) => { MOUSE = toStage(e); cv.style.cursor = canPickVertex() && vertexAt(MOUSE) >= 0 ? 'pointer' : 'default'; });
+cv.addEventListener('click', (e) => {
+  cv.focus();
+  const p = toStage(e);
+  if (canPickVertex()) { const v = vertexAt(p); if (v >= 0) { setPractice(v); return; } }
+  next();
+});
+cv.addEventListener('contextmenu', (e) => { e.preventDefault(); prev(); });
+
+// =====================================================================
+//  给测试 / 录屏用的接口
+// =====================================================================
+function stepDump() {
+  const o = stepNow();
+  const d = { idx: PH.i, sec: o.sec, kind: o.kind, n: o.n, texts: content(o).map((it) => partsText(it.p)) };
+  if (['tools', 'walk', 'redo'].includes(o.kind)) {
+    const W = walkView(o, 1e6), s = W.view.snap;
+    d.visited = s.visited.map((b) => (b ? 'T' : 'F')).join('');
+    d.stack = s.stack.map(vn); d.seq = s.seq.map(vn);
+    d.cur = s.stack.length ? vn(s.stack[s.stack.length - 1]) : null;
+    d.vstate = Object.fromEntries(Array.from({ length: G4.n }, (_, i) => [vn(i + 1), s.stack.includes(i + 1) ? 'in' : s.visited[i] ? 'out' : 'un']));
+    d.panels = o.kind === 'tools' ? ['visited', 'stack', 'seq'].slice(0, o.n + 1) : ['visited', 'stack', 'seq'];
+    if (o.kind === 'redo') d.rows = [RUN_A.seq.map(vn), s.seq.map(vn)];
+    if (o.kind === 'walk') {
+      d.mode = o.mode; d.events = [];
+      for (let i = o.a; i <= o.b; i++) d.events.push(RUN_A.ev[i].t + ':' + vn(RUN_A.ev[i].v));
+      d.bars = W.view.bars.map((b) => vn(b.a) + '→' + vn(b.b));
+      const info = walkEndInfo(o);
+      d.wall = !!(info && o.mode === 'look' && !info.U.length);
+      d.qs = info ? info.U.map(vn) : [];
+    }
+  }
+  if (o.kind === 'maze') { const ms = mazeState(o.n, 1e6); d.flags = Object.keys(ms.flags).filter((v) => ms.flags[v] > 0.5).map((v) => vn(+v)); d.walker = vn(o.n >= 4 ? 8 : o.n >= 1 ? 5 : 1); d.bars = ms.bar > 0.5 ? MAZE_BARS.map((b) => vn(b.to)) : []; }
+  if (o.kind === 'adj') {
+    d.list = adjListExport(o.n >= 5); d.chains = o.n >= 1;
+    const R = ADJ_ROWS(o.n); d.rows = [];
+    if (R.includes('A')) d.rows.push(['①', RUN_A.seq.map(vn)]);
+    if (R.includes('D')) d.rows.push(['②', RUN_D.seq.map(vn)]);
+    if (R.includes('S')) d.rows.push(['③', RUN_A.seq.map(vn)]);
+    d.revSeq = RUN_REV.seq.map(vn);
+  }
+  if (o.kind === 'nc') { const N = ncViews(o, 1e6); d.calls = NC.filter((r, k) => N.views[k]).map((r) => ({ start: vn(r.start), seq: r.seq.map(vn) })); d.count = N.calls; }
+  if (o.kind === 'algo') { if (o.n <= 3) d.code = CODE.map((c) => c[0] + (c[2] && c[1] <= o.n ? '  ' + c[2] : '')); else d.cx = { n: G4.n, e: G4.edges.length, cards: o.n - 3 }; }
+  if (o.kind === 'prac') { d.start = vn(CUR.ps); if (o.n >= 1) d.seq = PR.seq.map(vn); if (o.n >= 2) d.deep = PRD.chain.map(vn); }
+  if (o.kind === 'end' && o.n <= 2) { d.tree = TREE_A.map(([a, b]) => vn(a) + '-' + vn(b)); d.depth = Object.fromEntries(Object.entries(DEPTH_A).map(([v, k]) => [vn(+v), k])); d.deep = DEEP_A.chain.map(vn); }
+  return d;
+}
+function evOut(r) { return r.ev.map((e) => ({ t: e.t, v: e.v, frm: e.frm, stack: e.stack, visited: e.visited, seq: e.seq })); }
+function exportCheck() {
+  const pa = {};
+  for (let s = 1; s <= G4.n; s++) { const p = practiceOf(s); pa[vn(s)] = { seq: p.run.seq.map(vn), depth: p.deep.d, deep: p.deep.chain.map(vn) }; }
+  return {
+    G4: { n: G4.n, edges: G4.edges }, G6: { n: G6.n, edges: G6.edges },
+    runA: evOut(RUN_A), runD: evOut(RUN_D), runRev: evOut(RUN_REV), walk: WALK, walk2: WALK2.map((w) => [w.mode, w.a, w.b]), allN: ALLN,
+    adjlist: Array.from({ length: G4.n }, (_, i) => G4.asc[i + 1].map((w) => w - 1)),
+    nc: NC.map((r) => ({ start: r.start, ev: evOut(r), seq: r.seq })),
+    tree: TREE_A, depth: DEPTH_A, deep: DEEP_A, practice: pa, steps: STEPS.length, secFirst: SEC_FIRST,
+    plan: STEPS.map((o) => [o.sec, o.kind, o.n, !!o.d3]),
+  };
+}
+window.__demo = {
+  setTime(t) { manualT = t; render(); },
+  render,
+  state() { const o = stepNow(); return { idx: PH.i, total: STEPS.length, sec: o.sec, kind: o.kind, n: o.n, dur: stepDur(o), practice: CUR.ps, mode: W3.on ? '3d' : '2d', can3d: W3.ok, reason: W3.reason, d3: use3D(o) }; },
+  next, prev, enter, restart, jumpSec, toggle3D, goStep(i) { goStep(i, true); },
+  setPractice(v) { setPractice(v); },
+  clientOfStage(x, y) { return { x: VIEW.ox + x * VIEW.s, y: VIEW.oy + y * VIEW.s }; },
+  vertexStage(v) { const p = vpos(v); return { x: p.x, y: p.y }; },
+  stepDump, exportCheck,
+  finishAnim() { PH.t0 = now() - 100; PH.layFrom = null; CAMB.from = null; },
+  isFullscreen() { return !!document.fullscreenElement; },
+};
+
+makeBg(); init3D(); resize();
+window.addEventListener('resize', resize);
+LCUR = curLay();
+window.__demoReady = true;
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "dkm-video-dfs",
+  "version": "1.0.0",
+  "description": "Graph DFS explainer (DarkKandaoMaster)",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@remotion/cli": "4.0.529",
+    "@remotion/fonts": "4.0.529",
+    "@remotion/media": "4.0.529",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.529"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.7",
+    "@types/web": "0.0.166",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "dev": "remotion studio src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "render": "remotion render src/index.ts DFS out/DFS.mp4 --concurrency=12",
+    "dev:x": "remotion studio src/index.ts --env-file=variant-x.env",
+    "render:x": "remotion render src/index.ts DFS out/DFS-x.mp4 --concurrency=12 --env-file=variant-x.env"
+  }
+}

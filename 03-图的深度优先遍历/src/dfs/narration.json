@@ -1,0 +1,259 @@
+[
+  {
+    "id": "s1a", "scene": "1 口诀开场",
+    "speak": "图的深度优先遍历，先记一句口诀：不撞南墙不回头。",
+    "subs": [
+      { "at": "图的深度", "text": "图的深度优先遍历（DFS），", "en": "Depth-first search on a graph." },
+      { "at": "先记", "text": "先记一句口诀：不撞南墙不回头。", "en": "One rule to remember: don't turn back until you hit a wall." }
+    ]
+  },
+  {
+    "id": "s1b", "scene": "1 口诀开场",
+    "speak": "也叫一条道走到黑：能往前就往前，走不动了才退一步。",
+    "subs": [
+      { "at": "也叫", "text": "也叫一条道走到黑：", "en": "Or: follow one road all the way." },
+      { "at": "能往前", "text": "能往前就往前，走不动了才退一步。", "en": "Keep moving forward; step back only when you're stuck." }
+    ]
+  },
+  {
+    "id": "s2a", "scene": "2 准备",
+    "speak": "目标是每个顶点访问一次。拿教材这张图，从V一出发。",
+    "subs": [
+      { "at": "目标", "text": "目标：每个顶点访问一次。", "en": "Goal: visit every vertex exactly once." },
+      { "at": "拿教材", "text": "拿教材这张图G_{4}，从v_{1}出发。", "en": "Take graph G_{4} from the textbook and start at v_{1}." }
+    ]
+  },
+  {
+    "id": "s2b", "scene": "2 准备",
+    "speak": "右边两样东西：visited数组，记谁来过；递归栈，记一路走过来的顶点。",
+    "subs": [
+      { "at": "右边", "text": "右边两样东西：", "en": "Two things on the right:" },
+      { "at": "visited", "text": "visited数组，记谁来过；", "en": "the visited array: who has been visited;" },
+      { "at": "递归栈", "text": "递归栈，记一路走过来的顶点。", "en": "the recursion stack: the vertices on the way here." }
+    ]
+  },
+  {
+    "id": "s3a", "scene": "3 走一遍",
+    "speak": "访问V一：visited记上，压进栈，写进序列。",
+    "subs": [
+      { "at": "访问V一", "text": "访问v_{1}：visited记上，压进栈，写进序列。", "en": "Visit v_{1}: mark it, push it, write it down." }
+    ]
+  },
+  {
+    "id": "s3b", "scene": "3 走一遍",
+    "speak": "V一的邻接点有V二、V三，先挑小的，走V二。",
+    "subs": [
+      { "at": "V一的", "text": "v_{1}的邻接点有v_{2}、v_{3}，", "en": "v_{1} has two neighbors, v_{2} and v_{3}." },
+      { "at": "先挑", "text": "先挑小的，走v_{2}。", "en": "Take the smaller number first: go to v_{2}." }
+    ]
+  },
+  {
+    "id": "s3c", "scene": "3 走一遍",
+    "speak": "到了V二，V一来过了，跳过，走V四。",
+    "subs": [
+      { "at": "到了", "text": "到了v_{2}：v_{1}来过了，跳过，走v_{4}。", "en": "At v_{2}: v_{1} is visited, skip it, go to v_{4}." }
+    ]
+  },
+  {
+    "id": "s3d", "scene": "3 走一遍",
+    "speak": "一条道走到黑：V四到V八，V八到V五。",
+    "subs": [
+      { "at": "一条道", "text": "一条道走到黑：v_{4}到v_{8}，v_{8}到v_{5}。", "en": "All the way down: v_{4} to v_{8}, v_{8} to v_{5}." }
+    ]
+  },
+  {
+    "id": "s3e", "scene": "3 走一遍",
+    "speak": "到了V五，邻居V二、V八都来过了。",
+    "subs": [
+      { "at": "到了", "text": "到了v_{5}：邻居v_{2}、v_{8}都来过了。", "en": "At v_{5}: neighbors v_{2} and v_{8} are both visited." }
+    ]
+  },
+  {
+    "id": "s3f", "scene": "3 走一遍",
+    "speak": "没有新路，这就是撞南墙。",
+    "subs": [
+      { "at": "没有", "text": "没有新路，这就是撞南墙。", "en": "No new road. That's the wall." }
+    ]
+  },
+  {
+    "id": "s3g", "scene": "3 走一遍",
+    "speak": "那就回头：沿着来的那条边退回V八，V五出栈。",
+    "subs": [
+      { "at": "那就", "text": "那就回头：", "en": "So turn back:" },
+      { "at": "沿着", "text": "沿着来的那条边退回v_{8}，v_{5}出栈。", "en": "back along the edge you came by, to v_{8}. v_{5} is popped." }
+    ]
+  },
+  {
+    "id": "s3h", "scene": "3 走一遍",
+    "speak": "注意栈顶：它就是你现在站的顶点，所以出栈，就是往回退一步。",
+    "subs": [
+      { "at": "注意", "text": "注意栈顶：它就是你现在站的顶点，", "en": "Look at the top of the stack: it's where you stand," },
+      { "at": "所以", "text": "所以出栈，就是往回退一步。", "en": "so popping it means one step back." }
+    ]
+  },
+  {
+    "id": "s3i", "scene": "3 走一遍",
+    "speak": "V八也没新路，退回V四；V四也没有，退回V二。",
+    "subs": [
+      { "at": "V八", "text": "v_{8}也没新路，退回v_{4}；", "en": "No new road from v_{8}: back to v_{4}." },
+      { "at": "V四也", "text": "v_{4}也没有，退回v_{2}。", "en": "None from v_{4} either: back to v_{2}." }
+    ]
+  },
+  {
+    "id": "s3j", "scene": "3 走一遍",
+    "speak": "V二剩下的V五来过了，再退回V一。",
+    "subs": [
+      { "at": "V二", "text": "v_{2}剩下的v_{5}来过了，再退回v_{1}。", "en": "v_{2}'s last neighbor v_{5} is visited. Back to v_{1}." }
+    ]
+  },
+  {
+    "id": "s3k", "scene": "3 走一遍",
+    "speak": "V一还有V三没去，走V三，再到V六、V七。",
+    "subs": [
+      { "at": "V一", "text": "v_{1}还有v_{3}没去，走v_{3}，", "en": "v_{1} still has v_{3}. Go to v_{3}," },
+      { "at": "再到", "text": "再到v_{6}、v_{7}。", "en": "then v_{6} and v_{7}." }
+    ]
+  },
+  {
+    "id": "s3l", "scene": "3 走一遍",
+    "speak": "V七走不通，一路退回V一，栈空了，遍历结束。",
+    "subs": [
+      { "at": "V七", "text": "v_{7}走不通，一路退回v_{1}，", "en": "Dead end at v_{7}. Back all the way to v_{1}." },
+      { "at": "栈空", "text": "栈空了，遍历结束。", "en": "The stack is empty: done." }
+    ]
+  },
+  {
+    "id": "s3m", "scene": "3 走一遍",
+    "speak": "访问序列：V一、V二、V四、V八、V五、V三、V六、V七。",
+    "subs": [
+      { "at": "访问序列", "text": "访问序列：v_{1} v_{2} v_{4} v_{8} v_{5} v_{3} v_{6} v_{7}", "en": "Visit order: v_{1} v_{2} v_{4} v_{8} v_{5} v_{3} v_{6} v_{7}" }
+    ]
+  },
+  {
+    "id": "s4a", "scene": "4 序列不唯一",
+    "speak": "刚才先挑编号小的。换成先挑大的，再走一遍。",
+    "subs": [
+      { "at": "刚才", "text": "刚才先挑编号小的。", "en": "Last time we took the smaller number first." },
+      { "at": "换成", "text": "换成先挑大的，再走一遍。", "en": "Now take the larger one first, and run it again." }
+    ]
+  },
+  {
+    "id": "s4b", "scene": "4 序列不唯一",
+    "speak": "V一、V三、V七、V六，退回V一，再走V二、V五、V八、V四。",
+    "subs": [
+      { "at": "V一", "text": "v_{1}、v_{3}、v_{7}、v_{6}，退回v_{1}，", "en": "v_{1}, v_{3}, v_{7}, v_{6}, back to v_{1}," },
+      { "at": "再走", "text": "再走v_{2}、v_{5}、v_{8}、v_{4}。", "en": "then v_{2}, v_{5}, v_{8}, v_{4}." }
+    ]
+  },
+  {
+    "id": "s4c", "scene": "4 序列不唯一",
+    "speak": "两条都对，DFS序列不唯一。这张图从V一出发，一共有八种。",
+    "subs": [
+      { "at": "两条", "text": "两条都对，DFS序列不唯一。", "en": "Both are correct: a DFS order is not unique." },
+      { "at": "这张图", "text": "这张图从v_{1}出发，一共有8种。", "en": "From v_{1}, this graph has 8 of them." }
+    ]
+  },
+  {
+    "id": "s5a", "scene": "5 邻接表",
+    "speak": "那考试怎么考？题目会给定存储结构，比如邻接表。",
+    "subs": [
+      { "at": "那考试", "text": "那考试怎么考？", "en": "So how do exams ask it?" },
+      { "at": "题目", "text": "题目会给定存储结构，比如邻接表。", "en": "They fix the storage, for example an adjacency list." }
+    ]
+  },
+  {
+    "id": "s5b", "scene": "5 邻接表",
+    "speak": "每个顶点挂一条链，记着邻接点的下标。",
+    "subs": [
+      { "at": "每个", "text": "每个顶点挂一条链，记着邻接点的下标。", "en": "Each vertex has a linked list of its neighbors' indices." }
+    ]
+  },
+  {
+    "id": "s5c", "scene": "5 邻接表",
+    "speak": "沿着链从前往后找，第一个没来过的就去。",
+    "subs": [
+      { "at": "沿着", "text": "沿着链从前往后找，第一个没来过的就去。", "en": "Walk the list from the front; go to the first unvisited one." }
+    ]
+  },
+  {
+    "id": "s5d", "scene": "5 邻接表",
+    "speak": "每一步都定死了，序列唯一，就是第一条。",
+    "subs": [
+      { "at": "每一步", "text": "每一步都定死了，序列唯一，就是第一条。", "en": "Every step is fixed: one order only, the first one." }
+    ]
+  },
+  {
+    "id": "s5e", "scene": "5 邻接表",
+    "speak": "链倒过来，走出来就是第二条。所以表一给定，答案就唯一，考研考的就是这个。",
+    "subs": [
+      { "at": "链倒", "text": "链倒过来，走出来就是第二条。", "en": "Reverse the lists, and you get the second order." },
+      { "at": "所以", "text": "所以表一给定，答案就唯一，", "en": "Once the list is given, the answer is unique." },
+      { "at": "考研", "text": "考研考的就是这个。", "en": "That's what the exams test." }
+    ]
+  },
+  {
+    "id": "s6a", "scene": "6 非连通图",
+    "speak": "图要是不连通呢？从V一出发，只走得完这一块。",
+    "subs": [
+      { "at": "图要是", "text": "图要是不连通呢？", "en": "What if the graph isn't connected?" },
+      { "at": "从V一", "text": "从v_{1}出发，只走得完这一块。", "en": "From v_{1}, you only cover its own piece." }
+    ]
+  },
+  {
+    "id": "s6b", "scene": "6 非连通图",
+    "speak": "所以外面套一层循环：没访问过的顶点，再调一次DFS。",
+    "subs": [
+      { "at": "所以", "text": "所以外面套一层循环：", "en": "So wrap it in a loop:" },
+      { "at": "没访问", "text": "没访问过的顶点，再调一次DFS。", "en": "for each unvisited vertex, call DFS again." }
+    ]
+  },
+  {
+    "id": "s6c", "scene": "6 非连通图",
+    "speak": "调几次DFS，就有几个连通分量：这里三次，孤立的V六也算一个。",
+    "subs": [
+      { "at": "调几次", "text": "调几次DFS，就有几个连通分量：", "en": "Number of DFS calls = number of connected components:" },
+      { "at": "这里", "text": "这里3次，孤立的v_{6}也算一个。", "en": "here, 3. The lone v_{6} counts as one." }
+    ]
+  },
+  {
+    "id": "s7a", "scene": "7 复杂度",
+    "speak": "复杂度：时间花在找邻接点上。",
+    "subs": [
+      { "at": "复杂度", "text": "复杂度：时间花在找邻接点上。", "en": "Cost: the time goes into finding neighbors." }
+    ]
+  },
+  {
+    "id": "s7b", "scene": "7 复杂度",
+    "speak": "邻接矩阵每次扫一整行，O n平方；邻接表只扫边结点，O n加e。",
+    "subs": [
+      { "at": "邻接矩阵", "text": "邻接矩阵每次扫一整行：O(n²)；", "en": "Adjacency matrix: a whole row each time, O(n²)." },
+      { "at": "邻接表", "text": "邻接表只扫边结点：O(n+e)。", "en": "Adjacency list: only the edge nodes, O(n+e)." }
+    ]
+  },
+  {
+    "id": "s8a", "scene": "8 限时题",
+    "speak": "最后一题：下面哪个不是从V一出发的DFS序列？给你八秒。",
+    "subs": [
+      { "at": "最后", "text": "最后一题：", "en": "Last question:" },
+      { "at": "下面", "text": "下面哪个不是从v_{1}出发的DFS序列？", "en": "which one is NOT a DFS order starting from v_{1}?" },
+      { "at": "给你", "text": "给你8秒。", "en": "You have 8 seconds." }
+    ]
+  },
+  {
+    "id": "s8b", "scene": "8 限时题",
+    "speak": "答案是C。走到V四时，V八还没来过，只能去V八，跳不到V五。",
+    "subs": [
+      { "at": "答案", "text": "答案是C。", "en": "The answer is C." },
+      { "at": "走到", "text": "走到v_{4}时，v_{8}还没来过，", "en": "At v_{4}, v_{8} is still unvisited," },
+      { "at": "只能", "text": "只能去v_{8}，跳不到v_{5}。", "en": "so the next step must be v_{8}, not v_{5}." }
+    ]
+  },
+  {
+    "id": "s9a", "scene": "9 结尾",
+    "speak": "一条道走到黑，走不通就退一步。下期，我们讲BFS。",
+    "subs": [
+      { "at": "一条道", "text": "一条道走到黑，走不通就退一步。", "en": "Go as deep as you can; when stuck, step back." },
+      { "at": "下期", "text": "下期，我们讲BFS。", "en": "Next time: breadth-first search." }
+    ]
+  }
+]

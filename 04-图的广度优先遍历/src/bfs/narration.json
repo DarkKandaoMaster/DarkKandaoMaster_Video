@@ -1,0 +1,526 @@
+[
+  {
+    "id": "s1a",
+    "scene": "1 口诀开场",
+    "speak": "图的广度优先遍历，口诀就四个字：层层扩散。",
+    "subs": [
+      {
+        "at": "图的广度",
+        "text": "图的广度优先遍历（BFS），",
+        "en": "Breadth-first search on a graph."
+      },
+      {
+        "at": "口诀",
+        "text": "口诀就四个字：层层扩散。",
+        "en": "The rule in four words: spread out layer by layer."
+      }
+    ]
+  },
+  {
+    "id": "s1b",
+    "scene": "1 口诀开场",
+    "speak": "像往水里丢一颗石子，水波一圈一圈往外推。",
+    "subs": [
+      {
+        "at": "像往",
+        "text": "像往水里丢一颗石子，",
+        "en": "Like dropping a stone into water:"
+      },
+      {
+        "at": "水波",
+        "text": "水波一圈一圈往外推。",
+        "en": "the ripples move out one ring at a time."
+      }
+    ]
+  },
+  {
+    "id": "s2a",
+    "scene": "2 一层层出来",
+    "speak": "还是教材这张图，从V一出发。V一自己，算第零层。",
+    "subs": [
+      {
+        "at": "还是",
+        "text": "还是教材这张图G_{4}，从v_{1}出发。",
+        "en": "Same graph G_{4} from the textbook, starting at v_{1}."
+      },
+      {
+        "at": "V一自己",
+        "text": "v_{1}自己，算第0层。",
+        "en": "v_{1} itself is layer 0."
+      }
+    ]
+  },
+  {
+    "id": "s2b",
+    "scene": "2 一层层出来",
+    "speak": "先把V一的邻居全找出来：V二、V三，这是第一层。",
+    "subs": [
+      {
+        "at": "先把",
+        "text": "先把v_{1}的邻居全找出来：",
+        "en": "First, find all of v_{1}'s neighbors:"
+      },
+      {
+        "at": "V二",
+        "text": "v_{2}、v_{3}，这是第1层。",
+        "en": "v_{2} and v_{3}. That's layer 1."
+      }
+    ]
+  },
+  {
+    "id": "s2c",
+    "scene": "2 一层层出来",
+    "speak": "再从第一层往外找一圈：V四、V五、V六、V七，第二层。",
+    "subs": [
+      {
+        "at": "再从",
+        "text": "再从第1层往外找一圈：",
+        "en": "Then one more ring out from layer 1:"
+      },
+      {
+        "at": "V四",
+        "text": "v_{4}、v_{5}、v_{6}、v_{7}，第2层。",
+        "en": "v_{4}, v_{5}, v_{6}, v_{7}: layer 2."
+      }
+    ]
+  },
+  {
+    "id": "s2d",
+    "scene": "2 一层层出来",
+    "speak": "最后V八，第三层。所有顶点都到了。",
+    "subs": [
+      {
+        "at": "最后",
+        "text": "最后v_{8}，第3层。",
+        "en": "Last, v_{8}: layer 3."
+      },
+      {
+        "at": "所有",
+        "text": "所有顶点都到了。",
+        "en": "Every vertex is reached."
+      }
+    ]
+  },
+  {
+    "id": "s3a",
+    "scene": "3 队列",
+    "speak": "程序里怎么一层一层地找？靠一个队列，先进先出。",
+    "subs": [
+      {
+        "at": "程序里",
+        "text": "程序里怎么一层一层地找？",
+        "en": "How does a program find them layer by layer?"
+      },
+      {
+        "at": "靠一个",
+        "text": "靠一个队列，先进先出。",
+        "en": "With a queue: first in, first out."
+      }
+    ]
+  },
+  {
+    "id": "s3b",
+    "scene": "3 队列",
+    "speak": "规则只有一条：出队一个，把它没来过的邻居全部入队。",
+    "subs": [
+      {
+        "at": "规则",
+        "text": "规则只有一条：",
+        "en": "Just one rule:"
+      },
+      {
+        "at": "出队一个",
+        "text": "出队一个，把它没来过的邻居全部入队。",
+        "en": "dequeue one, and enqueue all its unvisited neighbors."
+      }
+    ]
+  },
+  {
+    "id": "s3c",
+    "scene": "3 队列",
+    "speak": "从头来：V一先标记，再入队。",
+    "subs": [
+      {
+        "at": "从头来",
+        "text": "从头来：v_{1}先标记，再入队。",
+        "en": "From the start: mark v_{1}, then enqueue it."
+      }
+    ]
+  },
+  {
+    "id": "s3d",
+    "scene": "3 队列",
+    "speak": "V一出队，邻居V二、V三没来过，标记，入队。",
+    "subs": [
+      {
+        "at": "V一出队",
+        "text": "v_{1}出队：邻居v_{2}、v_{3}没来过，",
+        "en": "Dequeue v_{1}: neighbors v_{2} and v_{3} are unvisited,"
+      },
+      {
+        "at": "标记",
+        "text": "标记，入队。",
+        "en": "so mark them and enqueue them."
+      }
+    ]
+  },
+  {
+    "id": "s3e",
+    "scene": "3 队列",
+    "speak": "V二出队：V一来过了，跳过；V四、V五入队。",
+    "subs": [
+      {
+        "at": "V二出队",
+        "text": "v_{2}出队：v_{1}来过了，跳过；v_{4}、v_{5}入队。",
+        "en": "Dequeue v_{2}: v_{1} is visited, skip it; enqueue v_{4} and v_{5}."
+      }
+    ]
+  },
+  {
+    "id": "s3f",
+    "scene": "3 队列",
+    "speak": "V三出队，V六、V七入队。现在队里，正好是第二层。",
+    "subs": [
+      {
+        "at": "V三出队",
+        "text": "v_{3}出队，v_{6}、v_{7}入队。",
+        "en": "Dequeue v_{3}; enqueue v_{6} and v_{7}."
+      },
+      {
+        "at": "现在",
+        "text": "现在队里，正好是第2层。",
+        "en": "Now the queue holds exactly layer 2."
+      }
+    ]
+  },
+  {
+    "id": "s3g",
+    "scene": "3 队列",
+    "speak": "V四出队，V八入队。",
+    "subs": [
+      {
+        "at": "V四出队",
+        "text": "v_{4}出队，v_{8}入队。",
+        "en": "Dequeue v_{4}; enqueue v_{8}."
+      }
+    ]
+  },
+  {
+    "id": "s3h",
+    "scene": "3 队列",
+    "speak": "V五出队，邻居V二、V八都来过了，跳过。",
+    "subs": [
+      {
+        "at": "V五出队",
+        "text": "v_{5}出队：邻居v_{2}、v_{8}都来过了，跳过。",
+        "en": "Dequeue v_{5}: neighbors v_{2} and v_{8} are both visited. Skip."
+      }
+    ]
+  },
+  {
+    "id": "s3i",
+    "scene": "3 队列",
+    "speak": "V八入队时就标记了。要是等出队才标记，V八会被V四、V五各放进队列一次。",
+    "subs": [
+      {
+        "at": "V八入队时",
+        "text": "v_{8}入队时就标记了。",
+        "en": "v_{8} was marked when it entered the queue."
+      },
+      {
+        "at": "要是",
+        "text": "要是等出队才标记，",
+        "en": "If you marked it only on dequeue,"
+      },
+      {
+        "at": "V八会",
+        "text": "v_{8}会被v_{4}、v_{5}各放进队列一次。",
+        "en": "v_{8} would be enqueued twice: once by v_{4}, once by v_{5}."
+      }
+    ]
+  },
+  {
+    "id": "s3j",
+    "scene": "3 队列",
+    "speak": "剩下的V六、V七、V八出队，邻居都来过了。队列空了，遍历结束。",
+    "subs": [
+      {
+        "at": "剩下的",
+        "text": "剩下的v_{6}、v_{7}、v_{8}出队，邻居都来过了。",
+        "en": "The rest, v_{6}, v_{7}, v_{8}, leave the queue; all neighbors are visited."
+      },
+      {
+        "at": "队列空了",
+        "text": "队列空了，遍历结束。",
+        "en": "The queue is empty: done."
+      }
+    ]
+  },
+  {
+    "id": "s3k",
+    "scene": "3 队列",
+    "speak": "序列正好一层一层排好。",
+    "subs": [
+      {
+        "at": "序列",
+        "text": "序列正好一层一层排好。",
+        "en": "The visit order comes out layer by layer."
+      }
+    ]
+  },
+  {
+    "id": "s4a",
+    "scene": "4 序列不唯一",
+    "speak": "同一层里的顺序可以换。这回先挑编号大的。",
+    "subs": [
+      {
+        "at": "同一层",
+        "text": "同一层里的顺序可以换。",
+        "en": "Within a layer, the order can change."
+      },
+      {
+        "at": "这回",
+        "text": "这回先挑编号大的。",
+        "en": "This time, take the larger number first."
+      }
+    ]
+  },
+  {
+    "id": "s4b",
+    "scene": "4 序列不唯一",
+    "speak": "V一、V三、V二；V七、V六、V五、V四；最后V八。",
+    "subs": [
+      {
+        "at": "V一",
+        "text": "v_{1}、v_{3}、v_{2}；v_{7}、v_{6}、v_{5}、v_{4}；最后v_{8}。",
+        "en": "v_{1}, v_{3}, v_{2}; v_{7}, v_{6}, v_{5}, v_{4}; finally v_{8}."
+      }
+    ]
+  },
+  {
+    "id": "s4c",
+    "scene": "4 序列不唯一",
+    "speak": "V三先出队，它的邻居就先入队：下一层跟着上一层的顺序。",
+    "subs": [
+      {
+        "at": "V三先",
+        "text": "v_{3}先出队，它的邻居就先入队：",
+        "en": "v_{3} leaves first, so its neighbors enter first:"
+      },
+      {
+        "at": "下一层",
+        "text": "下一层跟着上一层的顺序。",
+        "en": "the next layer follows the order of the one before."
+      }
+    ]
+  },
+  {
+    "id": "s4d",
+    "scene": "4 序列不唯一",
+    "speak": "所以BFS序列也不唯一。这张图从V一出发，一共八种。",
+    "subs": [
+      {
+        "at": "所以",
+        "text": "所以BFS序列也不唯一。",
+        "en": "So a BFS order is not unique either."
+      },
+      {
+        "at": "这张图",
+        "text": "这张图从v_{1}出发，一共8种。",
+        "en": "From v_{1}, this graph has 8 of them."
+      }
+    ]
+  },
+  {
+    "id": "s5a",
+    "scene": "5 邻接表",
+    "speak": "考试题会给定存储结构，比如邻接表。",
+    "subs": [
+      {
+        "at": "考试题",
+        "text": "考试题会给定存储结构，比如邻接表。",
+        "en": "Exam questions fix the storage, for example an adjacency list."
+      }
+    ]
+  },
+  {
+    "id": "s5b",
+    "scene": "5 邻接表",
+    "speak": "出队一个，就沿着它的链从前往后，没来过的依次入队。",
+    "subs": [
+      {
+        "at": "出队",
+        "text": "出队一个，就沿着它的链从前往后，",
+        "en": "Dequeue one and walk its list from the front;"
+      },
+      {
+        "at": "没来过",
+        "text": "没来过的依次入队。",
+        "en": "enqueue the unvisited ones in that order."
+      }
+    ]
+  },
+  {
+    "id": "s5c",
+    "scene": "5 邻接表",
+    "speak": "每一步都定死了，序列唯一，就是第一条。",
+    "subs": [
+      {
+        "at": "每一步",
+        "text": "每一步都定死了，序列唯一，就是第一条。",
+        "en": "Every step is fixed: one order only, the first one."
+      }
+    ]
+  },
+  {
+    "id": "s5d",
+    "scene": "5 邻接表",
+    "speak": "链倒过来，走出来就是第二条。所以表一给定，答案就唯一。",
+    "subs": [
+      {
+        "at": "链倒",
+        "text": "链倒过来，走出来就是第二条。",
+        "en": "Reverse the lists, and you get the second order."
+      },
+      {
+        "at": "所以",
+        "text": "所以表一给定，答案就唯一。",
+        "en": "Once the list is given, the answer is unique."
+      }
+    ]
+  },
+  {
+    "id": "s6a",
+    "scene": "6 最短路",
+    "speak": "BFS还有一个用处：层号，就是离V一最少要走几条边。",
+    "subs": [
+      {
+        "at": "BFS还有",
+        "text": "BFS还有一个用处：",
+        "en": "BFS gives you one more thing:"
+      },
+      {
+        "at": "层号",
+        "text": "层号，就是离v_{1}最少要走几条边。",
+        "en": "the layer number is the fewest edges from v_{1}."
+      }
+    ]
+  },
+  {
+    "id": "s6b",
+    "scene": "6 最短路",
+    "speak": "V八在第三层，最少三条边就到。无权图的最短路径，就是这样求的。",
+    "subs": [
+      {
+        "at": "V八",
+        "text": "v_{8}在第3层，最少3条边就到。",
+        "en": "v_{8} is in layer 3: 3 edges at least."
+      },
+      {
+        "at": "无权图",
+        "text": "无权图的最短路径，就是这样求的。",
+        "en": "That's how shortest paths are found in unweighted graphs."
+      }
+    ]
+  },
+  {
+    "id": "s7a",
+    "scene": "7 非连通图",
+    "speak": "图不连通的话，和DFS一样：外面套一层循环，调几次BFS，就有几个连通分量。",
+    "subs": [
+      {
+        "at": "图不连通",
+        "text": "图不连通的话，和DFS一样：",
+        "en": "If the graph isn't connected, it works like DFS:"
+      },
+      {
+        "at": "外面",
+        "text": "外面套一层循环，",
+        "en": "wrap it in a loop;"
+      },
+      {
+        "at": "调几次",
+        "text": "调几次BFS，就有几个连通分量。",
+        "en": "number of BFS calls = number of connected components."
+      }
+    ]
+  },
+  {
+    "id": "s8a",
+    "scene": "8 复杂度",
+    "speak": "复杂度也和DFS一样：邻接矩阵O n平方，邻接表O n加e。",
+    "subs": [
+      {
+        "at": "复杂度",
+        "text": "复杂度也和DFS一样：",
+        "en": "The cost is the same as DFS:"
+      },
+      {
+        "at": "邻接矩阵",
+        "text": "邻接矩阵O(n²)，邻接表O(n+e)。",
+        "en": "adjacency matrix O(n²), adjacency list O(n+e)."
+      }
+    ]
+  },
+  {
+    "id": "s9a",
+    "scene": "9 限时题",
+    "speak": "最后一题：下面哪个不是从V一出发的BFS序列？给你八秒。",
+    "subs": [
+      {
+        "at": "最后",
+        "text": "最后一题：",
+        "en": "Last question:"
+      },
+      {
+        "at": "下面",
+        "text": "下面哪个不是从v_{1}出发的BFS序列？",
+        "en": "which one is NOT a BFS order starting from v_{1}?"
+      },
+      {
+        "at": "给你",
+        "text": "给你8秒。",
+        "en": "You have 8 seconds."
+      }
+    ]
+  },
+  {
+    "id": "s9b",
+    "scene": "9 限时题",
+    "speak": "答案是B。V三先出队，V六、V七就该排在V四、V五前面。",
+    "subs": [
+      {
+        "at": "答案",
+        "text": "答案是B。",
+        "en": "The answer is B."
+      },
+      {
+        "at": "V三先",
+        "text": "v_{3}先出队，",
+        "en": "v_{3} leaves the queue first,"
+      },
+      {
+        "at": "V六",
+        "text": "v_{6}、v_{7}就该排在v_{4}、v_{5}前面。",
+        "en": "so v_{6}, v_{7} must come before v_{4}, v_{5}."
+      }
+    ]
+  },
+  {
+    "id": "s10a",
+    "scene": "10 结尾",
+    "speak": "DFS用栈，一条道走到黑；BFS用队列，层层扩散。",
+    "subs": [
+      {
+        "at": "DFS",
+        "text": "DFS用栈，一条道走到黑；",
+        "en": "DFS uses a stack: one road all the way down."
+      },
+      {
+        "at": "BFS",
+        "text": "BFS用队列，层层扩散。",
+        "en": "BFS uses a queue: spread out layer by layer."
+      }
+    ]
+  }
+]

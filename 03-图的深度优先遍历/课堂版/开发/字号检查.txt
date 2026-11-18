@@ -1,0 +1,4485 @@
+规则：所有字 ≥ 44px 且 bold（≥ 700，右下角进度小字除外）；标题 ≥ 72，说明句 ≥ 56，格子里的字 ≥ 56，代码 ≥ 48，顶点名字 ≥ 44；不出画面；字不压字。
+结论：全部符合
+
+[2d] 67 步，检查了 2039 段字；各类最小字号：cell 56px，code 48px，desc 56px，label 44px，text 60px，title 72px，vname 44px
+[3d] 67 步，检查了 2039 段字；各类最小字号：cell 56px，code 48px，desc 56px，label 44px，text 60px，title 72px，vname 44px
+
+[3d] 第 1 步（1 段 maze 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       48px 800  label  入口
+       88px 800  title  图的深度优先遍历
+       56px 800  desc   撞了南墙再回头
+       20px 700  progress 1 · 1/6
+
+[3d] 第 2 步（1 段 maze 1）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       72px 800  title  一条路走到黑
+       20px 700  progress 1 · 2/6
+
+[3d] 第 3 步（1 段 maze 2）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       64px 800  text   ?
+       64px 800  text   ?
+       72px 800  title  到了 v5，往哪走？
+       20px 700  progress 1 · 3/6
+
+[3d] 第 4 步（1 段 maze 3）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       72px 800  title  都插过旗 → 撞南墙！
+       20px 700  progress 1 · 4/6
+
+[3d] 第 5 步（1 段 maze 4）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       72px 800  title  原路退回 v8
+       20px 700  progress 1 · 5/6
+
+[3d] 第 6 步（1 段 maze 5）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       72px 800  title  迷宫就是一张图
+       20px 700  progress 1 · 6/6
+
+[3d] 第 7 步（2 段 tools 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   F
+       44px 800  vname  v2
+       60px 800  cell   F
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       72px 800  title  visited = 插旗
+       20px 700  progress 2 · 1/3
+
+[3d] 第 8 步（2 段 tools 1）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   F
+       44px 800  vname  v2
+       60px 800  cell   F
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       72px 800  title  递归栈 = 来时的路
+       20px 700  progress 2 · 2/3
+
+[3d] 第 9 步（2 段 tools 2）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   F
+       44px 800  vname  v2
+       60px 800  cell   F
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       44px 700  label  访问序列
+       72px 800  title  记下访问序列
+       20px 700  progress 2 · 3/3
+
+[3d] 第 10 步（3 段 walk 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   F
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       72px 800  title  从 v1 出发
+       20px 700  progress 3 · 1/24
+
+[3d] 第 11 步（3 段 walk 1）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   F
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       72px 800  title  v1 往哪走？
+       56px 800  desc   先挑编号小的
+       20px 700  progress 3 · 2/24
+
+[3d] 第 12 步（3 段 walk 2）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       72px 800  title  走到 v2
+       20px 700  progress 3 · 3/24
+
+[3d] 第 13 步（3 段 walk 3）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       72px 800  title  v2 往哪走？
+       20px 700  progress 3 · 4/24
+
+[3d] 第 14 步（3 段 walk 4）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       72px 800  title  走到 v4
+       20px 700  progress 3 · 5/24
+
+[3d] 第 15 步（3 段 walk 5）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       72px 800  title  v4 往哪走？
+       20px 700  progress 3 · 6/24
+
+[3d] 第 16 步（3 段 walk 6）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       72px 800  title  走到 v8
+       20px 700  progress 3 · 7/24
+
+[3d] 第 17 步（3 段 walk 7）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       72px 800  title  v8 往哪走？
+       20px 700  progress 3 · 8/24
+
+[3d] 第 18 步（3 段 walk 8）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  走到 v5
+       20px 700  progress 3 · 9/24
+
+[3d] 第 19 步（3 段 walk 9）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  v5 往哪走？
+       56px 800  desc   撞南墙！
+       20px 700  progress 3 · 10/24
+
+[3d] 第 20 步（3 段 walk 10）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  退回 v8
+       56px 800  desc   没路 → 再退
+       20px 700  progress 3 · 11/24
+
+[3d] 第 21 步（3 段 walk 11）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  退回 v4
+       56px 800  desc   没路 → 再退
+       20px 700  progress 3 · 12/24
+
+[3d] 第 22 步（3 段 walk 12）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  退回 v2
+       56px 800  desc   没路 → 再退
+       20px 700  progress 3 · 13/24
+
+[3d] 第 23 步（3 段 walk 13）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  退回 v1
+       56px 800  desc   还能去 v3
+       20px 700  progress 3 · 14/24
+
+[3d] 第 24 步（3 段 walk 14）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       72px 800  title  走到 v3
+       20px 700  progress 3 · 15/24
+
+[3d] 第 25 步（3 段 walk 15）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       72px 800  title  v3 往哪走？
+       20px 700  progress 3 · 16/24
+
+[3d] 第 26 步（3 段 walk 16）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v6
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       72px 800  title  走到 v6
+       20px 700  progress 3 · 17/24
+
+[3d] 第 27 步（3 段 walk 17）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v6
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       72px 800  title  v6 往哪走？
+       20px 700  progress 3 · 18/24
+
+[3d] 第 28 步（3 段 walk 18）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  走到 v7
+       20px 700  progress 3 · 19/24
+
+[3d] 第 29 步（3 段 walk 19）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  v7 往哪走？
+       56px 800  desc   撞南墙！
+       20px 700  progress 3 · 20/24
+
+[3d] 第 30 步（3 段 walk 20）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v6
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  退回 v6
+       56px 800  desc   没路 → 再退
+       20px 700  progress 3 · 21/24
+
+[3d] 第 31 步（3 段 walk 21）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  退回 v3
+       56px 800  desc   没路 → 再退
+       20px 700  progress 3 · 22/24
+
+[3d] 第 32 步（3 段 walk 22）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  退回 v1
+       56px 800  desc   没路 → 出栈
+       20px 700  progress 3 · 23/24
+
+[3d] 第 33 步（3 段 walk 23）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  栈空 → 结束
+       20px 700  progress 3 · 24/24
+
+[3d] 第 34 步（4 段 redo 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   F
+       44px 800  vname  v2
+       60px 800  cell   F
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ②
+       72px 800  title  先挑编号大的呢？
+       20px 700  progress 4 · 1/4
+
+[3d] 第 35 步（4 段 redo 1）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ②
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v7
+       56px 800  cell   v6
+       56px 800  cell   v2
+       56px 800  cell   v5
+       56px 800  cell   v8
+       56px 800  cell   v4
+       72px 800  title  先挑大的走一遍
+       20px 700  progress 4 · 2/4
+
+[3d] 第 36 步（4 段 redo 2）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   ✓
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ②
+       56px 800  cell   ✓
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v7
+       56px 800  cell   v6
+       56px 800  cell   v2
+       56px 800  cell   v5
+       56px 800  cell   v8
+       56px 800  cell   v4
+       72px 800  title  两条都对：不唯一
+       20px 700  progress 4 · 3/4
+
+[3d] 第 37 步（4 段 redo 3）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   ✓
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ②
+       56px 800  cell   ✓
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v7
+       56px 800  cell   v6
+       56px 800  cell   v2
+       56px 800  cell   v5
+       56px 800  cell   v8
+       56px 800  cell   v4
+       72px 800  title  从 v1 出发：共 8 种
+       20px 700  progress 4 · 4/4
+
+[3d] 第 38 步（5 段 adj 0）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  0
+       56px 800  cell   v1
+       56px 700  cell   ∧
+       44px 700  label  1
+       56px 800  cell   v2
+       56px 700  cell   ∧
+       44px 700  label  2
+       56px 800  cell   v3
+       56px 700  cell   ∧
+       44px 700  label  3
+       56px 800  cell   v4
+       56px 700  cell   ∧
+       44px 700  label  4
+       56px 800  cell   v5
+       56px 700  cell   ∧
+       44px 700  label  5
+       56px 800  cell   v6
+       56px 700  cell   ∧
+       44px 700  label  6
+       56px 800  cell   v7
+       56px 700  cell   ∧
+       44px 700  label  7
+       56px 800  cell   v8
+       56px 700  cell   ∧
+       72px 800  title  给定邻接表
+       20px 700  progress 5 · 1/8
+
+[3d] 第 39 步（5 段 adj 1）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       60px 800  cell   2
+       56px 700  cell   ∧
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       60px 800  cell   5
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       60px 800  cell   5
+       56px 700  cell   ∧
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       72px 800  title  链里存下标
+       20px 700  progress 5 · 2/8
+
+[3d] 第 40 步（5 段 adj 2）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       60px 800  cell   2
+       56px 700  cell   ∧
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       60px 800  cell   5
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       60px 800  cell   5
+       56px 700  cell   ∧
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       72px 800  title  v1 的链：先去哪？
+       20px 700  progress 5 · 3/8
+
+[3d] 第 41 步（5 段 adj 3）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       60px 800  cell   2
+       56px 700  cell   ∧
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       60px 800  cell   5
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       60px 800  cell   5
+       56px 700  cell   ∧
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       44px 700  label  访问序列
+       56px 800  cell   ③
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  沿链找：没来过就去
+       20px 700  progress 5 · 4/8
+
+[3d] 第 42 步（5 段 adj 4）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       60px 800  cell   2
+       56px 700  cell   ∧
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       60px 800  cell   5
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       60px 800  cell   5
+       56px 700  cell   ∧
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ③
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  和 ① 一样
+       20px 700  progress 5 · 5/8
+
+[3d] 第 43 步（5 段 adj 5）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   2
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       56px 700  cell   ∧
+       60px 800  cell   3
+       60px 800  cell   4
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       56px 700  cell   ∧
+       60px 800  cell   5
+       60px 800  cell   6
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   7
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   7
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       56px 700  cell   ∧
+       60px 800  cell   6
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       56px 700  cell   ∧
+       60px 800  cell   5
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       56px 700  cell   ∧
+       60px 800  cell   4
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ③
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  链倒过来呢？
+       20px 700  progress 5 · 6/8
+
+[3d] 第 44 步（5 段 adj 6）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   2
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       56px 700  cell   ∧
+       60px 800  cell   3
+       60px 800  cell   4
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       56px 700  cell   ∧
+       60px 800  cell   5
+       60px 800  cell   6
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   7
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   7
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       56px 700  cell   ∧
+       60px 800  cell   6
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       56px 700  cell   ∧
+       60px 800  cell   5
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       56px 700  cell   ∧
+       60px 800  cell   4
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ②
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v7
+       56px 800  cell   v6
+       56px 800  cell   v2
+       56px 800  cell   v5
+       56px 800  cell   v8
+       56px 800  cell   v4
+       56px 800  cell   ③
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  变成 ②
+       20px 700  progress 5 · 7/8
+
+[3d] 第 45 步（5 段 adj 7）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   2
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       56px 700  cell   ∧
+       60px 800  cell   3
+       60px 800  cell   4
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       56px 700  cell   ∧
+       60px 800  cell   5
+       60px 800  cell   6
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   7
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   7
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       56px 700  cell   ∧
+       60px 800  cell   6
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       56px 700  cell   ∧
+       60px 800  cell   5
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       56px 700  cell   ∧
+       60px 800  cell   4
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ②
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v7
+       56px 800  cell   v6
+       56px 800  cell   v2
+       56px 800  cell   v5
+       56px 800  cell   v8
+       56px 800  cell   v4
+       56px 800  cell   ③
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  表定了 → 唯一
+       20px 700  progress 5 · 8/8
+
+[3d] 第 46 步（6 段 nc 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       72px 800  title  图不连通呢？
+       20px 700  progress 6 · 1/7
+
+[3d] 第 47 步（6 段 nc 1）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       72px 800  title  从 v1 出发
+       20px 700  progress 6 · 2/7
+
+[3d] 第 48 步（6 段 nc 2）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       72px 800  title  v4、v5、v6 呢？
+       20px 700  progress 6 · 3/7
+
+[3d] 第 49 步（6 段 nc 3）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       48px 700  code   DFSTraverse(G)
+       48px 700  code   for (v = 0; v < G.vexnum; ++v)
+       48px 700  code     if (!visited[v]) DFS(G, v);
+       56px 800  desc   调用 DFS：1 次
+       72px 800  title  外面套一层循环
+       20px 700  progress 6 · 4/7
+
+[3d] 第 50 步（6 段 nc 4）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       48px 700  code   DFSTraverse(G)
+       48px 700  code   for (v = 0; v < G.vexnum; ++v)
+       48px 700  code     if (!visited[v]) DFS(G, v);
+       56px 800  desc   调用 DFS：2 次
+       72px 800  title  v4 没访问 → 再调 DFS
+       20px 700  progress 6 · 5/7
+
+[3d] 第 51 步（6 段 nc 5）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       48px 700  code   DFSTraverse(G)
+       48px 700  code   for (v = 0; v < G.vexnum; ++v)
+       48px 700  code     if (!visited[v]) DFS(G, v);
+       56px 800  desc   调用 DFS：3 次
+       72px 800  title  v6 也再调一次
+       20px 700  progress 6 · 6/7
+
+[3d] 第 52 步（6 段 nc 6）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       44px 800  label  连通分量 1
+       44px 800  label  连通分量 2
+       44px 800  label  连通分量 3
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       48px 700  code   DFSTraverse(G)
+       48px 700  code   for (v = 0; v < G.vexnum; ++v)
+       48px 700  code     if (!visited[v]) DFS(G, v);
+       56px 800  desc   调用 DFS：3 次
+       56px 800  desc   = 3 个连通分量
+       72px 800  title  调 3 次 = 3 个连通分量
+       20px 700  progress 6 · 7/7
+
+[3d] 第 53 步（7 段 algo 0）
+       48px 700  code   void DFSTraverse(Graph G) {
+       48px 700  code       for (v = 0; v < G.vexnum; ++v) visited[v] = FALSE;
+       48px 700  code       for (v = 0; v < G.vexnum; ++v)
+       48px 700  code           if (!visited[v]) DFS(G, v);
+       48px 700  code   }
+       48px 700  code   void DFS(Graph G, int v) {
+       48px 700  code       visited[v] = TRUE; Visit(v);
+       48px 700  code       for (w = FirstAdjVex(G, v); w >= 0; w = NextAdjVex(G, v, w))
+       48px 700  code           if (!visited[w]) DFS(G, w);
+       48px 700  code   }
+       72px 800  title  算法 7.4、7.5
+       20px 700  progress 7 · 1/6
+
+[3d] 第 54 步（7 段 algo 1）
+       48px 700  code   void DFSTraverse(Graph G) {
+       48px 700  code       for (v = 0; v < G.vexnum; ++v) visited[v] = FALSE;
+       48px 700  code       for (v = 0; v < G.vexnum; ++v)
+       48px 700  code           if (!visited[v]) DFS(G, v);
+       48px 700  code   }
+       48px 700  code   void DFS(Graph G, int v) {
+       48px 700  code       visited[v] = TRUE; Visit(v);
+       56px 800  desc   ← 插旗
+       48px 700  code       for (w = FirstAdjVex(G, v); w >= 0; w = NextAdjVex(G, v, w))
+       48px 700  code           if (!visited[w]) DFS(G, w);
+       48px 700  code   }
+       72px 800  title  算法 7.4、7.5
+       20px 700  progress 7 · 2/6
+
+[3d] 第 55 步（7 段 algo 2）
+       48px 700  code   void DFSTraverse(Graph G) {
+       48px 700  code       for (v = 0; v < G.vexnum; ++v) visited[v] = FALSE;
+       48px 700  code       for (v = 0; v < G.vexnum; ++v)
+       48px 700  code           if (!visited[v]) DFS(G, v);
+       48px 700  code   }
+       48px 700  code   void DFS(Graph G, int v) {
+       48px 700  code       visited[v] = TRUE; Visit(v);
+       56px 800  desc   ← 插旗
+       48px 700  code       for (w = FirstAdjVex(G, v); w >= 0; w = NextAdjVex(G, v, w))
+       48px 700  code           if (!visited[w]) DFS(G, w);
+       56px 800  desc   ← 递归 = 压栈
+       48px 700  code   }
+       72px 800  title  算法 7.4、7.5
+       20px 700  progress 7 · 3/6
+
+[3d] 第 56 步（7 段 algo 3）
+       48px 700  code   void DFSTraverse(Graph G) {
+       48px 700  code       for (v = 0; v < G.vexnum; ++v) visited[v] = FALSE;
+       48px 700  code       for (v = 0; v < G.vexnum; ++v)
+       48px 700  code           if (!visited[v]) DFS(G, v);
+       56px 800  desc   ← 非连通：再调一次
+       48px 700  code   }
+       48px 700  code   void DFS(Graph G, int v) {
+       48px 700  code       visited[v] = TRUE; Visit(v);
+       56px 800  desc   ← 插旗
+       48px 700  code       for (w = FirstAdjVex(G, v); w >= 0; w = NextAdjVex(G, v, w))
+       48px 700  code           if (!visited[w]) DFS(G, w);
+       56px 800  desc   ← 递归 = 压栈
+       48px 700  code   }
+       72px 800  title  算法 7.4、7.5
+       20px 700  progress 7 · 4/6
+
+[3d] 第 57 步（7 段 algo 4）
+       72px 800  title  找邻接点最费时
+       64px 800  desc   邻接矩阵
+       80px 800  desc   O(n²)
+       20px 700  progress 7 · 5/6
+
+[3d] 第 58 步（7 段 algo 5）
+       72px 800  title  找邻接点最费时
+       64px 800  desc   邻接矩阵
+       80px 800  desc   O(n²)
+       64px 800  desc   邻接表
+       80px 800  desc   O(n + e)
+       20px 700  progress 7 · 6/6
+
+[3d] 第 59 步（8 段 prac 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 800  label  起点
+       64px 800  desc   1:56
+       72px 800  title  小练：从 v6 出发
+       56px 800  desc   ① DFS 序列
+       56px 800  desc   ② 栈最深几个？
+       20px 700  progress 8 · 1/3
+
+[3d] 第 60 步（8 段 prac 1）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 800  label  起点
+       56px 800  cell   v6
+       56px 800  cell   v3
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v7
+       72px 800  title  小练：从 v6 出发
+       56px 800  desc   ① DFS 序列
+       56px 800  desc   ② 栈最深几个？
+       20px 700  progress 8 · 2/3
+
+[3d] 第 61 步（8 段 prac 2）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       48px 800  vname  v6
+       48px 800  vname  v3
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v4
+       48px 800  vname  v8
+       48px 800  vname  v5
+       44px 800  label  起点
+       56px 800  cell   v6
+       56px 800  cell   v3
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v7
+       56px 800  cell   v6
+       56px 800  cell   v3
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       44px 800  label  栈底
+       44px 800  label  栈顶
+       72px 800  title  小练：从 v6 出发
+       56px 800  desc   ① DFS 序列
+       56px 800  desc   ② 栈最深几个？
+       56px 800  desc   → 7 个
+       20px 700  progress 8 · 3/3
+
+[3d] 第 62 步（9 段 end 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       72px 800  title  DFS 生成树
+       20px 700  progress 9 · 1/6
+
+[3d] 第 63 步（9 段 end 1）
+       44px 800  label  第 1 层
+       44px 800  label  第 2 层
+       44px 800  label  第 3 层
+       44px 800  label  第 4 层
+       44px 800  label  第 5 层
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       72px 800  title  抓住 v1 提起来
+       56px 800  desc   共 5 层
+       20px 700  progress 9 · 2/6
+
+[3d] 第 64 步（9 段 end 2）
+       44px 800  label  第 1 层
+       44px 800  label  第 2 层
+       44px 800  label  第 3 层
+       44px 800  label  第 4 层
+       44px 800  label  第 5 层
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 800  label  栈最深时
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  栈最深 = 这一条
+       20px 700  progress 9 · 3/6
+
+[3d] 第 65 步（9 段 end 3）
+       72px 800  title  小结
+       56px 800  desc   一条路走到黑
+       56px 800  desc   visited + 递归栈
+       20px 700  progress 9 · 4/6
+
+[3d] 第 66 步（9 段 end 4）
+       72px 800  title  小结
+       56px 800  desc   一条路走到黑
+       56px 800  desc   visited + 递归栈
+       56px 800  desc   序列不唯一，表定才唯一
+       56px 800  desc   调几次 = 几个连通分量
+       20px 700  progress 9 · 5/6
+
+[3d] 第 67 步（9 段 end 5）
+       72px 800  title  小结
+       56px 800  desc   一条路走到黑
+       56px 800  desc   visited + 递归栈
+       56px 800  desc   序列不唯一，表定才唯一
+       56px 800  desc   调几次 = 几个连通分量
+       56px 800  desc   邻接矩阵 O(n²)，邻接表 O(n + e)
+       20px 700  progress 9 · 6/6
+
+[2d] 第 1 步（1 段 maze 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       48px 800  label  入口
+       88px 800  title  图的深度优先遍历
+       56px 800  desc   撞了南墙再回头
+       20px 700  progress 1 · 1/6
+
+[2d] 第 2 步（1 段 maze 1）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       72px 800  title  一条路走到黑
+       20px 700  progress 1 · 2/6
+
+[2d] 第 3 步（1 段 maze 2）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       64px 800  text   ?
+       64px 800  text   ?
+       72px 800  title  到了 v5，往哪走？
+       20px 700  progress 1 · 3/6
+
+[2d] 第 4 步（1 段 maze 3）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       72px 800  title  都插过旗 → 撞南墙！
+       20px 700  progress 1 · 4/6
+
+[2d] 第 5 步（1 段 maze 4）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       72px 800  title  原路退回 v8
+       20px 700  progress 1 · 5/6
+
+[2d] 第 6 步（1 段 maze 5）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       72px 800  title  迷宫就是一张图
+       20px 700  progress 1 · 6/6
+
+[2d] 第 7 步（2 段 tools 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   F
+       44px 800  vname  v2
+       60px 800  cell   F
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       72px 800  title  visited = 插旗
+       20px 700  progress 2 · 1/3
+
+[2d] 第 8 步（2 段 tools 1）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   F
+       44px 800  vname  v2
+       60px 800  cell   F
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       72px 800  title  递归栈 = 来时的路
+       20px 700  progress 2 · 2/3
+
+[2d] 第 9 步（2 段 tools 2）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   F
+       44px 800  vname  v2
+       60px 800  cell   F
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       44px 700  label  访问序列
+       72px 800  title  记下访问序列
+       20px 700  progress 2 · 3/3
+
+[2d] 第 10 步（3 段 walk 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   F
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       72px 800  title  从 v1 出发
+       20px 700  progress 3 · 1/24
+
+[2d] 第 11 步（3 段 walk 1）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   F
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       72px 800  title  v1 往哪走？
+       56px 800  desc   先挑编号小的
+       20px 700  progress 3 · 2/24
+
+[2d] 第 12 步（3 段 walk 2）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       72px 800  title  走到 v2
+       20px 700  progress 3 · 3/24
+
+[2d] 第 13 步（3 段 walk 3）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       72px 800  title  v2 往哪走？
+       20px 700  progress 3 · 4/24
+
+[2d] 第 14 步（3 段 walk 4）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       72px 800  title  走到 v4
+       20px 700  progress 3 · 5/24
+
+[2d] 第 15 步（3 段 walk 5）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       72px 800  title  v4 往哪走？
+       20px 700  progress 3 · 6/24
+
+[2d] 第 16 步（3 段 walk 6）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       72px 800  title  走到 v8
+       20px 700  progress 3 · 7/24
+
+[2d] 第 17 步（3 段 walk 7）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       72px 800  title  v8 往哪走？
+       20px 700  progress 3 · 8/24
+
+[2d] 第 18 步（3 段 walk 8）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  走到 v5
+       20px 700  progress 3 · 9/24
+
+[2d] 第 19 步（3 段 walk 9）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  v5 往哪走？
+       56px 800  desc   撞南墙！
+       20px 700  progress 3 · 10/24
+
+[2d] 第 20 步（3 段 walk 10）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  退回 v8
+       56px 800  desc   没路 → 再退
+       20px 700  progress 3 · 11/24
+
+[2d] 第 21 步（3 段 walk 11）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  退回 v4
+       56px 800  desc   没路 → 再退
+       20px 700  progress 3 · 12/24
+
+[2d] 第 22 步（3 段 walk 12）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v2
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  退回 v2
+       56px 800  desc   没路 → 再退
+       20px 700  progress 3 · 13/24
+
+[2d] 第 23 步（3 段 walk 13）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  退回 v1
+       56px 800  desc   还能去 v3
+       20px 700  progress 3 · 14/24
+
+[2d] 第 24 步（3 段 walk 14）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       72px 800  title  走到 v3
+       20px 700  progress 3 · 15/24
+
+[2d] 第 25 步（3 段 walk 15）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       72px 800  title  v3 往哪走？
+       20px 700  progress 3 · 16/24
+
+[2d] 第 26 步（3 段 walk 16）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v6
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       72px 800  title  走到 v6
+       20px 700  progress 3 · 17/24
+
+[2d] 第 27 步（3 段 walk 17）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       60px 800  text   ?
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v6
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       72px 800  title  v6 往哪走？
+       20px 700  progress 3 · 18/24
+
+[2d] 第 28 步（3 段 walk 18）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  走到 v7
+       20px 700  progress 3 · 19/24
+
+[2d] 第 29 步（3 段 walk 19）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  v7 往哪走？
+       56px 800  desc   撞南墙！
+       20px 700  progress 3 · 20/24
+
+[2d] 第 30 步（3 段 walk 20）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v6
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  退回 v6
+       56px 800  desc   没路 → 再退
+       20px 700  progress 3 · 21/24
+
+[2d] 第 31 步（3 段 walk 21）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       56px 800  cell   v3
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  退回 v3
+       56px 800  desc   没路 → 再退
+       20px 700  progress 3 · 22/24
+
+[2d] 第 32 步（3 段 walk 22）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       56px 800  cell   v1
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  退回 v1
+       56px 800  desc   没路 → 出栈
+       20px 700  progress 3 · 23/24
+
+[2d] 第 33 步（3 段 walk 23）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       44px 700  label  访问序列
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  栈空 → 结束
+       20px 700  progress 3 · 24/24
+
+[2d] 第 34 步（4 段 redo 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   F
+       44px 800  vname  v2
+       60px 800  cell   F
+       44px 800  vname  v3
+       60px 800  cell   F
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       44px 800  vname  v7
+       60px 800  cell   F
+       44px 800  vname  v8
+       60px 800  cell   F
+       44px 800  label  递归栈
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ②
+       72px 800  title  先挑编号大的呢？
+       20px 700  progress 4 · 1/4
+
+[2d] 第 35 步（4 段 redo 1）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 800  label  递归栈
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ②
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v7
+       56px 800  cell   v6
+       56px 800  cell   v2
+       56px 800  cell   v5
+       56px 800  cell   v8
+       56px 800  cell   v4
+       72px 800  title  先挑大的走一遍
+       20px 700  progress 4 · 2/4
+
+[2d] 第 36 步（4 段 redo 2）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   ✓
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ②
+       56px 800  cell   ✓
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v7
+       56px 800  cell   v6
+       56px 800  cell   v2
+       56px 800  cell   v5
+       56px 800  cell   v8
+       56px 800  cell   v4
+       72px 800  title  两条都对：不唯一
+       20px 700  progress 4 · 3/4
+
+[2d] 第 37 步（4 段 redo 3）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       44px 800  vname  v7
+       60px 800  cell   T
+       44px 800  vname  v8
+       60px 800  cell   T
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   ✓
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ②
+       56px 800  cell   ✓
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v7
+       56px 800  cell   v6
+       56px 800  cell   v2
+       56px 800  cell   v5
+       56px 800  cell   v8
+       56px 800  cell   v4
+       72px 800  title  从 v1 出发：共 8 种
+       20px 700  progress 4 · 4/4
+
+[2d] 第 38 步（5 段 adj 0）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  0
+       56px 800  cell   v1
+       56px 700  cell   ∧
+       44px 700  label  1
+       56px 800  cell   v2
+       56px 700  cell   ∧
+       44px 700  label  2
+       56px 800  cell   v3
+       56px 700  cell   ∧
+       44px 700  label  3
+       56px 800  cell   v4
+       56px 700  cell   ∧
+       44px 700  label  4
+       56px 800  cell   v5
+       56px 700  cell   ∧
+       44px 700  label  5
+       56px 800  cell   v6
+       56px 700  cell   ∧
+       44px 700  label  6
+       56px 800  cell   v7
+       56px 700  cell   ∧
+       44px 700  label  7
+       56px 800  cell   v8
+       56px 700  cell   ∧
+       72px 800  title  给定邻接表
+       20px 700  progress 5 · 1/8
+
+[2d] 第 39 步（5 段 adj 1）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       60px 800  cell   2
+       56px 700  cell   ∧
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       60px 800  cell   5
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       60px 800  cell   5
+       56px 700  cell   ∧
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       72px 800  title  链里存下标
+       20px 700  progress 5 · 2/8
+
+[2d] 第 40 步（5 段 adj 2）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       60px 800  cell   2
+       56px 700  cell   ∧
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       60px 800  cell   5
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       60px 800  cell   5
+       56px 700  cell   ∧
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       72px 800  title  v1 的链：先去哪？
+       20px 700  progress 5 · 3/8
+
+[2d] 第 41 步（5 段 adj 3）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       60px 800  cell   2
+       56px 700  cell   ∧
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       60px 800  cell   5
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       60px 800  cell   5
+       56px 700  cell   ∧
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       44px 700  label  访问序列
+       56px 800  cell   ③
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  沿链找：没来过就去
+       20px 700  progress 5 · 4/8
+
+[2d] 第 42 步（5 段 adj 4）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       60px 800  cell   2
+       56px 700  cell   ∧
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       60px 800  cell   5
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       60px 800  cell   7
+       56px 700  cell   ∧
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       60px 800  cell   6
+       56px 700  cell   ∧
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       60px 800  cell   5
+       56px 700  cell   ∧
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       60px 800  cell   4
+       56px 700  cell   ∧
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ③
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  和 ① 一样
+       20px 700  progress 5 · 5/8
+
+[2d] 第 43 步（5 段 adj 5）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   2
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       56px 700  cell   ∧
+       60px 800  cell   3
+       60px 800  cell   4
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       56px 700  cell   ∧
+       60px 800  cell   5
+       60px 800  cell   6
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   7
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   7
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       56px 700  cell   ∧
+       60px 800  cell   6
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       56px 700  cell   ∧
+       60px 800  cell   5
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       56px 700  cell   ∧
+       60px 800  cell   4
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ③
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  链倒过来呢？
+       20px 700  progress 5 · 6/8
+
+[2d] 第 44 步（5 段 adj 6）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   2
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       56px 700  cell   ∧
+       60px 800  cell   3
+       60px 800  cell   4
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       56px 700  cell   ∧
+       60px 800  cell   5
+       60px 800  cell   6
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   7
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   7
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       56px 700  cell   ∧
+       60px 800  cell   6
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       56px 700  cell   ∧
+       60px 800  cell   5
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       56px 700  cell   ∧
+       60px 800  cell   4
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ②
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v7
+       56px 800  cell   v6
+       56px 800  cell   v2
+       56px 800  cell   v5
+       56px 800  cell   v8
+       56px 800  cell   v4
+       56px 800  cell   ③
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  变成 ②
+       20px 700  progress 5 · 7/8
+
+[2d] 第 45 步（5 段 adj 7）
+       44px 800  vname  v1
+       44px 800  vname  v2
+       44px 800  vname  v3
+       44px 800  vname  v4
+       44px 800  vname  v5
+       44px 800  vname  v6
+       44px 800  vname  v7
+       44px 800  vname  v8
+       44px 700  label  顶点表
+       44px 700  label  边链表
+       44px 700  label  0
+       56px 800  cell   v1
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   2
+       44px 700  label  1
+       56px 800  cell   v2
+       60px 800  cell   0
+       56px 700  cell   ∧
+       60px 800  cell   3
+       60px 800  cell   4
+       44px 700  label  2
+       56px 800  cell   v3
+       60px 800  cell   0
+       56px 700  cell   ∧
+       60px 800  cell   5
+       60px 800  cell   6
+       44px 700  label  3
+       56px 800  cell   v4
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   7
+       44px 700  label  4
+       56px 800  cell   v5
+       60px 800  cell   1
+       56px 700  cell   ∧
+       60px 800  cell   7
+       44px 700  label  5
+       56px 800  cell   v6
+       60px 800  cell   2
+       56px 700  cell   ∧
+       60px 800  cell   6
+       44px 700  label  6
+       56px 800  cell   v7
+       60px 800  cell   2
+       56px 700  cell   ∧
+       60px 800  cell   5
+       44px 700  label  7
+       56px 800  cell   v8
+       60px 800  cell   3
+       56px 700  cell   ∧
+       60px 800  cell   4
+       44px 700  label  访问序列
+       56px 800  cell   ①
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       56px 800  cell   ②
+       56px 800  cell   v1
+       56px 800  cell   v3
+       56px 800  cell   v7
+       56px 800  cell   v6
+       56px 800  cell   v2
+       56px 800  cell   v5
+       56px 800  cell   v8
+       56px 800  cell   v4
+       56px 800  cell   ③
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v3
+       56px 800  cell   v6
+       56px 800  cell   v7
+       72px 800  title  表定了 → 唯一
+       20px 700  progress 5 · 8/8
+
+[2d] 第 46 步（6 段 nc 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       72px 800  title  图不连通呢？
+       20px 700  progress 6 · 1/7
+
+[2d] 第 47 步（6 段 nc 1）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       72px 800  title  从 v1 出发
+       20px 700  progress 6 · 2/7
+
+[2d] 第 48 步（6 段 nc 2）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       72px 800  title  v4、v5、v6 呢？
+       20px 700  progress 6 · 3/7
+
+[2d] 第 49 步（6 段 nc 3）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   F
+       44px 800  vname  v5
+       60px 800  cell   F
+       44px 800  vname  v6
+       60px 800  cell   F
+       48px 700  code   DFSTraverse(G)
+       48px 700  code   for (v = 0; v < G.vexnum; ++v)
+       48px 700  code     if (!visited[v]) DFS(G, v);
+       56px 800  desc   调用 DFS：1 次
+       72px 800  title  外面套一层循环
+       20px 700  progress 6 · 4/7
+
+[2d] 第 50 步（6 段 nc 4）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   F
+       48px 700  code   DFSTraverse(G)
+       48px 700  code   for (v = 0; v < G.vexnum; ++v)
+       48px 700  code     if (!visited[v]) DFS(G, v);
+       56px 800  desc   调用 DFS：2 次
+       72px 800  title  v4 没访问 → 再调 DFS
+       20px 700  progress 6 · 5/7
+
+[2d] 第 51 步（6 段 nc 5）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       48px 700  code   DFSTraverse(G)
+       48px 700  code   for (v = 0; v < G.vexnum; ++v)
+       48px 700  code     if (!visited[v]) DFS(G, v);
+       56px 800  desc   调用 DFS：3 次
+       72px 800  title  v6 也再调一次
+       20px 700  progress 6 · 6/7
+
+[2d] 第 52 步（6 段 nc 6）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       44px 800  label  连通分量 1
+       44px 800  label  连通分量 2
+       44px 800  label  连通分量 3
+       44px 700  label  visited
+       44px 800  vname  v1
+       60px 800  cell   T
+       44px 800  vname  v2
+       60px 800  cell   T
+       44px 800  vname  v3
+       60px 800  cell   T
+       44px 800  vname  v4
+       60px 800  cell   T
+       44px 800  vname  v5
+       60px 800  cell   T
+       44px 800  vname  v6
+       60px 800  cell   T
+       48px 700  code   DFSTraverse(G)
+       48px 700  code   for (v = 0; v < G.vexnum; ++v)
+       48px 700  code     if (!visited[v]) DFS(G, v);
+       56px 800  desc   调用 DFS：3 次
+       56px 800  desc   = 3 个连通分量
+       72px 800  title  调 3 次 = 3 个连通分量
+       20px 700  progress 6 · 7/7
+
+[2d] 第 53 步（7 段 algo 0）
+       48px 700  code   void DFSTraverse(Graph G) {
+       48px 700  code       for (v = 0; v < G.vexnum; ++v) visited[v] = FALSE;
+       48px 700  code       for (v = 0; v < G.vexnum; ++v)
+       48px 700  code           if (!visited[v]) DFS(G, v);
+       48px 700  code   }
+       48px 700  code   void DFS(Graph G, int v) {
+       48px 700  code       visited[v] = TRUE; Visit(v);
+       48px 700  code       for (w = FirstAdjVex(G, v); w >= 0; w = NextAdjVex(G, v, w))
+       48px 700  code           if (!visited[w]) DFS(G, w);
+       48px 700  code   }
+       72px 800  title  算法 7.4、7.5
+       20px 700  progress 7 · 1/6
+
+[2d] 第 54 步（7 段 algo 1）
+       48px 700  code   void DFSTraverse(Graph G) {
+       48px 700  code       for (v = 0; v < G.vexnum; ++v) visited[v] = FALSE;
+       48px 700  code       for (v = 0; v < G.vexnum; ++v)
+       48px 700  code           if (!visited[v]) DFS(G, v);
+       48px 700  code   }
+       48px 700  code   void DFS(Graph G, int v) {
+       48px 700  code       visited[v] = TRUE; Visit(v);
+       56px 800  desc   ← 插旗
+       48px 700  code       for (w = FirstAdjVex(G, v); w >= 0; w = NextAdjVex(G, v, w))
+       48px 700  code           if (!visited[w]) DFS(G, w);
+       48px 700  code   }
+       72px 800  title  算法 7.4、7.5
+       20px 700  progress 7 · 2/6
+
+[2d] 第 55 步（7 段 algo 2）
+       48px 700  code   void DFSTraverse(Graph G) {
+       48px 700  code       for (v = 0; v < G.vexnum; ++v) visited[v] = FALSE;
+       48px 700  code       for (v = 0; v < G.vexnum; ++v)
+       48px 700  code           if (!visited[v]) DFS(G, v);
+       48px 700  code   }
+       48px 700  code   void DFS(Graph G, int v) {
+       48px 700  code       visited[v] = TRUE; Visit(v);
+       56px 800  desc   ← 插旗
+       48px 700  code       for (w = FirstAdjVex(G, v); w >= 0; w = NextAdjVex(G, v, w))
+       48px 700  code           if (!visited[w]) DFS(G, w);
+       56px 800  desc   ← 递归 = 压栈
+       48px 700  code   }
+       72px 800  title  算法 7.4、7.5
+       20px 700  progress 7 · 3/6
+
+[2d] 第 56 步（7 段 algo 3）
+       48px 700  code   void DFSTraverse(Graph G) {
+       48px 700  code       for (v = 0; v < G.vexnum; ++v) visited[v] = FALSE;
+       48px 700  code       for (v = 0; v < G.vexnum; ++v)
+       48px 700  code           if (!visited[v]) DFS(G, v);
+       56px 800  desc   ← 非连通：再调一次
+       48px 700  code   }
+       48px 700  code   void DFS(Graph G, int v) {
+       48px 700  code       visited[v] = TRUE; Visit(v);
+       56px 800  desc   ← 插旗
+       48px 700  code       for (w = FirstAdjVex(G, v); w >= 0; w = NextAdjVex(G, v, w))
+       48px 700  code           if (!visited[w]) DFS(G, w);
+       56px 800  desc   ← 递归 = 压栈
+       48px 700  code   }
+       72px 800  title  算法 7.4、7.5
+       20px 700  progress 7 · 4/6
+
+[2d] 第 57 步（7 段 algo 4）
+       72px 800  title  找邻接点最费时
+       64px 800  desc   邻接矩阵
+       80px 800  desc   O(n²)
+       20px 700  progress 7 · 5/6
+
+[2d] 第 58 步（7 段 algo 5）
+       72px 800  title  找邻接点最费时
+       64px 800  desc   邻接矩阵
+       80px 800  desc   O(n²)
+       64px 800  desc   邻接表
+       80px 800  desc   O(n + e)
+       20px 700  progress 7 · 6/6
+
+[2d] 第 59 步（8 段 prac 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 800  label  起点
+       64px 800  desc   1:56
+       72px 800  title  小练：从 v6 出发
+       56px 800  desc   ① DFS 序列
+       56px 800  desc   ② 栈最深几个？
+       20px 700  progress 8 · 1/3
+
+[2d] 第 60 步（8 段 prac 1）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 800  label  起点
+       56px 800  cell   v6
+       56px 800  cell   v3
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v7
+       72px 800  title  小练：从 v6 出发
+       56px 800  desc   ① DFS 序列
+       56px 800  desc   ② 栈最深几个？
+       20px 700  progress 8 · 2/3
+
+[2d] 第 61 步（8 段 prac 2）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       48px 800  vname  v6
+       48px 800  vname  v3
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v4
+       48px 800  vname  v8
+       48px 800  vname  v5
+       44px 800  label  起点
+       56px 800  cell   v6
+       56px 800  cell   v3
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       56px 800  cell   v7
+       56px 800  cell   v6
+       56px 800  cell   v3
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       44px 800  label  栈底
+       44px 800  label  栈顶
+       72px 800  title  小练：从 v6 出发
+       56px 800  desc   ① DFS 序列
+       56px 800  desc   ② 栈最深几个？
+       56px 800  desc   → 7 个
+       20px 700  progress 8 · 3/3
+
+[2d] 第 62 步（9 段 end 0）
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       72px 800  title  DFS 生成树
+       20px 700  progress 9 · 1/6
+
+[2d] 第 63 步（9 段 end 1）
+       44px 800  label  第 1 层
+       44px 800  label  第 2 层
+       44px 800  label  第 3 层
+       44px 800  label  第 4 层
+       44px 800  label  第 5 层
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       72px 800  title  抓住 v1 提起来
+       56px 800  desc   共 5 层
+       20px 700  progress 9 · 2/6
+
+[2d] 第 64 步（9 段 end 2）
+       44px 800  label  第 1 层
+       44px 800  label  第 2 层
+       44px 800  label  第 3 层
+       44px 800  label  第 4 层
+       44px 800  label  第 5 层
+       48px 800  vname  v1
+       48px 800  vname  v2
+       48px 800  vname  v3
+       48px 800  vname  v4
+       48px 800  vname  v5
+       48px 800  vname  v6
+       48px 800  vname  v7
+       48px 800  vname  v8
+       44px 800  label  栈最深时
+       56px 800  cell   v1
+       56px 800  cell   v2
+       56px 800  cell   v4
+       56px 800  cell   v8
+       56px 800  cell   v5
+       72px 800  title  栈最深 = 这一条
+       20px 700  progress 9 · 3/6
+
+[2d] 第 65 步（9 段 end 3）
+       72px 800  title  小结
+       56px 800  desc   一条路走到黑
+       56px 800  desc   visited + 递归栈
+       20px 700  progress 9 · 4/6
+
+[2d] 第 66 步（9 段 end 4）
+       72px 800  title  小结
+       56px 800  desc   一条路走到黑
+       56px 800  desc   visited + 递归栈
+       56px 800  desc   序列不唯一，表定才唯一
+       56px 800  desc   调几次 = 几个连通分量
+       20px 700  progress 9 · 5/6
+
+[2d] 第 67 步（9 段 end 5）
+       72px 800  title  小结
+       56px 800  desc   一条路走到黑
+       56px 800  desc   visited + 递归栈
+       56px 800  desc   序列不唯一，表定才唯一
+       56px 800  desc   调几次 = 几个连通分量
+       56px 800  desc   邻接矩阵 O(n²)，邻接表 O(n + e)
+       20px 700  progress 9 · 6/6
